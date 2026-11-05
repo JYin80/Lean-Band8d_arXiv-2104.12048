@@ -1,0 +1,15 @@
+.lake/
+/.lake
+.DS_Store
+**/.DS_Store
+__pycache__/
+# LaTeX build products
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+paper/**/*.toc
+paper/**/*.bbl
+paper/**/*.blg
+paper/**/*.fls
+paper/**/*.fdb_latexmk
+paper/**/*.synctex.gz
