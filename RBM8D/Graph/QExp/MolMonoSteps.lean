@@ -1,7 +1,11 @@
-import RBM8D.Graph.QExp.MolMono
-import RBM8D.Graph.QExp.MainB
-import RBM8D.Graph.Local.Strategy
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.Graph.QExp.MolMono
+public import RBM8D.Graph.QExp.MainB
+public import RBM8D.Graph.Local.Strategy
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # Crossing counts along the steps of the `Q`-expansions that change the blocks or add atoms
@@ -2745,11 +2749,11 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance MolMonoSteps_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance MolMonoSteps_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 
-private instance MolMonoSteps_decIsPFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance MolMonoSteps_decIsPFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.IsPFormAt u) := by
   unfold Graph.IsPFormAt; infer_instance
 

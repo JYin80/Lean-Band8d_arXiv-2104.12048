@@ -1,5 +1,9 @@
-import RBM8D.Graph.QExp.SelStep1
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.Graph.QExp.SelStep1
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # Coherence in the Taylor degree, order, blocks and history of the run `selStep1`

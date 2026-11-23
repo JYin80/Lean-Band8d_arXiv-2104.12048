@@ -1,5 +1,9 @@
-import RBM8D.Graph.QExp.SelRun
-import RBM8D.Graph.MolDot
+module
+
+public import RBM8D.Graph.QExp.SelRun
+public import RBM8D.Graph.MolDot
+
+@[expose] public section
 
 /-!
 # Weak isolation of the output graphs of the family of `Q`-expansions
@@ -1891,54 +1895,54 @@ section SelRunIsoInstances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance SelRunIso_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance SelRunIso_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance SelRunIso_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance SelRunIso_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (SelRunIso_decAdjDot Γ) u v
 
-private instance SelRunIso_decAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance SelRunIso_decAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
-private instance SelRunIso_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance SelRunIso_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
       @SimpleGraph.instDecidableRelReachable _ _ _ _ (SelRunIso_decAdjMol Γ) u v
     inferInstanceAs (Decidable (u = v ∨
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 
-private instance SelRunIso_decIsQGraph {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
+instance SelRunIso_decIsQGraph {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
   inferInstanceAs (Decidable (∃ u : Atom k n, (∃ c ∈ Γ.comps, c.label = some (.Q, u)) ∧
     ∀ c ∈ Γ.comps, (c.kind.isRandom = true ∨ c.label.isSome = true) → c.label = some (.Q, u)))
 
-private instance SelRunIso_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance SelRunIso_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.IsQFormAt u) := by
   unfold Graph.IsQFormAt; infer_instance
 
-private instance SelRunIso_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance SelRunIso_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 
-private instance SelRunIso_decColourInv' {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInv' := by
+instance SelRunIso_decColourInv' {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInv' := by
   unfold Graph.ColourInv'; infer_instance
 
-private instance SelRunIso_decColourInvB {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInvB := by
+instance SelRunIso_decColourInvB {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInvB := by
   unfold Graph.ColourInvB; infer_instance
 
-private instance SelRunIso_decExtClause {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ExtClause := by
+instance SelRunIso_decExtClause {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ExtClause := by
   unfold Graph.ExtClause Graph.HasDiffToPinned Graph.DiffToPinned; infer_instance
 
-private instance SelRunIso_decNoGhost {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoGhost := by
+instance SelRunIso_decNoGhost {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoGhost := by
   unfold Graph.NoGhost; infer_instance
 
-private instance SelRunIso_decLabelsInt {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelsInt := by
+instance SelRunIso_decLabelsInt {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelsInt := by
   unfold Graph.LabelsInt; infer_instance
 
-private instance SelRunIso_decUnlabelledFreeAtBlock {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance SelRunIso_decUnlabelledFreeAtBlock {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.UnlabelledFreeAtBlock u) := by
   unfold Graph.UnlabelledFreeAtBlock; infer_instance
 

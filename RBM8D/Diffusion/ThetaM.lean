@@ -1,6 +1,10 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.SelfEnergy.Step
-import Mathlib.NumberTheory.Harmonic.Bounds
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.SelfEnergy.Step
+public import Mathlib.NumberTheory.Harmonic.Bounds
+
+@[expose] public section
 
 /-!
 # The renormalized diffusive matrix `Θ^{(M)}`

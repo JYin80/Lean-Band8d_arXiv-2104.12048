@@ -1,4 +1,8 @@
-import RBM8D.Graph.Glue
+module
+
+public import RBM8D.Graph.Glue
+
+@[expose] public section
 
 /-!
 # The transposed record and the transposed graph

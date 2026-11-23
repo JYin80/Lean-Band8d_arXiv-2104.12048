@@ -1,4 +1,10 @@
-import RBM8D.GlobalExp.TEqLeaf
+module
+
+public import RBM8D.GlobalExp.TEqLeaf
+public import RBM8D.TExp.Second
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # `Σ_n` of the construction of [II, (6.8)]: the normal form at `x = y`, the correction graphs and

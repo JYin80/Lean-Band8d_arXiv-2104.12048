@@ -1,8 +1,14 @@
-import RBM8D.Prob.Model
-import RBM8D.Basic.Resolvent
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.ContDiff.Bounds
-import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+module
+
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Analysis.Calculus.Deriv.Prod
+public import RBM8D.Prob.Model
+public import RBM8D.Basic.Resolvent
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.ContDiff.Bounds
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+
+@[expose] public section
 
 /-!
 # Wirtinger derivatives and test functions

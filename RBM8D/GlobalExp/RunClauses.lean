@@ -1,5 +1,18 @@
-import RBM8D.GlobalExp.Strategy
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.Strategy
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.Local
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.Graph.Local.StrategyPart1
+public import RBM8D.Graph.MolDot
+import all RBM8D.GlobalExp.Local
+import all RBM8D.Graph.Local.DotNorm
+import all RBM8D.Graph.Local.StrategyPart1
+import all RBM8D.Graph.MolDot
+import all RBM8D.GlobalExp.Strategy
+
+@[expose] public section
 
 /-!
 # The clauses of the invariant of a run
@@ -47,7 +60,7 @@ open private Local_atom_cases Local_CC Local_CC_int Local_colour_iff Local_count
   Local_mergeComp
   from RBM8D.GlobalExp.Local
 open private DotNorm.sameBlock_of_mem from RBM8D.Graph.Local.DotNorm
-open private mem_or_of_mem from RBM8D.Graph.Local.Strategy
+open private mem_or_of_mem from RBM8D.Graph.Local.StrategyPart1
 open private MolDot_add MolDot_colour_add MolDot_ext_add from RBM8D.Graph.MolDot
 
 /-! ## `O_dot` on graphs with the charge pattern of the block normal form -/

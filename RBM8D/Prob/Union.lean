@@ -1,4 +1,8 @@
-import RBM8D.Prob.StochDom
+module
+
+public import RBM8D.Prob.StochDom
+
+@[expose] public section
 
 /-!
 # Union bounds and moments

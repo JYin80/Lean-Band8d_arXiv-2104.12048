@@ -1,4 +1,8 @@
-import RBM8D.Deloc.Defs
+module
+
+public import RBM8D.Deloc.Defs
+
+@[expose] public section
 
 /-!
 # Deterministic steps of [I, §8]

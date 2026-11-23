@@ -1,4 +1,8 @@
-import RBM8D.Graph.Local.DotNorm
+module
+
+public import RBM8D.Graph.Local.DotNorm
+
+@[expose] public section
 
 /-!
 # Light weights and solid edges at equal order under the local expansions

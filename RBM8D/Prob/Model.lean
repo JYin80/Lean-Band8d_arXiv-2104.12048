@@ -1,7 +1,12 @@
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Order.Filter.AtTopBot.Basic
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Order.Filter.AtTopBot.Basic
+
+@[expose] public section
 
 /-!
 # The Gaussian model
@@ -23,39 +28,6 @@ namespace RBM8D
 section Model
 
 variable {ι : Type u} [Fintype ι] [DecidableEq ι]
-
-/-- An injective natural number key on a finite index type; it orients the off-diagonal pairs. -/
-def idxKey (ι : Type u) [Fintype ι] (x : ι) : ℕ := (Fintype.equivFin ι x).val
-
-/-- Off-diagonal pairs `(x, y)` with `idxKey x < idxKey y`: one per unordered pair `{x, y}`. -/
-abbrev OffPair (ι : Type u) [Fintype ι] : Type u := {p : ι × ι // idxKey ι p.1 < idxKey ι p.2}
-
-/-- Real coordinates of a Hermitian matrix: `h_xx` for each `x`, and `Re h_xy` (`true`),
-`Im h_xy` (`false`) for each oriented off-diagonal pair. -/
-abbrev Coord (ι : Type u) [Fintype ι] : Type u := ι ⊕ (OffPair ι × Bool)
-
-/-- The sample space: one real number per coordinate. -/
-abbrev Sample (ι : Type u) [Fintype ι] : Type u := Coord ι → ℝ
-
-/-- Variance of a coordinate: `s_xx` on the diagonal, `s_xy / 2` for `Re h_xy` and `Im h_xy`
-([I, Assumption 1.1], with a real diagonal of variance `s_xx`). -/
-def coordVar (S : Matrix ι ι ℝ) : Coord ι → ℝ≥0
-  | .inl x => (S x x).toNNReal
-  | .inr (e, _) => (S e.1.1 e.1.2 / 2).toNNReal
-
-/-- The law of [I, Assumption 1.1]: independent centred real Gaussians, one per coordinate. -/
-def gaussLaw (S : Matrix ι ι ℝ) : Measure (Sample ι) :=
-  Measure.pi fun c => gaussianReal 0 (coordVar S c)
-
-/-- The Hermitian matrix `H(ω)`: `h_xy = Re + i Im` for `idxKey x < idxKey y`, `h_yx = conj h_xy`,
-and `h_xx` real. -/
-def hmat (ω : Sample ι) : Matrix ι ι ℂ :=
-  Matrix.of fun x y =>
-    if h : idxKey ι x < idxKey ι y then
-      (ω (.inr (⟨(x, y), h⟩, true)) : ℂ) + I * (ω (.inr (⟨(x, y), h⟩, false)) : ℂ)
-    else if h' : idxKey ι y < idxKey ι x then
-      (ω (.inr (⟨(y, x), h'⟩, true)) : ℂ) - I * (ω (.inr (⟨(y, x), h'⟩, false)) : ℂ)
-    else (ω (.inl x) : ℂ)
 
 /-- The coordinates on which the entry `h_ab` depends. -/
 def entryCoords (a b : ι) : Finset (Coord ι) :=
@@ -90,7 +62,7 @@ theorem hmat_isHermitian (ω : Sample ι) : (hmat ω).IsHermitian := by
     ring
 
 omit [DecidableEq ι] in
-private instance gaussLaw_isProb (S : Matrix ι ι ℝ) : IsProbabilityMeasure (gaussLaw S) := by
+instance gaussLaw_isProb (S : Matrix ι ι ℝ) : IsProbabilityMeasure (gaussLaw S) := by
   unfold gaussLaw; infer_instance
 
 theorem isProbabilityMeasure_gaussLaw {ι : Type u} [Fintype ι] [DecidableEq ι] (S : Matrix ι ι ℝ) :

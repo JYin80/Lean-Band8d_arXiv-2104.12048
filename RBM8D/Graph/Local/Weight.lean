@@ -1,5 +1,9 @@
-import RBM8D.Graph.Local.IBP
-import RBM8D.Graph.Local.Dot
+module
+
+public import RBM8D.Graph.Local.IBP
+public import RBM8D.Graph.Local.Dot
+
+@[expose] public section
 
 /-!
 # The weight expansion

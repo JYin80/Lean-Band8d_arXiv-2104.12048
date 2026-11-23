@@ -1,7 +1,30 @@
-import RBM8D.GlobalExp.GlobalGood
-import RBM8D.GlobalExp.GlobalGoodRows
-import RBM8D.Graph.DotBlocks
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.GlobalGood
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import RBM8D.Graph.DotBlocks
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Graph.Local.StrategyPart1
+public import RBM8D.Graph.Local.SolidMono
+public import RBM8D.Graph.QExp.Clauses
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.Graph.Local.Weight
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.GlobalExp.GlueNormal
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.TExp.Second
+import all RBM8D.Graph.Local.StrategyPart1
+import all RBM8D.Graph.Local.SolidMono
+import all RBM8D.Graph.QExp.Clauses
+import all RBM8D.Graph.Local.DotNorm
+import all RBM8D.Graph.Local.Weight
+import all RBM8D.GlobalExp.GlobalGoodRows
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.GlobalExp.GlueNormal
+import all RBM8D.GlobalExp.SubstDC
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.8] in the block reading: the invariant of a run and the measure
@@ -24,7 +47,7 @@ open scoped BigOperators
 
 namespace RBM8D.Graphs
 
-open private Kind.isRg from RBM8D.Graph.Local.Strategy
+-- (the names formerly opened from RBM8D.Graph.Local.StrategyPart1 are public)
 open private SolidMono.dotExcess_zero from RBM8D.Graph.Local.SolidMono
 
 /-! ## The removal of a redundant dotted edge -/

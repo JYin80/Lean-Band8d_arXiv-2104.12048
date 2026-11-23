@@ -1,10 +1,15 @@
-import RBM8D.Prob.Model
-import RBM8D.Prob.StochDom
-import RBM8D.Prob.Partial
-import RBM8D.Basic.Minor
-import RBM8D.Basic.Domain
-import RBM8D.Basic.Semicircle
-import RBM8D.Profile.Basic
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Prob.Model
+public import RBM8D.Prob.StochDom
+public import RBM8D.Prob.Partial
+public import RBM8D.Basic.Minor
+public import RBM8D.Basic.Domain
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Profile.Basic
+
+@[expose] public section
 
 /-!
 # Sizes and the filter `W → ∞` inside `adm(c₀, c₁)`
@@ -21,20 +26,11 @@ open scoped NNReal ENNReal
 
 namespace RBM8D
 
-/-- Sizes `(W, L)` with `L ≠ 0`: the parameter set of the model on `Z_L^d`. -/
-abbrev SizeL : Type := {p : ℕ × ℕ // p.2 ≠ 0}
-
-instance SizeL.neZero (p : SizeL) : NeZero p.1.2 := ⟨p.2⟩
-
 /-- `W → ∞` inside `adm(c₀, c₁)`, on the sizes with `L ≠ 0`. -/
 def admFilterL (c₀ c₁ : ℝ) : Filter SizeL := comap Subtype.val (admFilter c₀ c₁)
 
 /-- The scale `W` of `≺`. -/
 def sizeW (p : SizeL) : ℝ := p.1.1
-
-/-- The law of [I, Assumption 1.1] on `Z_L^d` with the variance matrix `S_{xy} = f_{W,L}(x − y)`. -/
-def rbmLaw (d : ℕ) (P : Profile d) (p : SizeL) : Measure (Sample (Zd d p.1.2)) :=
-  gaussLaw (Smat P.ψ p.1.1 p.1.2)
 
 /-- `W → ∞` along `admFilterL c₀ c₁`. -/
 theorem tendsto_sizeW_admFilterL :

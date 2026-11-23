@@ -1,5 +1,9 @@
-import RBM8D.Profile.Norm
-import RBM8D.Kernel.Profile
+module
+
+public import RBM8D.Profile.Norm
+public import RBM8D.Kernel.Profile
+
+@[expose] public section
 
 /-!
 # The density `φ` and the symbol bounds

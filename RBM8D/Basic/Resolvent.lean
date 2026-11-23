@@ -1,6 +1,11 @@
-import Mathlib.Analysis.InnerProductSpace.Symmetric
-import Mathlib.Analysis.Matrix.Hermitian
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Analysis.InnerProductSpace.Symmetric
+public import Mathlib.Analysis.Matrix.Hermitian
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+
+@[expose] public section
 
 /-!
 # The resolvent of a Hermitian matrix
@@ -45,7 +50,7 @@ theorem norm_sub_smul_ge {T : E →ₗ[ℂ] E} (hT : T.IsSymmetric) (z : ℂ) (v
     rw [him, abs_neg, abs_mul, abs_of_nonneg (by positivity : (0:ℝ) ≤ ‖v‖ ^ 2)]
   have h2 : |(⟪v, T v - z • v⟫).im| ≤ ‖v‖ * ‖T v - z • v‖ := by
     refine le_trans ?_ (norm_inner_le_norm (𝕜 := ℂ) v (T v - z • v))
-    simpa using Complex.abs_im_le_norm (⟪v, T v - z • v⟫)
+    exact Complex.abs_im_le_norm (⟪v, T v - z • v⟫)
   have h3 : |z.im| * ‖v‖ ^ 2 ≤ ‖v‖ * ‖T v - z • v‖ := h1 ▸ h2
   have h4 : |z.im| * ‖v‖ * ‖v‖ ≤ ‖T v - z • v‖ * ‖v‖ := by nlinarith
   exact le_of_mul_le_mul_right h4 hvpos
@@ -125,10 +130,6 @@ theorem norm_inverse_entry_le {n : Type*} [Fintype n] [DecidableEq n]
     simp [he, Matrix.mulVec_single]
   rw [hentry] at hcoord
   exact le_trans hcoord hnorm
-
-/-- The Green function `G(z) = (H - z)⁻¹`. -/
-noncomputable def green {n : Type*} [Fintype n] [DecidableEq n] (H : Matrix n n ℂ) (z : ℂ) :
-    Matrix n n ℂ := (H - z • 1)⁻¹
 
 section Green
 

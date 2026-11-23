@@ -1,7 +1,21 @@
-import RBM8D.SelfEnergy.FT1a
-import RBM8D.SelfEnergy.InfBound
-import Batteries.Tactic.OpenPrivate
-import Mathlib.Analysis.SpecialFunctions.Pow.Integral
+module
+
+public import RBM8D.SelfEnergy.FT1a
+public import RBM8D.SelfEnergy.InfBound
+public import Batteries.Tactic.OpenPrivate
+public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
+public import RBM8D.Kernel.ShellKernel
+public import RBM8D.SelfEnergy.ValZ
+public import RBM8D.Bound.AuxTreeZ
+public import RBM8D.Bound.DoublyDet
+import all RBM8D.SelfEnergy.FT1a
+import all RBM8D.Kernel.ShellKernel
+import all RBM8D.SelfEnergy.ValZ
+import all RBM8D.Bound.AuxTreeZ
+import all RBM8D.SelfEnergy.InfBound
+import all RBM8D.Bound.DoublyDet
+
+@[expose] public section
 
 /-!
 # Momentum forms of the self-energies on `ℤ^d` ([I, (7.28)–(7.30)], [I, Claim 7.8])

@@ -1,5 +1,9 @@
-import RBM8D.LocalLaw.QTerm
-import RBM8D.LocalLaw.LabelPaths
+module
+
+public import RBM8D.LocalLaw.QTerm
+public import RBM8D.LocalLaw.LabelPaths
+
+@[expose] public section
 
 /-!
 # [II, Claim 8.7]: the sum over the graphs of `Q`

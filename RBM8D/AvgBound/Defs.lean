@@ -1,9 +1,18 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.Eta1
-import RBM8D.LocalLaw.Primed
-import RBM8D.GlobalExp.Strategy
-import RBM8D.GlobalExp.GlobalGoodRows
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.Eta1
+public import RBM8D.LocalLaw.Primed
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.TExp.Second
+import all RBM8D.GlobalExp.GlobalGoodRows
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # The averaged bound [II, Lemma 9.1] = [I, Lemma 5.6]: ghost edges
@@ -60,14 +69,7 @@ end RBM8D
 
 namespace RBM8D.Graphs
 
-open private
-  GlobalGoodRows_decAdjDot
-  GlobalGoodRows_decSameBlock GlobalGoodRows_decAdjMol GlobalGoodRows_decSameMol
-  GlobalGoodRows_decUnpinned
-  GlobalGoodRows_decIsRecollision
-  GlobalGoodRows_decRgCheck
-  GlobalGoodRows_decAdjEdge GlobalGoodRows_decAdjWavedTheta GlobalGoodRows_decRegular
-  GlobalGoodRows_decNormal from RBM8D.GlobalExp.GlobalGoodRows
+-- (the names formerly opened from RBM8D.GlobalExp.GlobalGoodRows are public)
 open private SubstSPD_mgext from RBM8D.GlobalExp.SubstSPD
 open private h2Rec_shape h2Rec_struct from RBM8D.TExp.Second
 

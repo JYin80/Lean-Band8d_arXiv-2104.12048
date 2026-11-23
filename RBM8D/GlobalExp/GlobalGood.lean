@@ -1,5 +1,9 @@
-import RBM8D.GlobalExp.RunClauses
-import RBM8D.Graph.QExp.MainB
+module
+
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.Graph.QExp.MainB
+
+@[expose] public section
 
 /-!
 # [II, Lemmas 6.5, 6.7] in the block reading

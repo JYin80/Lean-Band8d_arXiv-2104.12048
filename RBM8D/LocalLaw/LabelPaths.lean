@@ -1,4 +1,8 @@
-import RBM8D.LocalLaw.Defs
+module
+
+public import RBM8D.LocalLaw.Defs
+
+@[expose] public section
 
 /-!
 # The structure of the label-free graphs `Γ_S`

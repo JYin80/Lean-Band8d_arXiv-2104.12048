@@ -1,4 +1,8 @@
-import RBM8D.Graph.Local.Edge
+module
+
+public import RBM8D.Graph.Local.Edge
+
+@[expose] public section
 
 /-!
 # Order properties of the edge expansions
@@ -534,7 +538,7 @@ section SplitFacts
 variable {k n : ℕ}
 
 /-- `c₂` joins the same two atoms as `c`. -/
-private def SamePair (c c₂ : Comp (Atom k n)) : Prop :=
+def SamePair (c c₂ : Comp (Atom k n)) : Prop :=
   c₂.x = c.x ∧ c₂.y = c.y ∨ c₂.x = c.y ∧ c₂.y = c.x
 
 private theorem spJoined_samePair {Γ : Graph k n} {pr : Kind → Bool} {c : Comp (Atom k n)}
@@ -735,7 +739,7 @@ private theorem dotChoice_ord (g : Graph k n) (SP A : List (Atom k n × Atom k n
   ring
 
 /-- The dotted edges of `g` join distinct atoms, one of them external. -/
-private def DotOK (g : Graph k n) : Prop :=
+def DotOK (g : Graph k n) : Prop :=
   ∀ c ∈ g.comps, c.kind = .dot → c.x ≠ c.y ∧ (c.x.isRight = false ∨ c.y.isRight = false)
 
 /-- The number of added dotted edges whose ends have different images. -/
@@ -817,7 +821,7 @@ private theorem merge_ord_eq {g : Graph k n} (hd : DotOK g) {A : List (Atom k n 
   linarith
 
 /-- `c` has a `×`-dotted component joining the same two atoms. -/
-private def partnered (g : Graph k n) (c : Comp (Atom k n)) : Bool :=
+def partnered (g : Graph k n) (c : Comp (Atom k n)) : Bool :=
   g.comps.any fun c₂ => c₂.kind == .xdot &&
     ((c₂.x == c.x && c₂.y == c.y) || (c₂.x == c.y && c₂.y == c.x))
 
@@ -1025,7 +1029,7 @@ section OC
 variable {k n : ℕ}
 
 /-- The solid edges without a `×`-dotted partner. -/
-private def unpartL (g : Graph k n) : List (Comp (Atom k n)) :=
+def unpartL (g : Graph k n) : List (Comp (Atom k n)) :=
   g.comps.filter fun c => c.kind.isSolid && !partnered g c
 
 /-- The solid edges whose ends are in one dot block of `h`. -/
@@ -2107,7 +2111,7 @@ section Unpart
 variable {k n : ℕ}
 
 /-- The number of solid edges of the list `L` without `×`-dotted partner in `g`. -/
-private def unpartCount (g : Graph k n) (L : List (Comp (Atom k n))) : ℕ :=
+def unpartCount (g : Graph k n) (L : List (Comp (Atom k n))) : ℕ :=
   (L.filter fun c => c.kind.isSolid && !partnered g c).length
 
 private theorem unpartL_length (g : Graph k n) : (unpartL g).length = unpartCount g g.comps := rfl
@@ -3114,81 +3118,81 @@ section OutDefs
 variable {k n : ℕ} (x : Atom k n) (Γ : Graph k n) (i₁ : ℕ) (is₂ : List ℕ) (e₁ : Comp (Atom k n))
 
 /-- Auxiliary: the graph with `n + 1` internal atoms. -/
-private def t1 (cs : List (Comp (Atom k (n + 1)))) (d : Coeff) : Tracked k n := ⟨n + 1, ⟨cs, d⟩,
+def EO_t1 (cs : List (Comp (Atom k (n + 1)))) (d : Coeff) : Tracked k n := ⟨n + 1, ⟨cs, d⟩,
     liftA 1⟩
 
 /-- The indices of the solid edges attached to `x`: those of charge `plus` leaving `x`, then those
 of charge `minus` leaving `x`, then those of charge `plus` entering `x`, then those of charge
 `minus` entering `x` ([I, Def 3.11]). -/
-private def oXIdx : List ℕ :=
+def EO_oXIdx : List ℕ :=
   Γ.edgeIdx x .plus true ++ Γ.edgeIdx x .minus true ++ Γ.edgeIdx x .plus false ++
     Γ.edgeIdx x .minus false
 
 /-- The waved edge `s_{xα}` from the image of `x` to the new atom `α` ([I, (3.13)]). -/
-private def oSx : Comp (Atom k (n + 1)) := mkC (.waved .s) (liftA 1 x) (newA 0)
+def EO_oSx : Comp (Atom k (n + 1)) := mkC (.waved .s) (liftA 1 x) (newA 0)
 
 /-- The solid edge `G_{α y₁}` taking the place of the first edge `G_{x y₁}` of charge `plus`
 leaving `x` ([I, (3.13)]). -/
-private def oGy : Comp (Atom k (n + 1)) := mkC (.G .plus) (newA 0) (liftA 1 e₁.y)
+def EO_oGy : Comp (Atom k (n + 1)) := mkC (.G .plus) (newA 0) (liftA 1 e₁.y)
 
 /-- The components of a main term of [I, (3.13)] in case (i): the edges `G_{x y₁}` and `Ḡ_{x y_j}`
 are exchanged for `s_{xα} G_{α y₁} Ḡ_{α y_j}`. -/
-private def oBaseM (j : ℕ) : List (Comp (Atom k (n + 1))) :=
+def EO_oBaseM (j : ℕ) : List (Comp (Atom k (n + 1))) :=
   liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-    [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ((Γ.comps.getD j e₁).y))]
+    [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ((Γ.comps.getD j e₁).y))]
 
 /-- The components of a main term of [I, (3.13)] in case (i): the edges `G_{x y₁}` and `G_{w_j x}`
 are exchanged for `s_{xα} G_{α y₁} G_{w_j α}`. -/
-private def oBaseP (j : ℕ) : List (Comp (Atom k (n + 1))) :=
+def EO_oBaseP (j : ℕ) : List (Comp (Atom k (n + 1))) :=
   liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-    [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ((Γ.comps.getD j e₁).x)) (newA 0)]
+    [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ((Γ.comps.getD j e₁).x)) (newA 0)]
 
 /-- The components of the term of [I, (3.13)] in case (i) in which `G_{x y₁}` is exchanged for
 `s_{xα} G_{xα} G_{α y₁}`. -/
-private def oE1 : List (Comp (Atom k (n + 1))) :=
-  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mkC (.G .plus) (liftA 1 x) (newA 0), oGy e₁]
+def EO_oE1 : List (Comp (Atom k (n + 1))) :=
+  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mkC (.G .plus) (liftA 1 x) (newA 0), EO_oGy e₁]
 
 /-- The components of the term of [I, (3.13)] in case (i) in which `G_{x y₁}` is exchanged for
 `s_{xα} Ḡ_{αx} G_{α y₁}`. -/
-private def oE2 : List (Comp (Atom k (n + 1))) :=
-  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mkC (.G .minus) (newA 0) (liftA 1 x), oGy e₁]
+def EO_oE2 : List (Comp (Atom k (n + 1))) :=
+  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mkC (.G .minus) (newA 0) (liftA 1 x), EO_oGy e₁]
 
 /-- The components of the term `m ∑_α s_{xα} (G_{αα} - m) 𝒢` of [I, (3.13)] in case (i). -/
-private def oL3 : List (Comp (Atom k (n + 1))) :=
-  liftCs 1 Γ.comps ++ [oSx x, mkC (.light .plus) (newA 0) (newA 0)]
+def EO_oL3 : List (Comp (Atom k (n + 1))) :=
+  liftCs 1 Γ.comps ++ [EO_oSx x, mkC (.light .plus) (newA 0) (newA 0)]
 
 /-- The components of the derivative terms of [I, (3.13)] in case (i). -/
-private def oDs : List (List (Comp (Atom k (n + 1)))) :=
-  (dTerms (newA 0) (liftA 1 x) (liftCs 1 (eraseIdxs (oXIdx x Γ) Γ.comps))).map fun d =>
-    liftCs 1 (pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [oSx x, oGy e₁]
+def EO_oDs : List (List (Comp (Atom k (n + 1)))) :=
+  (dTerms (newA 0) (liftA 1 x) (liftCs 1 (eraseIdxs (EO_oXIdx x Γ) Γ.comps))).map fun d =>
+    liftCs 1 (pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [EO_oSx x, EO_oGy e₁]
 
 /-- The terms of `Ô^{(x)}_multi-e` in case (i) of [I, Def 3.11], for the first edge `G_{x y₁}` of
 charge `plus` leaving `x` (at the index `i₁`, the further such edges being at the indices
 `is₂`). -/
-private def oOut : TExpansion k n :=
-  (Γ.edgeIdx x .minus true).map (fun j => t1 (oBaseM x Γ i₁ e₁ j) (cm * cmb * Γ.coeff)) ++
-    (Γ.edgeIdx x .plus false).map (fun j => t1 (oBaseP x Γ i₁ e₁ j) (cm * cm * Γ.coeff)) ++
-    (Γ.edgeIdx x .minus true).map (fun j => t1 (oBaseM x Γ i₁ e₁ j ++
+def EO_oOut : TExpansion k n :=
+  (Γ.edgeIdx x .minus true).map (fun j => EO_t1 (EO_oBaseM x Γ i₁ e₁ j) (cm * cmb * Γ.coeff)) ++
+    (Γ.edgeIdx x .plus false).map (fun j => EO_t1 (EO_oBaseP x Γ i₁ e₁ j) (cm * cm * Γ.coeff)) ++
+    (Γ.edgeIdx x .minus true).map (fun j => EO_t1 (EO_oBaseM x Γ i₁ e₁ j ++
       [mkC (.light .minus) (liftA 1 x) (liftA 1 x)]) (cm * Γ.coeff)) ++
-    (Γ.edgeIdx x .plus false).map (fun j => t1 (oBaseP x Γ i₁ e₁ j ++
+    (Γ.edgeIdx x .plus false).map (fun j => EO_t1 (EO_oBaseP x Γ i₁ e₁ j ++
       [mkC (.light .plus) (liftA 1 x) (liftA 1 x)]) (cm * Γ.coeff)) ++
-    [t1 (oL3 x Γ) (cm * Γ.coeff)] ++
-    (if is₂.isEmpty then [] else [t1 (oE1 x Γ i₁ e₁) ((is₂.length : Coeff) * cm * Γ.coeff)]) ++
+    [EO_t1 (EO_oL3 x Γ) (cm * Γ.coeff)] ++
+    (if is₂.isEmpty then [] else [EO_t1 (EO_oE1 x Γ i₁ e₁) ((is₂.length : Coeff) * cm * Γ.coeff)]) ++
     (if (Γ.edgeIdx x .minus false).length = 0 then [] else
-      [t1 (oE2 x Γ i₁ e₁) (((Γ.edgeIdx x .minus false).length : Coeff) * cm * Γ.coeff)]) ++
-    (oDs x Γ i₁ e₁).map (fun d => t1 d (cm * Γ.coeff)) ++
+      [EO_t1 (EO_oE2 x Γ i₁ e₁) (((Γ.edgeIdx x .minus false).length : Coeff) * cm * Γ.coeff)]) ++
+    (EO_oDs x Γ i₁ e₁).map (fun d => EO_t1 d (cm * Γ.coeff)) ++
     [⟨n, ⟨labelQs x Γ.comps, Γ.coeff⟩, id⟩] ++
-    (Γ.edgeIdx x .minus true).map (fun j => t1 (labelQs (liftA 1 x) (oBaseM x Γ i₁ e₁ j ++
+    (Γ.edgeIdx x .minus true).map (fun j => EO_t1 (labelQs (liftA 1 x) (EO_oBaseM x Γ i₁ e₁ j ++
       [mkC (.weight .minus) (liftA 1 x) (liftA 1 x)])) (-cm * Γ.coeff)) ++
-    (Γ.edgeIdx x .plus false).map (fun j => t1 (labelQs (liftA 1 x) (oBaseP x Γ i₁ e₁ j ++
+    (Γ.edgeIdx x .plus false).map (fun j => EO_t1 (labelQs (liftA 1 x) (EO_oBaseP x Γ i₁ e₁ j ++
       [mkC (.weight .plus) (liftA 1 x) (liftA 1 x)])) (-cm * Γ.coeff)) ++
-    [t1 (labelQs (liftA 1 x) (oL3 x Γ)) (-cm * Γ.coeff)] ++
+    [EO_t1 (labelQs (liftA 1 x) (EO_oL3 x Γ)) (-cm * Γ.coeff)] ++
     (if is₂.isEmpty then [] else
-      [t1 (labelQs (liftA 1 x) (oE1 x Γ i₁ e₁)) (-(is₂.length : Coeff) * cm * Γ.coeff)]) ++
+      [EO_t1 (labelQs (liftA 1 x) (EO_oE1 x Γ i₁ e₁)) (-(is₂.length : Coeff) * cm * Γ.coeff)]) ++
     (if (Γ.edgeIdx x .minus false).length = 0 then [] else
-      [t1 (labelQs (liftA 1 x) (oE2 x Γ i₁ e₁))
+      [EO_t1 (labelQs (liftA 1 x) (EO_oE2 x Γ i₁ e₁))
         (-((Γ.edgeIdx x .minus false).length : Coeff) * cm * Γ.coeff)]) ++
-    (oDs x Γ i₁ e₁).map (fun d => t1 (labelQs (liftA 1 x) d) (-cm * Γ.coeff))
+    (EO_oDs x Γ i₁ e₁).map (fun d => EO_t1 (labelQs (liftA 1 x) d) (-cm * Γ.coeff))
 
 end OutDefs
 
@@ -3221,9 +3225,9 @@ private theorem OutCtx.e₁mem {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ :
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) : e₁ ∈ Γ.comps :=
   List.mem_of_getElem? Ctx.hL
 
-private theorem newOK_oSx (x : Atom k n) : NewOK (oSx x) := NewOK_waved _ _ _
+private theorem newOK_oSx (x : Atom k n) : NewOK (EO_oSx x) := NewOK_waved _ _ _
 
-private theorem newOK_oGy (e₁ : Comp (Atom k n)) : NewOK (oGy e₁) :=
+private theorem newOK_oGy (e₁ : Comp (Atom k n)) : NewOK (EO_oGy e₁) :=
   NewOK_G _ (liftA_ne_newA 1 e₁.y 0).symm
 
 /-- The terms `baseM` of `Ô_multi-e`, case (i), with an extra list of non-solid components. -/
@@ -3233,9 +3237,9 @@ private theorem preT_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
     (extra : List (Comp (Atom k (n + 1)))) (hex : ∀ c ∈ extra, NewOK c)
     (hexs : ∀ c ∈ extra, c.kind.isSolid = false) (hexl : ∀ c ∈ extra, c.label = none)
     (hexo : 0 ≤ ordL extra) (hexn : extra.length ≤ 1) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (oBaseM x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
-      (⟨labW o (oBaseM x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
-      ∃ c ∈ oBaseM x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (EO_oBaseM x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
+      (⟨labW o (EO_oBaseM x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
+      ∃ c ∈ EO_oBaseM x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hxj, hyj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -3248,31 +3252,31 @@ private theorem preT_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
   have hS : NewOK (mkC (.G .minus) (newA 0) (liftA 1 ej.y) : Comp (Atom k (n + 1))) :=
     NewOK_G _ (liftA_ne_newA 1 ej.y 0).symm
-  have hbase : oBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] := by
-    unfold oBaseM; rw [hgetD]
+  have hbase : EO_oBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] := by
+    unfold EO_oBaseM; rw [hgetD]
   rw [hbase]
   have hM2 : labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) =
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) =
       labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) ++ [] :=
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) ++ [] :=
     (List.append_nil _).symm
-  have hsx : oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
-  have hgy : oGy e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
+  have hsx : EO_oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
+  have hgy : EO_oGy e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
   have hgj : (mkC (.G .minus) (newA 0) (liftA 1 ej.y) : Comp (Atom k (n + 1))) ∈
       liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
-  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [oSx, mkC])
-  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [oGy, mkC])
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra := by simp
+  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [EO_oSx, mkC])
+  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [EO_oGy, mkC])
   have h3 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgj) (by simp [mkC])
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
   have e2 : ej.kind.ord = 1 := by rw [hkj]; rfl
   have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (eraseIdxs [i₁, j] Γ.comps)
-    [e₁, ej] ([oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) []
+    [e₁, ej] ([EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra) []
     (labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra)) d
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra)) d
     (by simp [List.append_assoc]) hperm
     (by
       intro r hr
@@ -3283,7 +3287,7 @@ private theorem preT_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
     newOK_nil
     (by
       simp only [List.append_nil, List.forall_mem_append]
-      exact ⟨by simp [oSx, oGy, mkC], hexl⟩)
+      exact ⟨by simp [EO_oSx, EO_oGy, mkC], hexl⟩)
     (by
       intro r hr hk hne'
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -3299,24 +3303,24 @@ private theorem preT_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
     (by
       simp only [List.append_nil, List.filter_append, filter_solid_nil hexs]
-      simp [oSx, oGy, mkC, Kind.isSolid])
+      simp [EO_oSx, EO_oGy, mkC, Kind.isSolid])
     (by
       simp only [List.length_append, List.length_cons, List.length_nil]
       omega)
     (by
-      have h4 : ordL ([oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra ++ []) =
+      have h4 : ordL ([EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra ++ []) =
           4 + ordL extra := by
-        simp [oSx, oGy, mkC, Kind.ord]
+        simp [EO_oSx, EO_oGy, mkC, Kind.ord]
         ring
       have h5 : ordL [e₁, ej] = 2 := by simp [ordL_cons, e1, e2]
       rw [h4, h5]
       push_cast
       linarith)
-  refine ⟨key.1, ?_, ⟨oGy e₁, by simp, by simp [oGy, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_oGy e₁, by simp, by simp [EO_oGy, mkC, Kind.isRandom]⟩⟩
   rw [key.2]
-  have h4 : ordL ([oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra ++ []) =
+  have h4 : ordL ([EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] ++ extra ++ []) =
       4 + ordL extra := by
-    simp [oSx, oGy, mkC, Kind.ord]
+    simp [EO_oSx, EO_oGy, mkC, Kind.ord]
     ring
   have h5 : ordL [e₁, ej] = 2 := by simp [ordL_cons, e1, e2]
   rw [h4, h5]
@@ -3336,9 +3340,9 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
     (extra : List (Comp (Atom k (n + 1)))) (hex : ∀ c ∈ extra, NewOK c)
     (hexs : ∀ c ∈ extra, c.kind.isSolid = false) (hexl : ∀ c ∈ extra, c.label = none)
     (hexo : 0 ≤ ordL extra) (hexn : extra.length ≤ 1) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (oBaseP x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
-      (⟨labW o (oBaseP x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
-      ∃ c ∈ oBaseP x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (EO_oBaseP x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
+      (⟨labW o (EO_oBaseP x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
+      ∃ c ∈ EO_oBaseP x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hyj, hxj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -3350,36 +3354,36 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
   have hS : NewOK (mkC (.G .plus) (liftA 1 ej.x) (newA 0) : Comp (Atom k (n + 1))) :=
     NewOK_G _ (liftA_ne_newA 1 ej.x 0)
-  have hbase : oBaseP x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] := by
-    unfold oBaseP; rw [hgetD]
+  have hbase : EO_oBaseP x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] := by
+    unfold EO_oBaseP; rw [hgetD]
   rw [hbase]
   have hM2 : labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) =
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) =
       labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) ++ [] :=
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) ++ [] :=
     (List.append_nil _).symm
-  have hsx : oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
-  have hgy : oGy e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have hsx : EO_oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have hgy : EO_oGy e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
   have hgj : (mkC (.G .plus) (liftA 1 ej.x) (newA 0) : Comp (Atom k (n + 1))) ∈
       liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
-  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [oSx, mkC])
-  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [oGy, mkC])
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [EO_oSx, mkC])
+  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [EO_oGy, mkC])
   have h3 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgj) (by simp [mkC])
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
   have e2 : ej.kind.ord = 1 := by rw [hkj]; rfl
-  have h4 : ordL ([oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra ++ []) =
+  have h4 : ordL ([EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra ++ []) =
       4 + ordL extra := by
-    simp [oSx, oGy, mkC, Kind.ord]
+    simp [EO_oSx, EO_oGy, mkC, Kind.ord]
     ring
   have h5 : ordL [e₁, ej] = 2 := by simp [ordL_cons, e1, e2]
   have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (eraseIdxs [i₁, j] Γ.comps)
-    [e₁, ej] ([oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) []
+    [e₁, ej] ([EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra) []
     (labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra)) d
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] ++ extra)) d
     (by simp [List.append_assoc]) hperm
     (by
       intro r hr
@@ -3390,7 +3394,7 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
     newOK_nil
     (by
       simp only [List.append_nil, List.forall_mem_append]
-      exact ⟨by simp [oSx, oGy, mkC], hexl⟩)
+      exact ⟨by simp [EO_oSx, EO_oGy, mkC], hexl⟩)
     (by
       intro r hr hk hne'
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -3406,7 +3410,7 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
     (by
       simp only [List.append_nil, List.filter_append, filter_solid_nil hexs]
-      simp [oSx, oGy, mkC, Kind.isSolid])
+      simp [EO_oSx, EO_oGy, mkC, Kind.isSolid])
     (by
       simp only [List.length_append, List.length_cons, List.length_nil]
       omega)
@@ -3414,7 +3418,7 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
       rw [h4, h5]
       push_cast
       linarith)
-  refine ⟨key.1, ?_, ⟨oGy e₁, by simp, by simp [oGy, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_oGy e₁, by simp, by simp [EO_oGy, mkC, Kind.isRandom]⟩⟩
   rw [key.2, h4, h5]
   push_cast
   ring
@@ -3423,30 +3427,30 @@ private theorem preT_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ
 private theorem preT_l3 {C : ℕ} {x : Atom k n} {Γ : Graph k n}
     (hN : Γ.Normal C) (hP : Γ.Plain) (hx : x.isRight = true) (hU : ∀ c ∈ Γ.comps, c.label = none)
     (o : Option (Atom k (n + 1))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (oL3 x Γ), d⟩, liftA 1⟩ ∧
-      (⟨labW o (oL3 x Γ), d⟩ : Graph k (n + 1)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ oL3 x Γ, c.kind.isRandom = true := by
-  have hM2 : labW o (oL3 x Γ) = labW o (oL3 x Γ) ++ [] := (List.append_nil _).symm
-  have hsx : oSx x ∈ oL3 x Γ := by simp [oL3]
-  have h4 : ordL ([oSx x, mkC (.light .plus) (newA 0) (newA 0)] ++ []) = (3 : ℤ) := by
-    simp [oSx, mkC, Kind.ord]
-  have key := preT_A (j := 1) hN hP hx hU o Γ.comps [] [oSx x,
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (EO_oL3 x Γ), d⟩, liftA 1⟩ ∧
+      (⟨labW o (EO_oL3 x Γ), d⟩ : Graph k (n + 1)).ord = Γ.ord + 1 ∧
+      ∃ c ∈ EO_oL3 x Γ, c.kind.isRandom = true := by
+  have hM2 : labW o (EO_oL3 x Γ) = labW o (EO_oL3 x Γ) ++ [] := (List.append_nil _).symm
+  have hsx : EO_oSx x ∈ EO_oL3 x Γ := by simp [EO_oL3]
+  have h4 : ordL ([EO_oSx x, mkC (.light .plus) (newA 0) (newA 0)] ++ []) = (3 : ℤ) := by
+    simp [EO_oSx, mkC, Kind.ord]
+  have key := preT_A (j := 1) hN hP hx hU o Γ.comps [] [EO_oSx x,
       mkC (.light .plus) (newA 0) (newA 0)] []
-    (labW o (oL3 x Γ)) d (by simp [oL3]) (by simp)
+    (labW o (EO_oL3 x Γ)) d (by simp [EO_oL3]) (by simp)
     (by simp)
     (newOK_cons (newOK_oSx x) (newOK_cons (NewOK_light _ _) newOK_nil)) newOK_nil
-    (by simp [oSx, mkC])
+    (by simp [EO_oSx, mkC])
     (by simp)
     (by
       intro i
       have hi : i = 0 := Subsingleton.elim _ _
       subst hi
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
-    (by simp [oSx, mkC, Kind.isSolid])
+    (by simp [EO_oSx, mkC, Kind.isSolid])
     (by simp)
     (by rw [h4]; simp)
   refine ⟨key.1, ?_, ⟨mkC (.light .plus) (newA 0) (newA 0),
-      by simp [oL3], by simp [mkC, Kind.isRandom]⟩⟩
+      by simp [EO_oL3], by simp [mkC, Kind.isRandom]⟩⟩
   rw [key.2, h4]
   simp
   ring
@@ -3459,29 +3463,29 @@ private theorem preT_e12 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
     (hmidk : mid.kind ≠ .xdot) (hmidx : (mid.x = liftA 1 x ∧ mid.y = newA 0) ∨
       (mid.x = newA 0 ∧ mid.y = liftA 1 x)) (hmido : mid.kind.ord = 1)
     (o : Option (Atom k (n + 1))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁]), d⟩,
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁]), d⟩,
       liftA 1⟩ ∧
-      (⟨labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁]), d⟩ :
+      (⟨labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁]), d⟩ :
         Graph k (n + 1)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁], c.kind.isRandom = true := by
+      ∃ c ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁], c.kind.isRandom = true := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
   have hperm := eraseIdx_perm Ctx.hL
-  have hM2 : labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁]) =
-      labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁]) ++ [] :=
+  have hM2 : labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁]) =
+      labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁]) ++ [] :=
     (List.append_nil _).symm
-  have hsx : oSx x ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁] := by simp
-  have hmm : mid ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁] := by simp
-  have hgy : oGy e₁ ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁] := by simp
+  have hsx : EO_oSx x ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁] := by simp
+  have hmm : mid ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁] := by simp
+  have hgy : EO_oGy e₁ ∈ liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁] := by simp
   have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hmm) hmidk
-  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [oGy, mkC])
+  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [EO_oGy, mkC])
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
-  have h4 : ordL ([oSx x, mid, oGy e₁] ++ []) = 4 := by
+  have h4 : ordL ([EO_oSx x, mid, EO_oGy e₁] ++ []) = 4 := by
     simp only [List.append_nil, ordL_cons, ordL_nil, hmido]
-    simp [oSx, oGy, mkC, Kind.ord]
+    simp [EO_oSx, EO_oGy, mkC, Kind.ord]
   have h5 : ordL [e₁] = 1 := by simp [ordL_cons, e1]
   have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (Γ.comps.eraseIdx i₁)
-    [e₁] [oSx x, mid, oGy e₁] []
-    (labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, mid, oGy e₁])) d
+    [e₁] [EO_oSx x, mid, EO_oGy e₁] []
+    (labW o (liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, mid, EO_oGy e₁])) d
     (by simp) hperm
     (by
       intro r hr
@@ -3491,7 +3495,7 @@ private theorem preT_e12 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
     newOK_nil
     (by
       simp only [List.append_nil]
-      exact lab_cons (by simp [oSx, mkC]) (lab_cons hmidl (lab_cons (by simp [oGy, mkC]) lab_nil)))
+      exact lab_cons (by simp [EO_oSx, mkC]) (lab_cons hmidl (lab_cons (by simp [EO_oGy, mkC]) lab_nil)))
     (by
       intro r hr hk hne'
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -3510,14 +3514,14 @@ private theorem preT_e12 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       subst hi
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
     (by
-      have hsxs : (oSx x).kind.isSolid = false := rfl
-      have hgys : (oGy e₁).kind.isSolid = true := rfl
+      have hsxs : (EO_oSx x).kind.isSolid = false := rfl
+      have hgys : (EO_oGy e₁).kind.isSolid = true := rfl
       simp [hsxs, hmids, hgys])
     (by simp)
     (by
       rw [h4, h5]
       push_cast)
-  refine ⟨key.1, ?_, ⟨oGy e₁, by simp, by simp [oGy, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_oGy e₁, by simp, by simp [EO_oGy, mkC, Kind.isRandom]⟩⟩
   rw [key.2, h4, h5]
   push_cast
   try ring
@@ -3552,9 +3556,9 @@ private theorem mem_eraseIdxs_iff {α : Type*} {is : List ℕ} {l : List α} {c 
     exact ⟨hi, by simpa using hn⟩
 
 private theorem mem_oXIdx {Γ : Graph k n} {x : Atom k n} {j : ℕ} :
-    j ∈ oXIdx x Γ ↔ ∃ c, Γ.comps[j]? = some c ∧ ∃ ch, c.kind = .G ch ∧
+    j ∈ EO_oXIdx x Γ ↔ ∃ c, Γ.comps[j]? = some c ∧ ∃ ch, c.kind = .G ch ∧
       ((c.x = x ∧ c.y ≠ x) ∨ (c.y = x ∧ c.x ≠ x)) := by
-  unfold oXIdx
+  unfold EO_oXIdx
   simp only [List.mem_append, mem_edgeIdx]
   constructor
   · rintro (((⟨c, h1, h2, h3⟩ | ⟨c, h1, h2, h3⟩) | ⟨c, h1, h2, h3⟩) | ⟨c, h1, h2, h3⟩)
@@ -3570,8 +3574,8 @@ private theorem mem_oXIdx {Γ : Graph k n} {x : Atom k n} {j : ℕ} :
       · exact Or.inl (Or.inr ⟨c, h1, h2, h3⟩)
       · exact Or.inr ⟨c, h1, h2, h3⟩
 
-private theorem oXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (oXIdx x Γ).Nodup := by
-  unfold oXIdx
+private theorem oXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (EO_oXIdx x Γ).Nodup := by
+  unfold EO_oXIdx
   have n1 := edgeIdx_nodup Γ x .plus true
   have n2 := edgeIdx_nodup Γ x .minus true
   have n3 := edgeIdx_nodup Γ x .plus false
@@ -3595,29 +3599,29 @@ private theorem oXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (oXIdx x Γ).Nodup
     · exact edgeIdx_disjoint (Or.inl (by simp)) ha hb
 
 private theorem oXIdx_mem_i₁ {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
-    {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) : i₁ ∈ oXIdx x Γ := by
+    {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) : i₁ ∈ EO_oXIdx x Γ := by
   have : i₁ ∈ Γ.edgeIdx x .plus true := by rw [Ctx.hOP]; exact List.mem_cons_self ..
-  unfold oXIdx
+  unfold EO_oXIdx
   simp [this]
 
 private theorem xe_fL_perm {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) :
-    (pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps ++ eraseIdxs (oXIdx x Γ) Γ.comps ++
+    (pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps ++ eraseIdxs (EO_oXIdx x Γ) Γ.comps ++
       [e₁]).Perm Γ.comps := by
   have hnd := oXIdx_nodup x Γ
   have hmem := oXIdx_mem_i₁ Ctx
-  have hP1 := pickIdxs_perm ((oXIdx x Γ).filter (· != i₁))
+  have hP1 := pickIdxs_perm ((EO_oXIdx x Γ).filter (· != i₁))
     (hnd.sublist (List.filter_sublist)) Γ.comps
-  have hP2 := pickIdxs_perm (oXIdx x Γ) hnd Γ.comps
-  have hxI : (oXIdx x Γ).Perm (i₁ :: (oXIdx x Γ).filter (· != i₁)) := by
+  have hP2 := pickIdxs_perm (EO_oXIdx x Γ) hnd Γ.comps
+  have hxI : (EO_oXIdx x Γ).Perm (i₁ :: (EO_oXIdx x Γ).filter (· != i₁)) := by
     have := List.perm_cons_erase hmem
     rwa [hnd.erase_eq_filter] at this
   have hP3 := hxI.filterMap (fun i => Γ.comps[i]?)
   simp only [List.filterMap_cons, Ctx.hL] at hP3
-  have hall : (pickIdxs (oXIdx x Γ) Γ.comps).Perm
-      (e₁ :: pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps) :=
+  have hall : (pickIdxs (EO_oXIdx x Γ) Γ.comps).Perm
+      (e₁ :: pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps) :=
     hP2.trans (hP3.trans (hP1.symm.cons e₁))
-  have h1 := eraseIdxs_pick_perm (oXIdx x Γ) Γ.comps
+  have h1 := eraseIdxs_pick_perm (EO_oXIdx x Γ) Γ.comps
   refine List.Perm.trans ?_ ((hall.symm.append_left _).trans h1)
   exact perm_aux _ _ _
 
@@ -3645,7 +3649,7 @@ private theorem wt_zero_imp {Γ : Graph k n} {x : Atom k n} (h : Γ.wt x = 0) {c
   rcases hk with ⟨ch, hch⟩ | ⟨ch, hch⟩ <;> simp [hch, hcx] at this
 
 private theorem fL_untouched {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : Γ.Normal C)
-    {c : Comp (Atom k n)} (hc : c ∈ eraseIdxs (oXIdx x Γ) Γ.comps) {ch : Charge}
+    {c : Comp (Atom k n)} (hc : c ∈ eraseIdxs (EO_oXIdx x Γ) Γ.comps) {ch : Charge}
     (hk : c.kind = .G ch) : c.x ≠ x ∧ c.y ≠ x := by
   obtain ⟨i, hi, hn⟩ := mem_eraseIdxs_iff.1 hc
   have hcm : c ∈ Γ.comps := mem_eraseIdxs_of_mem hc
@@ -3662,16 +3666,16 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) (o : Option (Atom k (n + 1)))
     {d : List (Comp (Atom k (n + 1)))}
     (hd : d ∈ dTerms (newA 0 : Atom k (n + 1)) (liftA 1 x)
-      (liftCs 1 (eraseIdxs (oXIdx x Γ) Γ.comps))) (c0 : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps) ++
-      d ++ [oSx x, oGy e₁]), c0⟩, liftA 1⟩ ∧
-    (Γ.wt x = 0 → Γ.ord + 1 ≤ (⟨labW o (liftCs 1 (pickIdxs ((oXIdx x Γ).filter (· != i₁))
-      Γ.comps) ++ d ++ [oSx x, oGy e₁]), c0⟩ : Graph k (n + 1)).ord) ∧
-    ∃ c ∈ liftCs 1 (pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [oSx x, oGy e₁],
+      (liftCs 1 (eraseIdxs (EO_oXIdx x Γ) Γ.comps))) (c0 : Coeff) :
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps) ++
+      d ++ [EO_oSx x, EO_oGy e₁]), c0⟩, liftA 1⟩ ∧
+    (Γ.wt x = 0 → Γ.ord + 1 ≤ (⟨labW o (liftCs 1 (pickIdxs ((EO_oXIdx x Γ).filter (· != i₁))
+      Γ.comps) ++ d ++ [EO_oSx x, EO_oGy e₁]), c0⟩ : Graph k (n + 1)).ord) ∧
+    ∃ c ∈ liftCs 1 (pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [EO_oSx x, EO_oGy e₁],
       c.kind.isRandom = true := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
-  set fL := eraseIdxs (oXIdx x Γ) Γ.comps with hfL
-  set xe := pickIdxs ((oXIdx x Γ).filter (· != i₁)) Γ.comps with hxe
+  set fL := eraseIdxs (EO_oXIdx x Γ) Γ.comps with hfL
+  set xe := pickIdxs ((EO_oXIdx x Γ).filter (· != i₁)) Γ.comps with hxe
   obtain ⟨jj, hjj, ps, hps, rfl⟩ := mem_dTerms.1 hd
   have hjj' : jj < fL.length := by simpa [liftCs_length] using hjj
   set cj := fL[jj] with hcj
@@ -3690,19 +3694,19 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
       (((h2.append_left xe).append_right [e₁])).trans h1
     simpa [List.append_assoc] using h3
   rw [hE]
-  have hP : liftCs 1 xe ++ (liftCs 1 (fL.eraseIdx jj) ++ ps) ++ [oSx x, oGy e₁] =
-      liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]) := by
+  have hP : liftCs 1 xe ++ (liftCs 1 (fL.eraseIdx jj) ++ ps) ++ [EO_oSx x, EO_oGy e₁] =
+      liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]) := by
     simp [liftCs, List.append_assoc]
   rw [hP]
-  have hM2 : labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁])) =
-      labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁])) ++ [] :=
+  have hM2 : labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁])) =
+      labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁])) ++ [] :=
     (List.append_nil _).symm
   have hpsNew := dPieces_newOK hps'
   have hpsLab := dPieces_label hps'
-  have hsxm : oSx x ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]) := by simp
-  have hgym : oGy e₁ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]) := by simp
-  have h1 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hsxm) (by simp [oSx, mkC])
-  have h2 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hgym) (by simp [oGy, mkC])
+  have hsxm : EO_oSx x ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]) := by simp
+  have hgym : EO_oGy e₁ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]) := by simp
+  have h1 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hsxm) (by simp [EO_oSx, mkC])
+  have h2 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hgym) (by simp [EO_oGy, mkC])
   have hcjrand := dPieces_random hps'
   have hcjrand' : cj.kind.isRandom = true := by
     rcases hcjrand with ⟨ch, h⟩ | ⟨ch, h⟩ | ⟨ch,
@@ -3712,11 +3716,11 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
   have hordcj : (cj.map (liftA 1)).kind.ord = cj.kind.ord := rfl
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
   have hR : ordL [cj, e₁] = cj.kind.ord + 1 := by simp [ordL_cons, e1]
-  have hN : ordL (ps ++ [oSx x, oGy e₁]) = ordL ps + 3 := by
-    simp [ordL_append, oSx, oGy, mkC, Kind.ord]
+  have hN : ordL (ps ++ [EO_oSx x, EO_oGy e₁]) = ordL ps + 3 := by
+    simp [ordL_append, EO_oSx, EO_oGy, mkC, Kind.ord]
   have key := preT_A' (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (xe ++ fL.eraseIdx jj)
-    [cj, e₁] (ps ++ [oSx x, oGy e₁]) []
-    (labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]))) c0
+    [cj, e₁] (ps ++ [EO_oSx x, EO_oGy e₁]) []
+    (labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]))) c0
     (by simp) hperm
     (by
       intro r hr
@@ -3728,7 +3732,7 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
     newOK_nil
     (by
       simp only [List.append_nil]
-      exact lab_append hpsLab (lab_cons (by simp [oSx, mkC]) (lab_cons (by simp [oGy, mkC])
+      exact lab_append hpsLab (lab_cons (by simp [EO_oSx, mkC]) (lab_cons (by simp [EO_oGy, mkC])
           lab_nil)))
     (by
       intro r hr hk hne'
@@ -3736,9 +3740,9 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
       rcases hr with rfl | rfl
       · rcases hcjrand with ⟨ch, h⟩ | ⟨ch, h⟩ | ⟨ch, h⟩
         · have := dPieces_path (G := (⟨labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-            (ps ++ [oSx x, oGy e₁])), c0⟩ : Graph k (n + 1)).edgeGraphNoX) hps' ⟨ch, h⟩
+            (ps ++ [EO_oSx x, EO_oGy e₁])), c0⟩ : Graph k (n + 1)).edgeGraphNoX) hps' ⟨ch, h⟩
             (fun c' hc' => by
-              have hmem : c' ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]) :=
+              have hmem : c' ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]) :=
                 List.mem_append_right _ (List.mem_append_left _ hc')
               exact reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hmem) (hpsNew c' hc').ne_xdot)
             h1.symm
@@ -3758,9 +3762,9 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
       exact reachW_in' o c0 hM2 (Or.inl hsxm) ⟨.s, rfl⟩)
     (fun E => unp_conv (by
       set g' : Graph k (n + 1) := ⟨labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-        (ps ++ [oSx x, oGy e₁])), c0⟩ with hg'
+        (ps ++ [EO_oSx x, EO_oGy e₁])), c0⟩ with hg'
       have hcomps : g'.comps = labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-        (ps ++ [oSx x, oGy e₁])) := rfl
+        (ps ++ [EO_oSx x, EO_oGy e₁])) := rfl
       have hBsub : ∀ c ∈ xe ++ fL.eraseIdx jj, c ∈ Γ.comps := fun c hc =>
         hperm.subset (List.mem_append_left _ hc)
       have hunp0 : unpartCount g' (liftCs 1 (xe ++ fL.eraseIdx jj)) = 0 := by
@@ -3768,24 +3772,24 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
         obtain ⟨c, hcB, rfl⟩ := mem_liftCs.1 hc'
         exact partnered_old Ctx.normal E ⟨c, hBsub c hcB, rfl, rfl, rfl⟩ hs
       have hlen : (unpartL g').length =
-          unpartCount g' ps + unpartCount g' [oSx x, oGy e₁] := by
+          unpartCount g' ps + unpartCount g' [EO_oSx x, EO_oGy e₁] := by
         rw [unpartL_length, hcomps, unpartCount_labW, unpartCount_append, hunp0, zero_add,
           unpartCount_append]
       have hps2 : unpartCount g' ps ≤ 2 := by
         have := unpartCount_le g' ps
         rw [dPieces_length hps'] at this
         exact this
-      have hsx1 : unpartCount g' [oSx x, oGy e₁] ≤ 1 := by
+      have hsx1 : unpartCount g' [EO_oSx x, EO_oGy e₁] ≤ 1 := by
         refine (unpartCount_le_solid g' _).trans ?_
-        simp [oSx, oGy, mkC, Kind.isSolid]
+        simp [EO_oSx, EO_oGy, mkC, Kind.isSolid]
       refine ⟨by omega, fun h3 => ?_⟩
       have h2 : unpartCount g' ps = 2 := by omega
-      have h1' : unpartCount g' [oSx x, oGy e₁] = 1 := by omega
-      have hGy : partnered g' (oGy e₁) = false := by
+      have h1' : unpartCount g' [EO_oSx x, EO_oGy e₁] = 1 := by omega
+      have hGy : partnered g' (EO_oGy e₁) = false := by
         by_contra hcon
-        have hcon' : partnered g' (oGy e₁) = true := by simpa using hcon
+        have hcon' : partnered g' (EO_oGy e₁) = true := by simpa using hcon
         unfold unpartCount at h1'
-        simp [oSx, oGy, mkC, Kind.isSolid, List.filter_cons] at h1' hcon'
+        simp [EO_oSx, EO_oGy, mkC, Kind.isSolid, List.filter_cons] at h1' hcon'
         simp [hcon'] at h1'
       have hall : ∀ c ∈ ps, (c.kind.isSolid && !partnered g' c) = true := by
         have := h2
@@ -3793,15 +3797,15 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
         rw [← dPieces_length hps'] at this
         exact List.length_filter_eq_length_iff.1 this
       obtain ⟨c₂, hc₂ps, hc₂q⟩ := dPieces_has_q hps'
-      have hc₂m : c₂ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, oGy e₁]) :=
+      have hc₂m : c₂ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_oGy e₁]) :=
         List.mem_append_right _ (List.mem_append_left _ hc₂ps)
       obtain ⟨c₁'', hc₁'', a1, a2, a3⟩ := labW_exists (o := o) hgym
       obtain ⟨c₂'', hc₂'', b1, b2, b3⟩ := labW_exists (o := o) hc₂m
       refine ⟨c₁'', ?_, c₂'', ?_, ?_⟩
       · refine List.mem_filter.2 ⟨by rw [hcomps]; exact hc₁'', ?_⟩
         have : partnered g' c₁'' = false := by
-          rw [partnered_congr g' (c' := oGy e₁) a1 a2]; exact hGy
-        simp [a3, oGy, mkC, Kind.isSolid, this]
+          rw [partnered_congr g' (c' := EO_oGy e₁) a1 a2]; exact hGy
+        simp [a3, EO_oGy, mkC, Kind.isSolid, this]
       · refine List.mem_filter.2 ⟨by rw [hcomps]; exact hc₂'', ?_⟩
         have hh := hall c₂ hc₂ps
         simp only [Bool.and_eq_true, Bool.not_eq_true'] at hh ⊢
@@ -3809,7 +3813,7 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
         rw [partnered_congr g' (c' := c₂) b1 b2]; exact hh.2
       · unfold SamePair
         rw [a1, a2, b1, b2]
-        simp only [oGy, mkC]
+        simp only [EO_oGy, mkC]
         rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
         · rcases hc₂q with hq | hq
           · exact liftA_ne_newA 1 x 0 (hq.symm.trans h1)
@@ -3826,7 +3830,7 @@ private theorem preT_ds {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {
       obtain ⟨h5, h6⟩ := hord1
       push_cast
       linarith)
-  refine ⟨key.1, ?_, ⟨oGy e₁, by simp, by simp [oGy, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_oGy e₁, by simp, by simp [EO_oGy, mkC, Kind.isRandom]⟩⟩
   intro hwt
   rw [key.2, List.append_nil, hR, hN]
   have hnt : cj.x ≠ x ∧ (cj.map (liftA 1)).endB ≠ liftA 1 x := by
@@ -3887,8 +3891,8 @@ private theorem labelQs_not_lf {m : ℕ} (u : Atom k m) (L : List (Comp (Atom k 
 /-- The bare main terms of `Ô_multi-e`, case (i). -/
 def BaseOut (x : Atom k n) (Γ : Graph k n) (i₁ : ℕ) (e₁ : Comp (Atom k n))
     (t : Tracked k n) : Prop :=
-  ∃ j d, (j ∈ Γ.edgeIdx x .minus true ∧ t = t1 (oBaseM x Γ i₁ e₁ j) d) ∨
-    (j ∈ Γ.edgeIdx x .plus false ∧ t = t1 (oBaseP x Γ i₁ e₁ j) d)
+  ∃ j d, (j ∈ Γ.edgeIdx x .minus true ∧ t = EO_t1 (EO_oBaseM x Γ i₁ e₁ j) d) ∨
+    (j ∈ Γ.edgeIdx x .plus false ∧ t = EO_t1 (EO_oBaseP x Γ i₁ e₁ j) d)
 
 private theorem comp_map_id' {V : Type*} (c : Comp V) : c.map id = c := by
   rcases c with ⟨κ, a, b, mi, l⟩
@@ -3941,13 +3945,13 @@ private theorem preT_self {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : Γ.Nor
 
 theorem oOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) :
-    ∀ t ∈ oOut x Γ i₁ is₂ e₁, PreT C Γ.ord x t ∧
+    ∀ t ∈ EO_oOut x Γ i₁ is₂ e₁, PreT C Γ.ord x t ∧
       (¬ t.g.LabelFree ∨ (Γ.wt x = 0 → Γ.ord + 1 ≤ t.g.ord) ∨ BaseOut x Γ i₁ e₁ t) := by
   intro t ht
   have light_ord : ∀ ch : Charge, ordL ([mkC (.light ch) (liftA 1 x) (liftA 1 x)] :
       List (Comp (Atom k (n + 1)))) = 1 := by
     intro ch; simp [ordL, mkC, Kind.ord]
-  simp only [oOut, List.mem_append, List.mem_map, List.mem_singleton, List.mem_ite_nil_left] at ht
+  simp only [EO_oOut, List.mem_append, List.mem_map, List.mem_singleton, List.mem_ite_nil_left] at ht
   rcases ht with
     ((((((((((((((⟨j, hj, rfl⟩ | ⟨j, hj, rfl⟩) | ⟨j, hj, rfl⟩) | ⟨j, hj, rfl⟩) | rfl) |
       ⟨hne, rfl⟩) | ⟨hne, rfl⟩) | ⟨d, hd, rfl⟩) | rfl) | ⟨j, hj, rfl⟩) | ⟨j, hj, rfl⟩) | rfl) |
@@ -3956,48 +3960,48 @@ theorem oOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ 
     have h := preT_baseM Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp) (cm * cmb
         * Γ.coeff)
     refine ⟨?_, Or.inr (Or.inr ⟨j, _, Or.inl ⟨hj, rfl⟩⟩)⟩
-    simpa [labW, t1] using h.1
+    simpa [labW, EO_t1] using h.1
   · -- baseP
     have h := preT_baseP Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp) (cm * cm
         * Γ.coeff)
     refine ⟨?_, Or.inr (Or.inr ⟨j, _, Or.inr ⟨hj, rfl⟩⟩)⟩
-    simpa [labW, t1] using h.1
+    simpa [labW, EO_t1] using h.1
   · -- baseM with a light weight
     have h := preT_baseM Ctx hj none [mkC (.light .minus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_light _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     rw [light_ord _] at this
     linarith
   · -- baseP with a light weight
     have h := preT_baseP Ctx hj none [mkC (.light .plus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_light _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     rw [light_ord _] at this
     linarith
   · -- l3
     have h := preT_l3 Ctx.normal Ctx.plain Ctx.right Ctx.unl none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     linarith
   · -- e1
     have h := preT_e12 Ctx (mkC (.G .plus) (liftA 1 x) (newA 0)) (NewOK_G _ (liftA_ne_newA 1 x 0))
       (by simp [mkC, Kind.isSolid]) rfl (by simp [mkC]) (Or.inl ⟨rfl,
           rfl⟩) (by simp [mkC, Kind.ord])
       none (((is₂.length : Coeff)) * cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, oE1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_oE1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1, oE1]
+    simp only [EO_t1, EO_oE1]
     linarith
   · -- e2
     have h := preT_e12 Ctx (mkC (.G .minus) (newA 0) (liftA 1 x)) (NewOK_G _ (liftA_ne_newA 1 x
@@ -4005,18 +4009,18 @@ theorem oOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ 
       (by simp [mkC, Kind.isSolid]) rfl (by simp [mkC]) (Or.inr ⟨rfl,
           rfl⟩) (by simp [mkC, Kind.ord])
       none ((((Γ.edgeIdx x .minus false).length : Coeff)) * cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, oE2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_oE2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1, oE2]
+    simp only [EO_t1, EO_oE2]
     linarith
   · -- ds
     obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd
     have h := preT_ds Ctx none hd' (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, oDs] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_oDs] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
     have := h.2.1 hw
     simp only [labW] at this
-    simpa [t1] using this
+    simpa [EO_t1] using this
   · -- the term with the labels `Q_x`
     refine ⟨(preT_self Ctx.normal Ctx.plain Ctx.right Ctx.unl _).1, Or.inl ?_⟩
     refine labelQs_not_lf _ _ _ ⟨e₁, Ctx.e₁mem, ?_⟩
@@ -4025,21 +4029,21 @@ theorem oOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ 
     have h := preT_baseM Ctx hj (some (liftA 1 x)) [mkC (.weight .minus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_weight _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · -- baseP, labelled
     have h := preT_baseP Ctx hj (some (liftA 1 x)) [mkC (.weight .plus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_weight _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · -- l3, labelled
     have h := preT_l3 Ctx.normal Ctx.plain Ctx.right Ctx.unl (some (liftA 1 x)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · -- e1, labelled
     have h := preT_e12 Ctx (mkC (.G .plus) (liftA 1 x) (newA 0)) (NewOK_G _ (liftA_ne_newA 1 x 0))
       (by simp [mkC, Kind.isSolid]) rfl (by simp [mkC]) (Or.inl ⟨rfl,
           rfl⟩) (by simp [mkC, Kind.ord])
       (some (liftA 1 x)) (-(is₂.length : Coeff) * cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1, oE1] using h.1,
+    exact ⟨by simpa [labW, EO_t1, EO_oE1] using h.1,
       Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · -- e2, labelled
     have h := preT_e12 Ctx (mkC (.G .minus) (newA 0) (liftA 1 x)) (NewOK_G _ (liftA_ne_newA 1 x
@@ -4047,12 +4051,12 @@ theorem oOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ 
       (by simp [mkC, Kind.isSolid]) rfl (by simp [mkC]) (Or.inr ⟨rfl,
           rfl⟩) (by simp [mkC, Kind.ord])
       (some (liftA 1 x)) (-((Γ.edgeIdx x .minus false).length : Coeff) * cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1, oE2] using h.1,
+    exact ⟨by simpa [labW, EO_t1, EO_oE2] using h.1,
       Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · -- ds, labelled
     obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd
     have h := preT_ds Ctx (some (liftA 1 x)) hd' (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1, oDs] using h.1,
+    exact ⟨by simpa [labW, EO_t1, EO_oDs] using h.1,
       Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
 
 end OutSpec
@@ -4062,45 +4066,45 @@ section InDefs
 variable {k n : ℕ} (x : Atom k n) (Γ : Graph k n) (i₁ : ℕ) (is₂ : List ℕ) (e₁ : Comp (Atom k n))
 
 /-- The indices of the solid edges of charge `plus` or `minus` entering `x` ([I, Def 3.11]). -/
-private def iXIdx : List ℕ := Γ.edgeIdx x .plus false ++ Γ.edgeIdx x .minus false
+def EO_iXIdx : List ℕ := Γ.edgeIdx x .plus false ++ Γ.edgeIdx x .minus false
 
 /-- The solid edge `G_{w₁ α}` taking the place of the first edge `G_{w₁ x}` of charge `plus`
 entering `x` ([I, (3.13)]). -/
-private def iGw : Comp (Atom k (n + 1)) := mkC (.G .plus) (liftA 1 e₁.x) (newA 0)
+def EO_iGw : Comp (Atom k (n + 1)) := mkC (.G .plus) (liftA 1 e₁.x) (newA 0)
 
 /-- The components of a main term of [I, (3.13)] in case (iii): the edges `G_{w₁ x}` and `Ḡ_{w_j
 x}` are exchanged for `s_{xα} G_{w₁ α} Ḡ_{w_j α}`. -/
-private def iBaseM (j : ℕ) : List (Comp (Atom k (n + 1))) :=
+def EO_iBaseM (j : ℕ) : List (Comp (Atom k (n + 1))) :=
   liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-    [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ((Γ.comps.getD j e₁).x)) (newA 0)]
+    [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ((Γ.comps.getD j e₁).x)) (newA 0)]
 
 /-- The components of the term of [I, (3.13)] in case (iii) in which `G_{w₁ x}` is exchanged for
 `s_{xα} G_{w₁ α} G_{αx}`. -/
-private def iE1 : List (Comp (Atom k (n + 1))) :=
-  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [oSx x, iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)]
+def EO_iE1 : List (Comp (Atom k (n + 1))) :=
+  liftCs 1 (Γ.comps.eraseIdx i₁) ++ [EO_oSx x, EO_iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)]
 
 /-- The components of the derivative terms of [I, (3.13)] in case (iii). -/
-private def iDs : List (List (Comp (Atom k (n + 1)))) :=
-  (dTerms (liftA 1 x) (newA 0) (liftCs 1 (eraseIdxs (iXIdx x Γ) Γ.comps))).map fun d =>
-    liftCs 1 (pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [oSx x, iGw e₁]
+def EO_iDs : List (List (Comp (Atom k (n + 1)))) :=
+  (dTerms (liftA 1 x) (newA 0) (liftCs 1 (eraseIdxs (EO_iXIdx x Γ) Γ.comps))).map fun d =>
+    liftCs 1 (pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [EO_oSx x, EO_iGw e₁]
 
 /-- The terms of `Ô^{(x)}_multi-e` in case (iii) of [I, Def 3.11], for the first edge `G_{w₁ x}`
 of charge `plus` entering `x` (at the index `i₁`, the further such edges being at the indices
 `is₂`). -/
-private def iOut : TExpansion k n :=
-  (Γ.edgeIdx x .minus false).map (fun j => t1 (iBaseM x Γ i₁ e₁ j) (cm * cmb * Γ.coeff)) ++
-    (Γ.edgeIdx x .minus false).map (fun j => t1 (iBaseM x Γ i₁ e₁ j ++
+def EO_iOut : TExpansion k n :=
+  (Γ.edgeIdx x .minus false).map (fun j => EO_t1 (EO_iBaseM x Γ i₁ e₁ j) (cm * cmb * Γ.coeff)) ++
+    (Γ.edgeIdx x .minus false).map (fun j => EO_t1 (EO_iBaseM x Γ i₁ e₁ j ++
       [mkC (.light .minus) (liftA 1 x) (liftA 1 x)]) (cm * Γ.coeff)) ++
-    [t1 (oL3 x Γ) (cm * Γ.coeff)] ++
-    (if is₂.isEmpty then [] else [t1 (iE1 x Γ i₁ e₁) ((is₂.length : Coeff) * cm * Γ.coeff)]) ++
-    (iDs x Γ i₁ e₁).map (fun d => t1 d (cm * Γ.coeff)) ++
+    [EO_t1 (EO_oL3 x Γ) (cm * Γ.coeff)] ++
+    (if is₂.isEmpty then [] else [EO_t1 (EO_iE1 x Γ i₁ e₁) ((is₂.length : Coeff) * cm * Γ.coeff)]) ++
+    (EO_iDs x Γ i₁ e₁).map (fun d => EO_t1 d (cm * Γ.coeff)) ++
     [⟨n, ⟨labelQs x Γ.comps, Γ.coeff⟩, id⟩] ++
-    (Γ.edgeIdx x .minus false).map (fun j => t1 (labelQs (liftA 1 x) (iBaseM x Γ i₁ e₁ j ++
+    (Γ.edgeIdx x .minus false).map (fun j => EO_t1 (labelQs (liftA 1 x) (EO_iBaseM x Γ i₁ e₁ j ++
       [mkC (.weight .minus) (liftA 1 x) (liftA 1 x)])) (-cm * Γ.coeff)) ++
-    [t1 (labelQs (liftA 1 x) (oL3 x Γ)) (-cm * Γ.coeff)] ++
+    [EO_t1 (labelQs (liftA 1 x) (EO_oL3 x Γ)) (-cm * Γ.coeff)] ++
     (if is₂.isEmpty then [] else
-      [t1 (labelQs (liftA 1 x) (iE1 x Γ i₁ e₁)) (-(is₂.length : Coeff) * cm * Γ.coeff)]) ++
-    (iDs x Γ i₁ e₁).map (fun d => t1 (labelQs (liftA 1 x) d) (-cm * Γ.coeff))
+      [EO_t1 (labelQs (liftA 1 x) (EO_iE1 x Γ i₁ e₁)) (-(is₂.length : Coeff) * cm * Γ.coeff)]) ++
+    (EO_iDs x Γ i₁ e₁).map (fun d => EO_t1 (labelQs (liftA 1 x) d) (-cm * Γ.coeff))
 
 end InDefs
 
@@ -4153,12 +4157,12 @@ private theorem InCtx.e₁mem {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : 
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) : e₁ ∈ Γ.comps :=
   List.mem_of_getElem? Ctx.hL
 
-private theorem newOK_iGw (e₁ : Comp (Atom k n)) : NewOK (iGw e₁) :=
+private theorem newOK_iGw (e₁ : Comp (Atom k n)) : NewOK (EO_iGw e₁) :=
   NewOK_G _ (liftA_ne_newA 1 e₁.x 0)
 
 private theorem mem_iXIdx {Γ : Graph k n} {x : Atom k n} {j : ℕ} :
-    j ∈ iXIdx x Γ ↔ ∃ c, Γ.comps[j]? = some c ∧ ∃ ch, c.kind = .G ch ∧ (c.y = x ∧ c.x ≠ x) := by
-  unfold iXIdx
+    j ∈ EO_iXIdx x Γ ↔ ∃ c, Γ.comps[j]? = some c ∧ ∃ ch, c.kind = .G ch ∧ (c.y = x ∧ c.x ≠ x) := by
+  unfold EO_iXIdx
   simp only [List.mem_append, mem_edgeIdx]
   constructor
   · rintro (⟨c, h1, h2, h3⟩ | ⟨c, h1, h2, h3⟩)
@@ -4169,8 +4173,8 @@ private theorem mem_iXIdx {Γ : Graph k n} {x : Atom k n} {j : ℕ} :
     · exact Or.inl ⟨c, h1, h2, h3⟩
     · exact Or.inr ⟨c, h1, h2, h3⟩
 
-private theorem iXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (iXIdx x Γ).Nodup := by
-  unfold iXIdx
+private theorem iXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (EO_iXIdx x Γ).Nodup := by
+  unfold EO_iXIdx
   have n3 := edgeIdx_nodup Γ x .plus false
   have n4 := edgeIdx_nodup Γ x .minus false
   simp only [List.nodup_append]
@@ -4180,35 +4184,35 @@ private theorem iXIdx_nodup (x : Atom k n) (Γ : Graph k n) : (iXIdx x Γ).Nodup
   exact edgeIdx_disjoint (Or.inl (by simp)) ha hb
 
 private theorem iXIdx_mem_i₁ {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
-    {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) : i₁ ∈ iXIdx x Γ := by
+    {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) : i₁ ∈ EO_iXIdx x Γ := by
   have : i₁ ∈ Γ.edgeIdx x .plus false := by rw [Ctx.hIP]; exact List.mem_cons_self ..
-  unfold iXIdx
+  unfold EO_iXIdx
   simp [this]
 
 private theorem ixe_fL_perm {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) :
-    (pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps ++ eraseIdxs (iXIdx x Γ) Γ.comps ++
+    (pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps ++ eraseIdxs (EO_iXIdx x Γ) Γ.comps ++
       [e₁]).Perm Γ.comps := by
   have hnd := iXIdx_nodup x Γ
   have hmem := iXIdx_mem_i₁ Ctx
-  have hP1 := pickIdxs_perm ((iXIdx x Γ).filter (· != i₁))
+  have hP1 := pickIdxs_perm ((EO_iXIdx x Γ).filter (· != i₁))
     (hnd.sublist (List.filter_sublist)) Γ.comps
-  have hP2 := pickIdxs_perm (iXIdx x Γ) hnd Γ.comps
-  have hxI : (iXIdx x Γ).Perm (i₁ :: (iXIdx x Γ).filter (· != i₁)) := by
+  have hP2 := pickIdxs_perm (EO_iXIdx x Γ) hnd Γ.comps
+  have hxI : (EO_iXIdx x Γ).Perm (i₁ :: (EO_iXIdx x Γ).filter (· != i₁)) := by
     have := List.perm_cons_erase hmem
     rwa [hnd.erase_eq_filter] at this
   have hP3 := hxI.filterMap (fun i => Γ.comps[i]?)
   simp only [List.filterMap_cons, Ctx.hL] at hP3
-  have hall : (pickIdxs (iXIdx x Γ) Γ.comps).Perm
-      (e₁ :: pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps) :=
+  have hall : (pickIdxs (EO_iXIdx x Γ) Γ.comps).Perm
+      (e₁ :: pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps) :=
     hP2.trans (hP3.trans (hP1.symm.cons e₁))
-  have h1 := eraseIdxs_pick_perm (iXIdx x Γ) Γ.comps
+  have h1 := eraseIdxs_pick_perm (EO_iXIdx x Γ) Γ.comps
   refine List.Perm.trans ?_ ((hall.symm.append_left _).trans h1)
   exact perm_aux _ _ _
 
 private theorem fL_untouched_in {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁)
-    {c : Comp (Atom k n)} (hc : c ∈ eraseIdxs (iXIdx x Γ) Γ.comps) {ch : Charge}
+    {c : Comp (Atom k n)} (hc : c ∈ eraseIdxs (EO_iXIdx x Γ) Γ.comps) {ch : Charge}
     (hk : c.kind = .G ch) : c.x ≠ x ∧ c.y ≠ x := by
   obtain ⟨i, hi, hn⟩ := mem_eraseIdxs_iff.1 hc
   have hcm : c ∈ Γ.comps := mem_eraseIdxs_of_mem hc
@@ -4236,9 +4240,9 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
     (extra : List (Comp (Atom k (n + 1)))) (hex : ∀ c ∈ extra, NewOK c)
     (hexs : ∀ c ∈ extra, c.kind.isSolid = false) (hexl : ∀ c ∈ extra, c.label = none)
     (hexo : 0 ≤ ordL extra) (hexn : extra.length ≤ 1) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (iBaseM x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
-      (⟨labW o (iBaseM x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
-      ∃ c ∈ iBaseM x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (EO_iBaseM x Γ i₁ e₁ j ++ extra), d⟩, liftA 1⟩ ∧
+      (⟨labW o (EO_iBaseM x Γ i₁ e₁ j ++ extra), d⟩ : Graph k (n + 1)).ord = Γ.ord + ordL extra ∧
+      ∃ c ∈ EO_iBaseM x Γ i₁ e₁ j ++ extra, c.kind.isRandom = true := by
   obtain ⟨hk₁, hy₁, hx₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hyj, hxj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -4251,36 +4255,36 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
   have hS : NewOK (mkC (.G .minus) (liftA 1 ej.x) (newA 0) : Comp (Atom k (n + 1))) :=
     NewOK_G _ (liftA_ne_newA 1 ej.x 0)
-  have hbase : iBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] := by
-    unfold iBaseM; rw [hgetD]
+  have hbase : EO_iBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] := by
+    unfold EO_iBaseM; rw [hgetD]
   rw [hbase]
   have hM2 : labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) =
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) =
       labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) ++ [] :=
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) ++ [] :=
     (List.append_nil _).symm
-  have hsx : oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
-  have hgy : iGw e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have hsx : EO_oSx x ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have hgy : EO_iGw e₁ ∈ liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
   have hgj : (mkC (.G .minus) (liftA 1 ej.x) (newA 0) : Comp (Atom k (n + 1))) ∈
       liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
-  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [oSx, mkC])
-  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [iGw, mkC])
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra := by simp
+  have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hsx) (by simp [EO_oSx, mkC])
+  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [EO_iGw, mkC])
   have h3 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgj) (by simp [mkC])
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
   have e2 : ej.kind.ord = 1 := by rw [hkj]; rfl
-  have h4 : ordL ([oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra ++ []) =
+  have h4 : ordL ([EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra ++ []) =
       4 + ordL extra := by
-    simp [oSx, iGw, mkC, Kind.ord]
+    simp [EO_oSx, EO_iGw, mkC, Kind.ord]
     ring
   have h5 : ordL [e₁, ej] = 2 := by simp [ordL_cons, e1, e2]
   have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (eraseIdxs [i₁, j] Γ.comps)
-    [e₁, ej] ([oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) []
+    [e₁, ej] ([EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra) []
     (labW o (liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra)) d
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] ++ extra)) d
     (by simp [List.append_assoc]) hperm
     (by
       intro r hr
@@ -4291,7 +4295,7 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
     newOK_nil
     (by
       simp only [List.append_nil, List.forall_mem_append]
-      exact ⟨by simp [oSx, iGw, mkC], hexl⟩)
+      exact ⟨by simp [EO_oSx, EO_iGw, mkC], hexl⟩)
     (by
       intro r hr hk hne'
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -4307,7 +4311,7 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
     (by
       simp only [List.append_nil, List.filter_append, filter_solid_nil hexs]
-      simp [oSx, iGw, mkC, Kind.isSolid])
+      simp [EO_oSx, EO_iGw, mkC, Kind.isSolid])
     (by
       simp only [List.length_append, List.length_cons, List.length_nil]
       omega)
@@ -4315,7 +4319,7 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
       rw [h4, h5]
       push_cast
       linarith)
-  refine ⟨key.1, ?_, ⟨iGw e₁, by simp, by simp [iGw, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_iGw e₁, by simp, by simp [EO_iGw, mkC, Kind.isRandom]⟩⟩
   rw [key.2, h4, h5]
   push_cast
   ring
@@ -4324,26 +4328,26 @@ private theorem preT_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
 private theorem preT_ie1 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁)
     (o : Option (Atom k (n + 1))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (iE1 x Γ i₁ e₁), d⟩, liftA 1⟩ ∧
-      (⟨labW o (iE1 x Γ i₁ e₁), d⟩ : Graph k (n + 1)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ iE1 x Γ i₁ e₁, c.kind.isRandom = true := by
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (EO_iE1 x Γ i₁ e₁), d⟩, liftA 1⟩ ∧
+      (⟨labW o (EO_iE1 x Γ i₁ e₁), d⟩ : Graph k (n + 1)).ord = Γ.ord + 1 ∧
+      ∃ c ∈ EO_iE1 x Γ i₁ e₁, c.kind.isRandom = true := by
   obtain ⟨hk₁, hy₁, hx₁⟩ := Ctx.e₁spec
   have hperm := eraseIdx_perm Ctx.hL
-  have hM2 : labW o (iE1 x Γ i₁ e₁) = labW o (iE1 x Γ i₁ e₁) ++ [] := (List.append_nil _).symm
-  have hsx : oSx x ∈ iE1 x Γ i₁ e₁ := by simp [iE1]
-  have hmm : (mkC (.G .plus) (newA 0) (liftA 1 x) : Comp (Atom k (n + 1))) ∈ iE1 x Γ i₁ e₁ := by
-    simp [iE1]
-  have hgy : iGw e₁ ∈ iE1 x Γ i₁ e₁ := by simp [iE1]
+  have hM2 : labW o (EO_iE1 x Γ i₁ e₁) = labW o (EO_iE1 x Γ i₁ e₁) ++ [] := (List.append_nil _).symm
+  have hsx : EO_oSx x ∈ EO_iE1 x Γ i₁ e₁ := by simp [EO_iE1]
+  have hmm : (mkC (.G .plus) (newA 0) (liftA 1 x) : Comp (Atom k (n + 1))) ∈ EO_iE1 x Γ i₁ e₁ := by
+    simp [EO_iE1]
+  have hgy : EO_iGw e₁ ∈ EO_iE1 x Γ i₁ e₁ := by simp [EO_iE1]
   have h1 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hmm) (by simp [mkC])
-  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [iGw, mkC])
+  have h2 := reach_in' (k := k) (n := n) o d hM2 (Or.inl hgy) (by simp [EO_iGw, mkC])
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
-  have h4 : ordL ([oSx x, iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)] ++ []) = 4 := by
-    simp [oSx, iGw, mkC, Kind.ord]
+  have h4 : ordL ([EO_oSx x, EO_iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)] ++ []) = 4 := by
+    simp [EO_oSx, EO_iGw, mkC, Kind.ord]
   have h5 : ordL [e₁] = 1 := by simp [ordL_cons, e1]
   have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (Γ.comps.eraseIdx i₁)
-    [e₁] [oSx x, iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)] []
-    (labW o (iE1 x Γ i₁ e₁)) d
-    (by simp [iE1]) hperm
+    [e₁] [EO_oSx x, EO_iGw e₁, mkC (.G .plus) (newA 0) (liftA 1 x)] []
+    (labW o (EO_iE1 x Γ i₁ e₁)) d
+    (by simp [EO_iE1]) hperm
     (by
       intro r hr
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -4353,7 +4357,7 @@ private theorem preT_ie1 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
     newOK_nil
     (by
       simp only [List.append_nil]
-      exact lab_cons (by simp [oSx, mkC]) (lab_cons (by simp [iGw, mkC]) (lab_cons (by simp [mkC])
+      exact lab_cons (by simp [EO_oSx, mkC]) (lab_cons (by simp [EO_iGw, mkC]) (lab_cons (by simp [mkC])
           lab_nil)))
     (by
       intro r hr hk hne'
@@ -4367,12 +4371,12 @@ private theorem preT_ie1 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       subst hi
       exact reachW_in' o d hM2 (Or.inl hsx) ⟨.s, rfl⟩)
     (by
-      simp [oSx, iGw, mkC, Kind.isSolid])
+      simp [EO_oSx, EO_iGw, mkC, Kind.isSolid])
     (by simp)
     (by
       rw [h4, h5]
       push_cast)
-  refine ⟨key.1, ?_, ⟨iGw e₁, by simp [iE1], by simp [iGw, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_iGw e₁, by simp [EO_iE1], by simp [EO_iGw, mkC, Kind.isRandom]⟩⟩
   rw [key.2, h4, h5]
   push_cast
   try ring
@@ -4389,16 +4393,16 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) (o : Option (Atom k (n + 1)))
     {d : List (Comp (Atom k (n + 1)))}
     (hd : d ∈ dTerms (liftA 1 x : Atom k (n + 1)) (newA 0)
-      (liftCs 1 (eraseIdxs (iXIdx x Γ) Γ.comps))) (c0 : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps) ++
-      d ++ [oSx x, iGw e₁]), c0⟩, liftA 1⟩ ∧
-    (Γ.wt x = 0 → Γ.ord + 1 ≤ (⟨labW o (liftCs 1 (pickIdxs ((iXIdx x Γ).filter (· != i₁))
-      Γ.comps) ++ d ++ [oSx x, iGw e₁]), c0⟩ : Graph k (n + 1)).ord) ∧
-    ∃ c ∈ liftCs 1 (pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [oSx x, iGw e₁],
+      (liftCs 1 (eraseIdxs (EO_iXIdx x Γ) Γ.comps))) (c0 : Coeff) :
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps) ++
+      d ++ [EO_oSx x, EO_iGw e₁]), c0⟩, liftA 1⟩ ∧
+    (Γ.wt x = 0 → Γ.ord + 1 ≤ (⟨labW o (liftCs 1 (pickIdxs ((EO_iXIdx x Γ).filter (· != i₁))
+      Γ.comps) ++ d ++ [EO_oSx x, EO_iGw e₁]), c0⟩ : Graph k (n + 1)).ord) ∧
+    ∃ c ∈ liftCs 1 (pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps) ++ d ++ [EO_oSx x, EO_iGw e₁],
       c.kind.isRandom = true := by
   obtain ⟨hk₁, hy₁, hx₁⟩ := Ctx.e₁spec
-  set fL := eraseIdxs (iXIdx x Γ) Γ.comps with hfL
-  set xe := pickIdxs ((iXIdx x Γ).filter (· != i₁)) Γ.comps with hxe
+  set fL := eraseIdxs (EO_iXIdx x Γ) Γ.comps with hfL
+  set xe := pickIdxs ((EO_iXIdx x Γ).filter (· != i₁)) Γ.comps with hxe
   obtain ⟨jj, hjj, ps, hps, rfl⟩ := mem_dTerms.1 hd
   have hjj' : jj < fL.length := by simpa [liftCs_length] using hjj
   set cj := fL[jj] with hcj
@@ -4417,19 +4421,19 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       (((h2.append_left xe).append_right [e₁])).trans h1
     simpa [List.append_assoc] using h3
   rw [hE]
-  have hP : liftCs 1 xe ++ (liftCs 1 (fL.eraseIdx jj) ++ ps) ++ [oSx x, iGw e₁] =
-      liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]) := by
+  have hP : liftCs 1 xe ++ (liftCs 1 (fL.eraseIdx jj) ++ ps) ++ [EO_oSx x, EO_iGw e₁] =
+      liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]) := by
     simp [liftCs, List.append_assoc]
   rw [hP]
-  have hM2 : labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁])) =
-      labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁])) ++ [] :=
+  have hM2 : labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁])) =
+      labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁])) ++ [] :=
     (List.append_nil _).symm
   have hpsNew := dPieces_newOK hps'
   have hpsLab := dPieces_label hps'
-  have hsxm : oSx x ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]) := by simp
-  have hgym : iGw e₁ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]) := by simp
-  have h1 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hsxm) (by simp [oSx, mkC])
-  have h2 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hgym) (by simp [iGw, mkC])
+  have hsxm : EO_oSx x ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]) := by simp
+  have hgym : EO_iGw e₁ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]) := by simp
+  have h1 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hsxm) (by simp [EO_oSx, mkC])
+  have h2 := reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hgym) (by simp [EO_iGw, mkC])
   have hcjrand := dPieces_random hps'
   have hcjrand' : cj.kind.isRandom = true := by
     rcases hcjrand with ⟨ch, h⟩ | ⟨ch, h⟩ | ⟨ch,
@@ -4442,11 +4446,11 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
   have hordcj : (cj.map (liftA 1)).kind.ord = cj.kind.ord := rfl
   have e1 : e₁.kind.ord = 1 := by rw [hk₁]; rfl
   have hR : ordL [cj, e₁] = cj.kind.ord + 1 := by simp [ordL_cons, e1]
-  have hN : ordL (ps ++ [oSx x, iGw e₁]) = ordL ps + 3 := by
-    simp [ordL_append, oSx, iGw, mkC, Kind.ord]
+  have hN : ordL (ps ++ [EO_oSx x, EO_iGw e₁]) = ordL ps + 3 := by
+    simp [ordL_append, EO_oSx, EO_iGw, mkC, Kind.ord]
   have key := preT_A' (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (xe ++ fL.eraseIdx jj)
-    [cj, e₁] (ps ++ [oSx x, iGw e₁]) []
-    (labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]))) c0
+    [cj, e₁] (ps ++ [EO_oSx x, EO_iGw e₁]) []
+    (labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]))) c0
     (by simp) hperm
     (by
       intro r hr
@@ -4458,7 +4462,7 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
     newOK_nil
     (by
       simp only [List.append_nil]
-      exact lab_append hpsLab (lab_cons (by simp [oSx, mkC]) (lab_cons (by simp [iGw, mkC])
+      exact lab_append hpsLab (lab_cons (by simp [EO_oSx, mkC]) (lab_cons (by simp [EO_iGw, mkC])
           lab_nil)))
     (by
       intro r hr hk hne'
@@ -4466,9 +4470,9 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       rcases hr with rfl | rfl
       · rcases hcjrand with ⟨ch, h⟩ | ⟨ch, h⟩ | ⟨ch, h⟩
         · have := dPieces_path (G := (⟨labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-            (ps ++ [oSx x, iGw e₁])), c0⟩ : Graph k (n + 1)).edgeGraphNoX) hps' ⟨ch, h⟩
+            (ps ++ [EO_oSx x, EO_iGw e₁])), c0⟩ : Graph k (n + 1)).edgeGraphNoX) hps' ⟨ch, h⟩
             (fun c' hc' => by
-              have hmem : c' ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]) :=
+              have hmem : c' ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]) :=
                 List.mem_append_right _ (List.mem_append_left _ hc')
               exact reach_in' (k := k) (n := n) o c0 hM2 (Or.inl hmem) (hpsNew c' hc').ne_xdot)
             h1
@@ -4488,9 +4492,9 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       exact reachW_in' o c0 hM2 (Or.inl hsxm) ⟨.s, rfl⟩)
     (fun E => unp_conv (by
       set g' : Graph k (n + 1) := ⟨labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-        (ps ++ [oSx x, iGw e₁])), c0⟩ with hg'
+        (ps ++ [EO_oSx x, EO_iGw e₁])), c0⟩ with hg'
       have hcomps : g'.comps = labW o (liftCs 1 (xe ++ fL.eraseIdx jj) ++
-        (ps ++ [oSx x, iGw e₁])) := rfl
+        (ps ++ [EO_oSx x, EO_iGw e₁])) := rfl
       have hBsub : ∀ c ∈ xe ++ fL.eraseIdx jj, c ∈ Γ.comps := fun c hc =>
         hperm.subset (List.mem_append_left _ hc)
       have hunp0 : unpartCount g' (liftCs 1 (xe ++ fL.eraseIdx jj)) = 0 := by
@@ -4498,24 +4502,24 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
         obtain ⟨c, hcB, rfl⟩ := mem_liftCs.1 hc'
         exact partnered_old Ctx.normal E ⟨c, hBsub c hcB, rfl, rfl, rfl⟩ hs
       have hlen : (unpartL g').length =
-          unpartCount g' ps + unpartCount g' [oSx x, iGw e₁] := by
+          unpartCount g' ps + unpartCount g' [EO_oSx x, EO_iGw e₁] := by
         rw [unpartL_length, hcomps, unpartCount_labW, unpartCount_append, hunp0, zero_add,
           unpartCount_append]
       have hps2 : unpartCount g' ps ≤ 2 := by
         have := unpartCount_le g' ps
         rw [dPieces_length hps'] at this
         exact this
-      have hsx1 : unpartCount g' [oSx x, iGw e₁] ≤ 1 := by
+      have hsx1 : unpartCount g' [EO_oSx x, EO_iGw e₁] ≤ 1 := by
         refine (unpartCount_le_solid g' _).trans ?_
-        simp [oSx, iGw, mkC, Kind.isSolid]
+        simp [EO_oSx, EO_iGw, mkC, Kind.isSolid]
       refine ⟨by omega, fun h3 => ?_⟩
       have h2 : unpartCount g' ps = 2 := by omega
-      have h1' : unpartCount g' [oSx x, iGw e₁] = 1 := by omega
-      have hGy : partnered g' (iGw e₁) = false := by
+      have h1' : unpartCount g' [EO_oSx x, EO_iGw e₁] = 1 := by omega
+      have hGy : partnered g' (EO_iGw e₁) = false := by
         by_contra hcon
-        have hcon' : partnered g' (iGw e₁) = true := by simpa using hcon
+        have hcon' : partnered g' (EO_iGw e₁) = true := by simpa using hcon
         unfold unpartCount at h1'
-        simp [oSx, iGw, mkC, Kind.isSolid, List.filter_cons] at h1' hcon'
+        simp [EO_oSx, EO_iGw, mkC, Kind.isSolid, List.filter_cons] at h1' hcon'
         simp [hcon'] at h1'
       have hall : ∀ c ∈ ps, (c.kind.isSolid && !partnered g' c) = true := by
         have := h2
@@ -4523,15 +4527,15 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
         rw [← dPieces_length hps'] at this
         exact List.length_filter_eq_length_iff.1 this
       obtain ⟨c₂, hc₂ps, hc₂q⟩ := dPieces_has_p hps'
-      have hc₂m : c₂ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [oSx x, iGw e₁]) :=
+      have hc₂m : c₂ ∈ liftCs 1 (xe ++ fL.eraseIdx jj) ++ (ps ++ [EO_oSx x, EO_iGw e₁]) :=
         List.mem_append_right _ (List.mem_append_left _ hc₂ps)
       obtain ⟨c₁'', hc₁'', a1, a2, a3⟩ := labW_exists (o := o) hgym
       obtain ⟨c₂'', hc₂'', b1, b2, b3⟩ := labW_exists (o := o) hc₂m
       refine ⟨c₁'', ?_, c₂'', ?_, ?_⟩
       · refine List.mem_filter.2 ⟨by rw [hcomps]; exact hc₁'', ?_⟩
         have : partnered g' c₁'' = false := by
-          rw [partnered_congr g' (c' := iGw e₁) a1 a2]; exact hGy
-        simp [a3, iGw, mkC, Kind.isSolid, this]
+          rw [partnered_congr g' (c' := EO_iGw e₁) a1 a2]; exact hGy
+        simp [a3, EO_iGw, mkC, Kind.isSolid, this]
       · refine List.mem_filter.2 ⟨by rw [hcomps]; exact hc₂'', ?_⟩
         have hh := hall c₂ hc₂ps
         simp only [Bool.and_eq_true, Bool.not_eq_true'] at hh ⊢
@@ -4539,7 +4543,7 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
         rw [partnered_congr g' (c' := c₂) b1 b2]; exact hh.2
       · unfold SamePair
         rw [a1, a2, b1, b2]
-        simp only [iGw, mkC]
+        simp only [EO_iGw, mkC]
         rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
         · rcases hc₂q with hq | hq
           · exact hx₁ (liftA_injective 1 (h1.symm.trans hq))
@@ -4555,7 +4559,7 @@ private theorem preT_ids {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} 
       rw [List.append_nil, hR, hN]
       push_cast
       linarith)
-  refine ⟨key.1, ?_, ⟨iGw e₁, by simp, by simp [iGw, mkC, Kind.isRandom]⟩⟩
+  refine ⟨key.1, ?_, ⟨EO_iGw e₁, by simp, by simp [EO_iGw, mkC, Kind.isRandom]⟩⟩
   intro hwt
   rw [key.2, List.append_nil, hR, hN]
   have hnt : cj.x ≠ x ∧ (cj.map (liftA 1)).endB ≠ liftA 1 x := by
@@ -4594,65 +4598,65 @@ variable {k n : ℕ}
 /-- The bare main terms of `Ô_multi-e`, case (iii). -/
 def BaseIn (x : Atom k n) (Γ : Graph k n) (i₁ : ℕ) (e₁ : Comp (Atom k n))
     (t : Tracked k n) : Prop :=
-  ∃ j d, j ∈ Γ.edgeIdx x .minus false ∧ t = t1 (iBaseM x Γ i₁ e₁ j) d
+  ∃ j d, j ∈ Γ.edgeIdx x .minus false ∧ t = EO_t1 (EO_iBaseM x Γ i₁ e₁ j) d
 
 theorem iOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) :
-    ∀ t ∈ iOut x Γ i₁ is₂ e₁, PreT C Γ.ord x t ∧
+    ∀ t ∈ EO_iOut x Γ i₁ is₂ e₁, PreT C Γ.ord x t ∧
       (¬ t.g.LabelFree ∨ (Γ.wt x = 0 → Γ.ord + 1 ≤ t.g.ord) ∨ BaseIn x Γ i₁ e₁ t) := by
   intro t ht
   have light_ord : ∀ ch : Charge, ordL ([mkC (.light ch) (liftA 1 x) (liftA 1 x)] :
       List (Comp (Atom k (n + 1)))) = 1 := by
     intro ch; simp [ordL, mkC, Kind.ord]
-  simp only [iOut, List.mem_append, List.mem_map, List.mem_singleton, List.mem_ite_nil_left] at ht
+  simp only [EO_iOut, List.mem_append, List.mem_map, List.mem_singleton, List.mem_ite_nil_left] at ht
   rcases ht with
     (((((((((⟨j, hj, rfl⟩ | ⟨j, hj, rfl⟩) | rfl) | ⟨hne, rfl⟩) | ⟨d, hd, rfl⟩) | rfl) |
       ⟨j, hj, rfl⟩) | rfl) | ⟨hne, rfl⟩) | ⟨d, hd, rfl⟩)
   · have h := preT_iBaseM Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp)
       (cm * cmb * Γ.coeff)
     refine ⟨?_, Or.inr (Or.inr ⟨j, _, hj, rfl⟩)⟩
-    simpa [labW, t1] using h.1
+    simpa [labW, EO_t1] using h.1
   · have h := preT_iBaseM Ctx hj none [mkC (.light .minus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_light _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     rw [light_ord] at this
     linarith
   · have h := preT_l3 Ctx.normal Ctx.plain Ctx.right Ctx.unl none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     linarith
   · have h := preT_ie1 Ctx none ((is₂.length : Coeff) * cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, iE1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_iE1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have := h.2.1
     simp only [labW] at this
-    simp only [t1]
+    simp only [EO_t1]
     linarith
   · obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd
     have h := preT_ids Ctx none hd' (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, iDs] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_iDs] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
     have := h.2.1 hw
     simp only [labW] at this
-    simpa [t1] using this
+    simpa [EO_t1] using this
   · refine ⟨(preT_self Ctx.normal Ctx.plain Ctx.right Ctx.unl _).1, Or.inl ?_⟩
     refine labelQs_not_lf _ _ _ ⟨e₁, Ctx.e₁mem, ?_⟩
     simp [Ctx.e₁spec.1, Kind.isRandom]
   · have h := preT_iBaseM Ctx hj (some (liftA 1 x)) [mkC (.weight .minus) (liftA 1 x) (liftA 1 x)]
       (newOK_cons (NewOK_weight _ _) newOK_nil) (by simp [mkC, Kind.isSolid]) (by simp [mkC])
       (by simp [ordL, mkC, Kind.ord]) (by simp) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · have h := preT_l3 Ctx.normal Ctx.plain Ctx.right Ctx.unl (some (liftA 1 x)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · have h := preT_ie1 Ctx (some (liftA 1 x)) (-(is₂.length : Coeff) * cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1, iE1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1, EO_iE1] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
   · obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd
     have h := preT_ids Ctx (some (liftA 1 x)) hd' (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1, iDs] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1, EO_iDs] using h.1, Or.inl (labelQs_not_lf _ _ _ h.2.2)⟩
 
 end InSpec
 
@@ -4706,71 +4710,71 @@ section GGDefs2
 variable {k n : ℕ} (x : Atom k n) (Γ : Graph k n) (i j : ℕ) (e e' : Comp (Atom k n))
 
 /-- Auxiliary: the graph with `n + 2` internal atoms. -/
-private def t2 (cs : List (Comp (Atom k (n + 2)))) (d : Coeff) : Tracked k n := ⟨n + 2, ⟨cs, d⟩,
+def EO_t2 (cs : List (Comp (Atom k (n + 2)))) (d : Coeff) : Tracked k n := ⟨n + 2, ⟨cs, d⟩,
     liftA 2⟩
 
 /-- The components of `Γ` other than the two solid edges at the indices `i` and `j`. -/
-private def ggF : List (Comp (Atom k n)) := eraseIdxs [i, j] Γ.comps
+def EO_ggF : List (Comp (Atom k n)) := eraseIdxs [i, j] Γ.comps
 
 /-- The components `f G_{y'y}` (with the weight `G_{yy}` when `y = y'`) of the main term of
 `Ô^{(x)}_GG` ([I, (3.17)]). -/
-private def ggMain : List (Comp (Atom k n)) := ggF Γ i j ++ [solidC .plus e'.x e.y]
+def EO_ggMain : List (Comp (Atom k n)) := EO_ggF Γ i j ++ [solidC .plus e'.x e.y]
 
 /-- The derivative terms of `f` at `α` in `Ô^{(x)}_GG` ([I, (3.17)]), with one new atom. -/
-private def ggD1 : List (List (Comp (Atom k (n + 1)))) :=
-  (dTerms (newA 0) (liftA 1 x) (liftCs 1 (ggF Γ i j))).map fun d =>
+def EO_ggD1 : List (List (Comp (Atom k (n + 1)))) :=
+  (dTerms (newA 0) (liftA 1 x) (liftCs 1 (EO_ggF Γ i j))).map fun d =>
     d ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y), mkC (.G .plus) (liftA 1 e'.x) (liftA 1 x)]
 
 /-- The derivative terms of `f` at `β` in `Ô^{(x)}_GG` ([I, (3.17)]), with two new atoms. -/
-private def ggD2 : List (List (Comp (Atom k (n + 2)))) :=
-  (dTerms (newA 1) (newA 0) (liftCs 2 (ggF Γ i j))).map fun d =>
+def EO_ggD2 : List (List (Comp (Atom k (n + 2)))) :=
+  (dTerms (newA 1) (newA 0) (liftCs 2 (EO_ggF Γ i j))).map fun d =>
     d ++ [mkC (.G .plus) (newA 1) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 0)]
 
 /-- The terms of `Ô^{(x)}_GG` ([I, (3.17)]) for the edges `e = G_{xy}` at the index `i` and `e' =
 G_{y'x}` at the index `j`. -/
-private def ggOut : TExpansion k n :=
+def EO_ggOut : TExpansion k n :=
   let a₁ : Atom k (n + 1) := newA 0
   let a₂ : Atom k (n + 2) := newA 0
   let b₂ : Atom k (n + 2) := newA 1
-  [⟨n, ⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], cm * Γ.coeff⟩, id⟩,
-    t1 (liftCs 1 Γ.comps ++ [mkC (.waved .s) (liftA 1 x) a₁, mkC (.light .plus) a₁ a₁])
+  [⟨n, ⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], cm * Γ.coeff⟩, id⟩,
+    EO_t1 (liftCs 1 Γ.comps ++ [mkC (.waved .s) (liftA 1 x) a₁, mkC (.light .plus) a₁ a₁])
       (cm * Γ.coeff),
-    t2 (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂,
+    EO_t2 (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂,
       mkC (.light .plus) b₂ b₂, mkC (.G .plus) a₂ (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) a₂]) (cm * Γ.coeff),
-    t1 (liftCs 1 (ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
+    EO_t1 (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
       mkC (.waved .s) (liftA 1 x) a₁, mkC (.G .plus) a₁ (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) a₁]) (cm * Γ.coeff),
-    t2 (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂,
+    EO_t2 (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂,
       mkC (.light .plus) a₂ a₂, mkC (.G .plus) b₂ (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) b₂]) (cm * Γ.coeff)] ++
-    (ggD1 x Γ i j e e').map (fun d => t1 (d ++ [mkC (.waved .s) (liftA 1 x) a₁]) (cm * Γ.coeff)) ++
-    (ggD2 Γ i j e e').map (fun d => t2 (d ++ [mkC (.waved .plus) (liftA 2 x) a₂,
+    (EO_ggD1 x Γ i j e e').map (fun d => EO_t1 (d ++ [mkC (.waved .s) (liftA 1 x) a₁]) (cm * Γ.coeff)) ++
+    (EO_ggD2 Γ i j e e').map (fun d => EO_t2 (d ++ [mkC (.waved .plus) (liftA 2 x) a₂,
       mkC (.waved .s) a₂ b₂]) (cm * Γ.coeff)) ++
     [⟨n, ⟨labelQs x Γ.comps, Γ.coeff⟩, id⟩,
-      t1 (labelQs a₁ (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) a₁ (liftA 1 e.y),
+      EO_t1 (labelQs a₁ (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) a₁ (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) a₁]) ++ [mkC (.waved .plus) (liftA 1 x) a₁]) Γ.coeff,
-      ⟨n, ⟨labelQs e.y (ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], -cm * Γ.coeff⟩, id⟩,
-      t1 (labelQs (liftA 1 x) (liftCs 1 Γ.comps ++ [mkC (.light .plus) a₁ a₁]) ++
+      ⟨n, ⟨labelQs e.y (EO_ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], -cm * Γ.coeff⟩, id⟩,
+      EO_t1 (labelQs (liftA 1 x) (liftCs 1 Γ.comps ++ [mkC (.light .plus) a₁ a₁]) ++
         [mkC (.waved .s) (liftA 1 x) a₁]) (-cm * Γ.coeff),
-      t2 (labelQs a₂ (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus) b₂ b₂,
+      EO_t2 (labelQs a₂ (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus) b₂ b₂,
         mkC (.G .plus) a₂ (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) a₂]) ++
         [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂]) (-cm * Γ.coeff),
-      t1 (labelQs (liftA 1 x) (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+      EO_t1 (labelQs (liftA 1 x) (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
         mkC (.G .plus) a₁ (liftA 1 e.y), mkC (.G .plus) (liftA 1 e'.x) a₁]) ++
         [mkC (.waved .s) (liftA 1 x) a₁]) (-cm * Γ.coeff),
-      t2 (labelQs a₂ (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus) a₂ a₂,
+      EO_t2 (labelQs a₂ (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus) a₂ a₂,
         mkC (.G .plus) b₂ (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) b₂]) ++
         [mkC (.waved .plus) (liftA 2 x) a₂, mkC (.waved .s) a₂ b₂]) (-cm * Γ.coeff)] ++
-    (ggD1 x Γ i j e e').map (fun d => t1 (labelQs (liftA 1 x) d ++
+    (EO_ggD1 x Γ i j e e').map (fun d => EO_t1 (labelQs (liftA 1 x) d ++
       [mkC (.waved .s) (liftA 1 x) a₁]) (-cm * Γ.coeff)) ++
-    (ggD2 Γ i j e e').map (fun d => t2 (labelQs a₂ d ++ [mkC (.waved .plus) (liftA 2 x) a₂,
+    (EO_ggD2 Γ i j e e').map (fun d => EO_t2 (labelQs a₂ d ++ [mkC (.waved .plus) (liftA 2 x) a₂,
       mkC (.waved .s) a₂ b₂]) (-cm * Γ.coeff))
 
 private theorem ggPos_some' {E : TExpansion k n} (h : ggPos x Γ = some E) :
     ∃ i j e e', Γ.edgeIdx x .plus true = [i] ∧ Γ.edgeIdx x .plus false = [j] ∧
       Γ.comps[i]? = some e ∧ Γ.comps[j]? = some e' ∧ Γ.xdotsAt x [i, j] = true ∧
-      E = ggOut x Γ i j e e' := by
+      E = EO_ggOut x Γ i j e e' := by
   unfold ggPos at h
   split_ifs at h
   split at h
@@ -4835,13 +4839,13 @@ private theorem GGCtx.hij {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} 
   exact Ctx.e'spec.2.2 Ctx.espec.2.1
 
 private theorem GGCtx.perm {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' : Comp (Atom k n)}
-    (Ctx : GGCtx C x Γ i j e e') : (ggF Γ i j ++ [e, e']).Perm Γ.comps :=
+    (Ctx : GGCtx C x Γ i j e e') : (EO_ggF Γ i j ++ [e, e']).Perm Γ.comps :=
   eraseIdxs_two_perm Ctx.hij Ctx.hi Ctx.hj
 
 set_option linter.flexible false in
 private theorem GGCtx.f_untouched {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e') {c : Comp (Atom k n)}
-    (hc : c ∈ ggF Γ i j) {ch : Charge} (hk : c.kind = .G ch) : c.x ≠ x ∧ c.y ≠ x := by
+    (hc : c ∈ EO_ggF Γ i j) {ch : Charge} (hk : c.kind = .G ch) : c.x ≠ x ∧ c.y ≠ x := by
   obtain ⟨m, hm, hn⟩ := mem_eraseIdxs_iff.1 hc
   have hcm : c ∈ Γ.comps := mem_eraseIdxs_of_mem hc
   have hsl := Ctx.normal.2.1 c hcm (by simp [hk, Kind.isSolid])
@@ -4878,15 +4882,15 @@ private theorem preT_gg_T2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 2))) (d : Coeff) :
     PreT C Γ.ord x ⟨n + 2,
-        ⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+        ⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 1) (newA 1),
         mkC (.G .plus) (newA 0) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [], d⟩,
         liftA 2⟩ ∧
-      (⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+      (⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 1) (newA 1),
           mkC (.G .plus) (newA 0) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [],
           d⟩ : Graph k (n + 2)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+      ∃ c ∈ liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 1) (newA 1),
           mkC (.G .plus) (newA 0) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 0)],
           c.kind.isRandom = true := by
@@ -4894,10 +4898,10 @@ private theorem preT_gg_T2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+  have hM2 : (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
       mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 1) (newA 1),
       mkC (.G .plus) (newA 0) (liftA 2 e.y),
-      mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ []) = labW o (liftCs 2 (ggF Γ i j) ++ [mkC
+      mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ []) = labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC
       (.waved .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
       mkC (.light .plus) (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [] := rfl
@@ -4915,10 +4919,10 @@ private theorem preT_gg_T2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.waved .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
         mkC (.light .plus) (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
-        mkC (.G .plus) (liftA 2 e'.x) (newA 0)] [] (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved
+        mkC (.G .plus) (liftA 2 e'.x) (newA 0)] [] (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved
         .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
         mkC (.light .plus) (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ []) d rfl Ctx.perm
@@ -4960,25 +4964,25 @@ private theorem preT_gg_T2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
 private theorem preT_gg_Q5 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 2))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 2, ⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
+    PreT C Γ.ord x ⟨n + 2, ⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
         mkC (.G .plus) (newA 0) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1)], d⟩, liftA 2⟩ ∧
-      (⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
+      (⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
           mkC (.G .plus) (newA 0) (liftA 2 e.y),
           mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1)], d⟩ : Graph k (n + 2)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
+      ∃ c ∈ liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
           mkC (.G .plus) (newA 0) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 0)],
           c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
+  have hM2 : (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus) (newA 1) (newA 1),
       mkC (.G .plus) (newA 0) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
-      mkC (.waved .s) (newA 0) (newA 1)]) = labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus)
+      mkC (.waved .s) (newA 0) (newA 1)]) = labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus)
       (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
       mkC (.waved .s) (newA 0) (newA 1)] := rfl
@@ -4996,10 +5000,10 @@ private theorem preT_gg_Q5 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.light .plus) (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 0)] [mkC (.waved .plus) (liftA 2 x) (newA 0),
-        mkC (.waved .s) (newA 0) (newA 1)] (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.light .plus)
+        mkC (.waved .s) (newA 0) (newA 1)] (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.light .plus)
         (newA 1) (newA 1), mkC (.G .plus) (newA 0) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1)]) d rfl Ctx.perm
@@ -5042,15 +5046,15 @@ private theorem preT_gg_T4 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 2))) (d : Coeff) :
     PreT C Γ.ord x ⟨n + 2,
-        ⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+        ⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 0) (newA 0),
         mkC (.G .plus) (newA 1) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [], d⟩,
         liftA 2⟩ ∧
-      (⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+      (⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 0) (newA 0),
           mkC (.G .plus) (newA 1) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [],
           d⟩ : Graph k (n + 2)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+      ∃ c ∈ liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 0) (newA 0),
           mkC (.G .plus) (newA 1) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 1)],
           c.kind.isRandom = true := by
@@ -5058,10 +5062,10 @@ private theorem preT_gg_T4 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
+  have hM2 : (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
       mkC (.waved .s) (newA 0) (newA 1), mkC (.light .plus) (newA 0) (newA 0),
       mkC (.G .plus) (newA 1) (liftA 2 e.y),
-      mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ []) = labW o (liftCs 2 (ggF Γ i j) ++ [mkC
+      mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ []) = labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC
       (.waved .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
       mkC (.light .plus) (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [] := rfl
@@ -5079,10 +5083,10 @@ private theorem preT_gg_T4 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.waved .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
         mkC (.light .plus) (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
-        mkC (.G .plus) (liftA 2 e'.x) (newA 1)] [] (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.waved
+        mkC (.G .plus) (liftA 2 e'.x) (newA 1)] [] (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.waved
         .plus) (liftA 2 x) (newA 0), mkC (.waved .s) (newA 0) (newA 1),
         mkC (.light .plus) (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ []) d rfl Ctx.perm
@@ -5124,25 +5128,25 @@ private theorem preT_gg_T4 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
 private theorem preT_gg_Q7 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 2))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 2, ⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
+    PreT C Γ.ord x ⟨n + 2, ⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
         mkC (.G .plus) (newA 1) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1)], d⟩, liftA 2⟩ ∧
-      (⟨labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
+      (⟨labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
           mkC (.G .plus) (newA 1) (liftA 2 e.y),
           mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
           mkC (.waved .s) (newA 0) (newA 1)], d⟩ : Graph k (n + 2)).ord = Γ.ord + 0 ∧
-      ∃ c ∈ liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
+      ∃ c ∈ liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
           mkC (.G .plus) (newA 1) (liftA 2 e.y), mkC (.G .plus) (liftA 2 e'.x) (newA 1)],
           c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
+  have hM2 : (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (newA 0) (newA 0),
       mkC (.G .plus) (newA 1) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
-      mkC (.waved .s) (newA 0) (newA 1)]) = labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus)
+      mkC (.waved .s) (newA 0) (newA 1)]) = labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus)
       (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
       mkC (.waved .s) (newA 0) (newA 1)] := rfl
@@ -5160,10 +5164,10 @@ private theorem preT_gg_Q7 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 2) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.weight .plus) (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 1)] [mkC (.waved .plus) (liftA 2 x) (newA 0),
-        mkC (.waved .s) (newA 0) (newA 1)] (labW o (liftCs 2 (ggF Γ i j) ++ [mkC (.weight .plus)
+        mkC (.waved .s) (newA 0) (newA 1)] (labW o (liftCs 2 (EO_ggF Γ i j) ++ [mkC (.weight .plus)
         (newA 0) (newA 0), mkC (.G .plus) (newA 1) (liftA 2 e.y),
         mkC (.G .plus) (liftA 2 e'.x) (newA 1)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
         mkC (.waved .s) (newA 0) (newA 1)]) d rfl Ctx.perm
@@ -5206,22 +5210,22 @@ private theorem preT_gg_T3 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 1))) (d : Coeff) :
     PreT C Γ.ord x ⟨n + 1,
-        ⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
+        ⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
         mkC (.waved .s) (liftA 1 x) (newA 0), mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [], d⟩, liftA 1⟩ ∧
-      (⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
+      (⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
           mkC (.waved .s) (liftA 1 x) (newA 0), mkC (.G .plus) (newA 0) (liftA 1 e.y),
           mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [], d⟩ : Graph k (n + 1)).ord = Γ.ord + 1 ∧
-      ∃ c ∈ liftCs 1 (ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
+      ∃ c ∈ liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
           mkC (.waved .s) (liftA 1 x) (newA 0), mkC (.G .plus) (newA 0) (liftA 1 e.y),
           mkC (.G .plus) (liftA 1 e'.x) (newA 0)], c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
+  have hM2 : (labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light .plus) (liftA 1 x) (liftA 1 x),
       mkC (.waved .s) (liftA 1 x) (newA 0), mkC (.G .plus) (newA 0) (liftA 1 e.y),
-      mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ []) = labW o (liftCs 1 (ggF Γ i j) ++ [mkC
+      mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ []) = labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC
       (.light .plus) (liftA 1 x) (liftA 1 x), mkC (.waved .s) (liftA 1 x) (newA 0),
       mkC (.G .plus) (newA 0) (liftA 1 e.y), mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [] := rfl
   have h_Ga := reach_in' (k := k) (n := n) (c := mkC (.G .plus) (newA 0) (liftA 1
@@ -5236,10 +5240,10 @@ private theorem preT_gg_T3 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.light .plus) (liftA 1 x) (liftA 1 x), mkC (.waved .s) (liftA 1 x) (newA 0),
         mkC (.G .plus) (newA 0) (liftA 1 e.y),
-        mkC (.G .plus) (liftA 1 e'.x) (newA 0)] [] (labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.light
+        mkC (.G .plus) (liftA 1 e'.x) (newA 0)] [] (labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.light
         .plus) (liftA 1 x) (liftA 1 x), mkC (.waved .s) (liftA 1 x) (newA 0),
         mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ []) d rfl Ctx.perm
@@ -5278,25 +5282,25 @@ private theorem preT_gg_Q6 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 1))) (d : Coeff) :
     PreT C Γ.ord x ⟨n + 1,
-        ⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+        ⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
         mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .s) (liftA 1 x) (newA 0)], d⟩,
         liftA 1⟩ ∧
-      (⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+      (⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
           mkC (.G .plus) (newA 0) (liftA 1 e.y),
           mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .s) (liftA 1 x) (newA 0)],
           d⟩ : Graph k (n + 1)).ord = Γ.ord + 0 ∧
-      ∃ c ∈ liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+      ∃ c ∈ liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
           mkC (.G .plus) (newA 0) (liftA 1 e.y), mkC (.G .plus) (liftA 1 e'.x) (newA 0)],
           c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+  have hM2 : (labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
       mkC (.G .plus) (newA 0) (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .s) (liftA 1 x) (newA
-      0)]) = labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+      0)]) = labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
       mkC (.G .plus) (newA 0) (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .s) (liftA 1 x) (newA 0)] := rfl
   have h_Ga := reach_in' (k := k) (n := n) (c := mkC (.G .plus) (newA 0) (liftA 1
@@ -5311,10 +5315,10 @@ private theorem preT_gg_Q6 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.weight .plus) (liftA 1 x) (liftA 1 x), mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)] [mkC (.waved .s) (liftA 1 x) (newA 0)] (labW o
-        (liftCs 1 (ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
+        (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.weight .plus) (liftA 1 x) (liftA 1 x),
         mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .s) (liftA 1 x) (newA
         0)]) d rfl Ctx.perm
@@ -5351,21 +5355,21 @@ private theorem preT_gg_Q6 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
 private theorem preT_gg_Q2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e')
     (o : Option (Atom k (n + 1))) (d : Coeff) :
-    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+    PreT C Γ.ord x ⟨n + 1, ⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 1 x) (newA 0)], d⟩,
         liftA 1⟩ ∧
-      (⟨labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+      (⟨labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
           mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 1 x) (newA 0)],
           d⟩ : Graph k (n + 1)).ord = Γ.ord + 0 ∧
-      ∃ c ∈ liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+      ∃ c ∈ liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
           mkC (.G .plus) (liftA 1 e'.x) (newA 0)], c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : (labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+  have hM2 : (labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 1 x) (newA
-      0)]) = labW o (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+      0)]) = labW o (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 1 x) (newA 0)] := rfl
   have h_Ga := reach_in' (k := k) (n := n) (c := mkC (.G .plus) (newA 0) (liftA 1
       e.y)) o d hM2 (Or.inl (by simp)) (by simp [mkC])
@@ -5379,10 +5383,10 @@ private theorem preT_gg_Q2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     simp [ordL, mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by
     simp [ordL_cons, e1, e2]
-  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j)
+  have key := preT_A (j := 1) Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j)
     [e, e'] [mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)] [mkC (.waved .plus) (liftA 1 x) (newA 0)] (labW o
-        (liftCs 1 (ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
+        (liftCs 1 (EO_ggF Γ i j) ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
         mkC (.G .plus) (liftA 1 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 1 x) (newA
         0)]) d rfl Ctx.perm
     (by
@@ -5436,32 +5440,32 @@ private theorem ord_solidC_nonneg {V : Type*} [DecidableEq V] (ch : Charge) (u v
 /-- The main term `m S⁺_{xy} G_{y'y} f` of `Ô_GG`, with an optional label. -/
 private theorem preT_gg_main {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e') (o : Option (Atom k n)) (d : Coeff) :
-    PreT C Γ.ord x ⟨n, ⟨labW o (ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], d⟩, id⟩ ∧
-      (⟨labW o (ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).ord =
+    PreT C Γ.ord x ⟨n, ⟨labW o (EO_ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], d⟩, id⟩ ∧
+      (⟨labW o (EO_ggMain Γ i j e e') ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).ord =
         Γ.ord + (solidC .plus e'.x e.y).kind.ord ∧
-      ∃ c ∈ ggMain Γ i j e e', c.kind.isRandom = true := by
+      ∃ c ∈ EO_ggMain Γ i j e e', c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
   have e1 : e.kind.ord = 1 := by rw [he_k]; rfl
   have e2 : e'.kind.ord = 1 := by rw [he'_k]; rfl
-  have hM2 : labW o (ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y] =
-      labW o (ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y] := rfl
+  have hM2 : labW o (EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y] =
+      labW o (EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y] := rfl
   have h_S := reach_in' (k := k) (n := n) (j := 0) (c := mkC (.waved .plus) x e.y) o d
-    (M := labW o (ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y])
-    (P := ggF Γ i j ++ [solidC .plus e'.x e.y]) (N₂ := [mkC (.waved .plus) x e.y]) rfl
+    (M := labW o (EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y])
+    (P := EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) (N₂ := [mkC (.waved .plus) x e.y]) rfl
     (Or.inr (by simp)) (by simp [mkC])
   have h_G := reach_in' (k := k) (n := n) (j := 0) (c := solidC .plus e'.x e.y) o d
-    (M := labW o (ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y])
-    (P := ggF Γ i j ++ [solidC .plus e'.x e.y]) (N₂ := [mkC (.waved .plus) x e.y]) rfl
+    (M := labW o (EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y])
+    (P := EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) (N₂ := [mkC (.waved .plus) x e.y]) rfl
     (Or.inl (by simp)) (solidC_ne_xdot _ _ _)
   rw [solidC_x, solidC_y] at h_G
   have hN : ordL ([solidC .plus e'.x e.y] ++ [mkC (.waved .plus) x e.y]) =
       (solidC .plus e'.x e.y).kind.ord + 2 := by
     simp [mkC, Kind.ord]
   have hR : ordL [e, e'] = 2 := by simp [ordL_cons, e1, e2]
-  have key := preT_A0 Ctx.normal Ctx.plain Ctx.right Ctx.unl o (ggF Γ i j) [e, e']
+  have key := preT_A0 Ctx.normal Ctx.plain Ctx.right Ctx.unl o (EO_ggF Γ i j) [e, e']
     [solidC .plus e'.x e.y] [mkC (.waved .plus) x e.y]
-    (labW o (ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y]) d rfl Ctx.perm
+    (labW o (EO_ggF Γ i j ++ [solidC .plus e'.x e.y]) ++ [mkC (.waved .plus) x e.y]) d rfl Ctx.perm
     (by
       intro r hr
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
@@ -5486,10 +5490,10 @@ private theorem preT_gg_main {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : �
       rw [hN, hR]
       have := ord_solidC_nonneg (V := Atom k n) .plus e'.x e.y
       linarith)
-  refine ⟨key.1, ?_, ⟨solidC .plus e'.x e.y, by simp [ggMain], solidC_random _ _ _⟩⟩
+  refine ⟨key.1, ?_, ⟨solidC .plus e'.x e.y, by simp [EO_ggMain], solidC_random _ _ _⟩⟩
   have h2 := key.2
   rw [hN, hR] at h2
-  simp only [ggMain]
+  simp only [EO_ggMain]
   rw [h2]
   ring
 
@@ -5540,7 +5544,7 @@ set_option linter.flexible false in
 private theorem preT_gg_D1 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e') (o : Option (Atom k (n + 1)))
     {d₀ : List (Comp (Atom k (n + 1)))}
-    (hd : d₀ ∈ dTerms (newA 0 : Atom k (n + 1)) (liftA 1 x) (liftCs 1 (ggF Γ i j)))
+    (hd : d₀ ∈ dTerms (newA 0 : Atom k (n + 1)) (liftA 1 x) (liftCs 1 (EO_ggF Γ i j)))
     (c0 : Coeff) :
     PreT C Γ.ord x ⟨n + 1, ⟨labW o (d₀ ++ [mkC (.G .plus) (newA 0) (liftA 1 e.y),
       mkC (.G .plus) (liftA 1 e'.x) (liftA 1 x)]) ++ [mkC (.waved .s) (liftA 1 x) (newA 0)], c0⟩,
@@ -5552,7 +5556,7 @@ private theorem preT_gg_D1 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
       c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
-  set fL := ggF Γ i j with hfL
+  set fL := EO_ggF Γ i j with hfL
   obtain ⟨jj, hjj, ps, hps, rfl⟩ := mem_dTerms.1 hd
   have hjj' : jj < fL.length := by simpa [liftCs_length] using hjj
   set cj := fL[jj] with hcj
@@ -5910,7 +5914,7 @@ variable {k n : ℕ}
 private theorem preT_gg_D2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
     {e e' : Comp (Atom k n)} (Ctx : GGCtx C x Γ i j e e') (o : Option (Atom k (n + 2)))
     {d₀ : List (Comp (Atom k (n + 2)))}
-    (hd : d₀ ∈ dTerms (newA 1 : Atom k (n + 2)) (newA 0) (liftCs 2 (ggF Γ i j)))
+    (hd : d₀ ∈ dTerms (newA 1 : Atom k (n + 2)) (newA 0) (liftCs 2 (EO_ggF Γ i j)))
     (c0 : Coeff) :
     PreT C Γ.ord x ⟨n + 2, ⟨labW o (d₀ ++ [mkC (.G .plus) (newA 1) (liftA 2 e.y),
       mkC (.G .plus) (liftA 2 e'.x) (newA 0)]) ++ [mkC (.waved .plus) (liftA 2 x) (newA 0),
@@ -5922,7 +5926,7 @@ private theorem preT_gg_D2 {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ}
       c.kind.isRandom = true := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
-  set fL := ggF Γ i j with hfL
+  set fL := EO_ggF Γ i j with hfL
   obtain ⟨jj, hjj, ps, hps, rfl⟩ := mem_dTerms.1 hd
   have hjj' : jj < fL.length := by simpa [liftCs_length] using hjj
   set cj := fL[jj] with hcj
@@ -6100,14 +6104,14 @@ private theorem labW_some_not_lf' {m : ℕ} (u : Atom k m) (P N₂ : List (Comp 
 /-- The main term of `Ô_GG` when `y = y'`. -/
 def GGMainShape (x : Atom k n) (Γ : Graph k n) (i j : ℕ) (e e' : Comp (Atom k n))
     (t : Tracked k n) : Prop :=
-  e'.x = e.y ∧ ∃ d, t = ⟨n, ⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩, id⟩
+  e'.x = e.y ∧ ∃ d, t = ⟨n, ⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩, id⟩
 
 theorem ggOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' : Comp (Atom k n)}
     (Ctx : GGCtx C x Γ i j e e') :
-    ∀ t ∈ ggOut x Γ i j e e', PreT C Γ.ord x t ∧
+    ∀ t ∈ EO_ggOut x Γ i j e e', PreT C Γ.ord x t ∧
       (¬ t.g.LabelFree ∨ (Γ.wt x = 0 → Γ.ord + 1 ≤ t.g.ord) ∨ GGMainShape x Γ i j e e' t) := by
   intro t ht
-  simp only [ggOut, List.mem_append, List.mem_map, List.mem_cons, 
+  simp only [EO_ggOut, List.mem_append, List.mem_map, List.mem_cons, 
     List.not_mem_nil, or_false] at ht
   rcases ht with
     ((((((rfl | rfl | rfl | rfl | rfl) | ⟨d₀, hd₀, rfl⟩) | ⟨d₀, hd₀, rfl⟩) |
@@ -6124,61 +6128,61 @@ theorem ggOut_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' :
       linarith
   · -- the light weight term
     have h := preT_l3 Ctx.normal Ctx.plain Ctx.right Ctx.unl none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1, oL3, oSx] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1, EO_oL3, EO_oSx] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have h2 := h.2.1
     simp only [labW] at h2
     exact h2.symm.le
   · have h := preT_gg_T2 Ctx none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have h2 := h.2.1
-    simp only [labW, List.append_nil, t2] at h2 ⊢
+    simp only [labW, List.append_nil, EO_t2] at h2 ⊢
     linarith
   · have h := preT_gg_T3 Ctx none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have h2 := h.2.1
-    simp only [labW, List.append_nil, t1] at h2 ⊢
+    simp only [labW, List.append_nil, EO_t1] at h2 ⊢
     linarith
   · have h := preT_gg_T4 Ctx none (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have h2 := h.2.1
-    simp only [labW, List.append_nil, t2] at h2 ⊢
+    simp only [labW, List.append_nil, EO_t2] at h2 ⊢
     linarith
   · -- the derivative terms at `x`
     obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd₀
     have h := preT_gg_D1 Ctx none hd' (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t1] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
+    refine ⟨by simpa [labW, EO_t1] using h.1, Or.inr (Or.inl fun hw => ?_)⟩
     have h2 := h.2.1 hw
     simp only [labW] at h2
-    simpa [t1] using h2
+    simpa [EO_t1] using h2
   · -- the derivative terms at the new atom
     obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd₀
     have h := preT_gg_D2 Ctx none hd' (cm * Γ.coeff)
-    refine ⟨by simpa [labW, t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
+    refine ⟨by simpa [labW, EO_t2] using h.1, Or.inr (Or.inl fun _ => ?_)⟩
     have h2 := h.2.1
     simp only [labW] at h2
-    simpa [t2] using h2
+    simpa [EO_t2] using h2
   · -- labelled: the graph itself
     refine ⟨(preT_self Ctx.normal Ctx.plain Ctx.right Ctx.unl _).1, Or.inl ?_⟩
     refine labelQs_not_lf _ _ _ ⟨e, Ctx.emem, ?_⟩
     simp [Ctx.espec.1, Kind.isRandom]
   · have h := preT_gg_Q2 Ctx (some (newA 0)) Γ.coeff
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · have h := preT_gg_main Ctx (some e.y) (-cm * Γ.coeff)
     exact ⟨by simpa [labW] using h.1, Or.inl (labW_some_not_lf' _ _ _ _ h.2.2)⟩
   · have h := preT_gg_Q4 Ctx.normal Ctx.plain Ctx.right Ctx.unl (some (liftA 1 x)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · have h := preT_gg_Q5 Ctx (some (newA 0)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · have h := preT_gg_Q6 Ctx (some (liftA 1 x)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · have h := preT_gg_Q7 Ctx (some (newA 0)) (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd₀
     have h := preT_gg_D1 Ctx (some (liftA 1 x)) hd' (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t1] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
   · obtain ⟨d', hd', rfl⟩ := List.mem_map.1 hd₀
     have h := preT_gg_D2 Ctx (some (newA 0)) hd' (-cm * Γ.coeff)
-    exact ⟨by simpa [labW, t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
+    exact ⟨by simpa [labW, EO_t2] using h.1, Or.inl (labW_some_not_lf _ _ _ _ h.2.2)⟩
 
 end GGSpec
 
@@ -6963,8 +6967,8 @@ variable {k n : ℕ}
 private theorem base2_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) {j : ℕ}
     (hj : j ∈ Γ.edgeIdx x .minus true) (d : Coeff) :
-    Base2Data Γ x (⟨oBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
-      (⟨oBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
+    Base2Data Γ x (⟨EO_oBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
+      (⟨EO_oBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hxj, hyj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -6975,9 +6979,9 @@ private theorem base2_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
     cases hkj
   have hperm := eraseIdxs_two_perm hne Ctx.hL hej
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
-  have hbase : oBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] := by
-    unfold oBaseM; rw [hgetD]
+  have hbase : EO_oBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .minus) (newA 0) (liftA 1 ej.y)] := by
+    unfold EO_oBaseM; rw [hgetD]
   have h := preT_baseM Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp) d
   have hP := h.1
   simp only [labW, List.append_nil] at hP h
@@ -6985,16 +6989,16 @@ private theorem base2_baseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
   exact base2_of_shape Ctx.normal (eraseIdxs [i₁,
       j] Γ.comps) e₁ ej hperm i₁ j Ctx.hL hej hne e₁.y ej.y hy₁ hyj
     (by simp [hk₁, Kind.isSolid]) (by simp [hkj, Kind.isSolid]) (Or.inl ⟨hx₁, rfl⟩)
-    (Or.inl ⟨hxj, rfl⟩) (oSx x) (oGy e₁) (mkC (.G .minus) (newA 0) (liftA 1 ej.y))
-    ⟨oBaseM x Γ i₁ e₁ j, d⟩ hbase (by simp [oSx, mkC, Kind.isSolid])
-    (by simp [oGy, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
+    (Or.inl ⟨hxj, rfl⟩) (EO_oSx x) (EO_oGy e₁) (mkC (.G .minus) (newA 0) (liftA 1 ej.y))
+    ⟨EO_oBaseM x Γ i₁ e₁ j, d⟩ hbase (by simp [EO_oSx, mkC, Kind.isSolid])
+    (by simp [EO_oGy, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
     (Or.inl ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩) hP.dotOK hP.sl
 
 private theorem base2_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) {j : ℕ}
     (hj : j ∈ Γ.edgeIdx x .plus false) (d : Coeff) :
-    Base2Data Γ x (⟨oBaseP x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
-      (⟨oBaseP x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
+    Base2Data Γ x (⟨EO_oBaseP x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
+      (⟨EO_oBaseP x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
   obtain ⟨hk₁, hx₁, hy₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hyj, hxj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -7004,9 +7008,9 @@ private theorem base2_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
     exact hy₁ hyj
   have hperm := eraseIdxs_two_perm hne Ctx.hL hej
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
-  have hbase : oBaseP x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] := by
-    unfold oBaseP; rw [hgetD]
+  have hbase : EO_oBaseP x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_oGy e₁, mkC (.G .plus) (liftA 1 ej.x) (newA 0)] := by
+    unfold EO_oBaseP; rw [hgetD]
   have h := preT_baseP Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp) d
   have hP := h.1
   simp only [labW, List.append_nil] at hP h
@@ -7014,16 +7018,16 @@ private theorem base2_baseP {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
   exact base2_of_shape Ctx.normal (eraseIdxs [i₁,
       j] Γ.comps) e₁ ej hperm i₁ j Ctx.hL hej hne e₁.y ej.x hy₁ hxj
     (by simp [hk₁, Kind.isSolid]) (by simp [hkj, Kind.isSolid]) (Or.inl ⟨hx₁, rfl⟩)
-    (Or.inr ⟨hyj, rfl⟩) (oSx x) (oGy e₁) (mkC (.G .plus) (liftA 1 ej.x) (newA 0))
-    ⟨oBaseP x Γ i₁ e₁ j, d⟩ hbase (by simp [oSx, mkC, Kind.isSolid])
-    (by simp [oGy, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
+    (Or.inr ⟨hyj, rfl⟩) (EO_oSx x) (EO_oGy e₁) (mkC (.G .plus) (liftA 1 ej.x) (newA 0))
+    ⟨EO_oBaseP x Γ i₁ e₁ j, d⟩ hbase (by simp [EO_oSx, mkC, Kind.isSolid])
+    (by simp [EO_oGy, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
     (Or.inl ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩) hP.dotOK hP.sl
 
 private theorem base2_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) {j : ℕ}
     (hj : j ∈ Γ.edgeIdx x .minus false) (d : Coeff) :
-    Base2Data Γ x (⟨iBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
-      (⟨iBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
+    Base2Data Γ x (⟨EO_iBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)) ∧
+      (⟨EO_iBaseM x Γ i₁ e₁ j, d⟩ : Graph k (n + 1)).ord = Γ.ord := by
   obtain ⟨hk₁, hy₁, hx₁⟩ := Ctx.e₁spec
   obtain ⟨ej, hej, hkj, hyj, hxj⟩ := mem_edgeIdx.1 hj
   have hne : i₁ ≠ j := by
@@ -7034,9 +7038,9 @@ private theorem base2_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
     cases hkj
   have hperm := eraseIdxs_two_perm hne Ctx.hL hej
   have hgetD : Γ.comps.getD j e₁ = ej := by simp [List.getD_eq_getElem?_getD, hej]
-  have hbase : iBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
-      [oSx x, iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] := by
-    unfold iBaseM; rw [hgetD]
+  have hbase : EO_iBaseM x Γ i₁ e₁ j = liftCs 1 (eraseIdxs [i₁, j] Γ.comps) ++
+      [EO_oSx x, EO_iGw e₁, mkC (.G .minus) (liftA 1 ej.x) (newA 0)] := by
+    unfold EO_iBaseM; rw [hgetD]
   have h := preT_iBaseM Ctx hj none [] newOK_nil (by simp) (by simp) (by simp) (by simp) d
   have hP := h.1
   simp only [labW, List.append_nil] at hP h
@@ -7044,9 +7048,9 @@ private theorem base2_iBaseM {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : �
   exact base2_of_shape Ctx.normal (eraseIdxs [i₁,
       j] Γ.comps) e₁ ej hperm i₁ j Ctx.hL hej hne e₁.x ej.x hx₁ hxj
     (by simp [hk₁, Kind.isSolid]) (by simp [hkj, Kind.isSolid]) (Or.inr ⟨hy₁, rfl⟩)
-    (Or.inr ⟨hyj, rfl⟩) (oSx x) (iGw e₁) (mkC (.G .minus) (liftA 1 ej.x) (newA 0))
-    ⟨iBaseM x Γ i₁ e₁ j, d⟩ hbase (by simp [oSx, mkC, Kind.isSolid])
-    (by simp [iGw, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
+    (Or.inr ⟨hyj, rfl⟩) (EO_oSx x) (EO_iGw e₁) (mkC (.G .minus) (liftA 1 ej.x) (newA 0))
+    ⟨EO_iBaseM x Γ i₁ e₁ j, d⟩ hbase (by simp [EO_oSx, mkC, Kind.isSolid])
+    (by simp [EO_iGw, mkC, Kind.isSolid]) (by simp [mkC, Kind.isSolid])
     (Or.inr ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩) hP.dotOK hP.sl
 
 end Base2Fam
@@ -7289,11 +7293,11 @@ private theorem length_filterMap_of_some {α β : Type*} (f : α → Option β) 
 private theorem deg_eq_sum {C : ℕ} {Γ : Graph k n} (hN : Γ.Normal C) (x : Atom k n) :
     Γ.deg x = (Γ.edgeIdx x .plus true).length + (Γ.edgeIdx x .minus true).length +
       (Γ.edgeIdx x .plus false).length + (Γ.edgeIdx x .minus false).length := by
-  have hperm := eraseIdxs_pick_perm (oXIdx x Γ) Γ.comps
+  have hperm := eraseIdxs_pick_perm (EO_oXIdx x Γ) Γ.comps
   have hnd := oXIdx_nodup x Γ
-  have hpp := pickIdxs_perm (oXIdx x Γ) hnd Γ.comps
+  have hpp := pickIdxs_perm (EO_oXIdx x Γ) hnd Γ.comps
   rw [deg_eq_countP, ← hperm.countP_eq, List.countP_append]
-  have h0 : (eraseIdxs (oXIdx x Γ) Γ.comps).countP
+  have h0 : (eraseIdxs (EO_oXIdx x Γ) Γ.comps).countP
       (fun c => c.kind.isSolid && (c.x == x || c.y == x)) = 0 := by
     rw [List.countP_eq_zero]
     intro c hc hcon
@@ -7305,14 +7309,14 @@ private theorem deg_eq_sum {C : ℕ} {Γ : Graph k n} (hN : Γ.Normal C) (x : At
     rcases hxy with h | h
     · exact a h
     · exact b h
-  have hlen : (pickIdxs (oXIdx x Γ) Γ.comps).length = (oXIdx x Γ).length := by
+  have hlen : (pickIdxs (EO_oXIdx x Γ) Γ.comps).length = (EO_oXIdx x Γ).length := by
     rw [hpp.length_eq]
     apply length_filterMap_of_some
     intro i hi
     obtain ⟨c, hc, -⟩ := mem_oXIdx.1 hi
     exact ⟨c, hc⟩
-  have h1 : (pickIdxs (oXIdx x Γ) Γ.comps).countP
-      (fun c => c.kind.isSolid && (c.x == x || c.y == x)) = (oXIdx x Γ).length := by
+  have h1 : (pickIdxs (EO_oXIdx x Γ) Γ.comps).countP
+      (fun c => c.kind.isSolid && (c.x == x || c.y == x)) = (EO_oXIdx x Γ).length := by
     rw [← hlen, List.countP_eq_length]
     intro c hc
     obtain ⟨i, hi, hic⟩ := List.mem_filterMap.1 (hpp.subset hc)
@@ -7323,7 +7327,7 @@ private theorem deg_eq_sum {C : ℕ} {Γ : Graph k n} (hN : Γ.Normal C) (x : At
     rw [this]
     rcases hxy with ⟨h1', -⟩ | ⟨h1', -⟩ <;> simp [hk, Kind.isSolid, h1']
   rw [h0, h1]
-  simp only [oXIdx, List.length_append]
+  simp only [EO_oXIdx, List.length_append]
   omega
 
 end EdgeIdxConj
@@ -7505,7 +7509,7 @@ private theorem Classify.conj {C : ℕ} {Γ : Graph k n} {x : Atom k n} {T : Tra
 
 private theorem classify_oOut {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : OutCtx C x Γ i₁ is₂ e₁) :
-    ∀ t ∈ oOut x Γ i₁ is₂ e₁, Classify C Γ x t := by
+    ∀ t ∈ EO_oOut x Γ i₁ is₂ e₁, Classify C Γ x t := by
   intro t ht
   obtain ⟨hP, hc⟩ := oOut_spec Ctx t ht
   refine ⟨hP, ?_⟩
@@ -7527,7 +7531,7 @@ private theorem classify_oOut {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : 
 
 private theorem classify_iOut {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (Ctx : InCtx C x Γ i₁ is₂ e₁) :
-    ∀ t ∈ iOut x Γ i₁ is₂ e₁, Classify C Γ x t := by
+    ∀ t ∈ EO_iOut x Γ i₁ is₂ e₁, Classify C Γ x t := by
   intro t ht
   obtain ⟨hP, hc⟩ := iOut_spec Ctx t ht
   refine ⟨hP, ?_⟩
@@ -7549,8 +7553,8 @@ variable {k n : ℕ}
 
 private theorem multiEOut_eq {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (hOP : Γ.edgeIdx x .plus true = i₁ :: is₂)
-    (hL : Γ.comps[i₁]? = some e₁) (hX : Γ.xdotsAt x (oXIdx x Γ) = true) :
-    multiEOut x Γ = some (oOut x Γ i₁ is₂ e₁) := by
+    (hL : Γ.comps[i₁]? = some e₁) (hX : Γ.xdotsAt x (EO_oXIdx x Γ) = true) :
+    multiEOut x Γ = some (EO_oOut x Γ i₁ is₂ e₁) := by
   unfold multiEOut
   split
   · rename_i h
@@ -7567,13 +7571,13 @@ private theorem multiEOut_eq {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂
       rw [hL] at h2
       obtain rfl := Option.some.inj h2
       dsimp only
-      rw [ite_eq_right (by simpa [oXIdx] using hX)]
+      rw [ite_eq_right (by simpa [EO_oXIdx] using hX)]
       rfl
 
 private theorem multiEIn_eq {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ : List ℕ}
     {e₁ : Comp (Atom k n)} (hIP : Γ.edgeIdx x .plus false = i₁ :: is₂)
-    (hL : Γ.comps[i₁]? = some e₁) (hX : Γ.xdotsAt x (iXIdx x Γ) = true) :
-    multiEIn x Γ = some (iOut x Γ i₁ is₂ e₁) := by
+    (hL : Γ.comps[i₁]? = some e₁) (hX : Γ.xdotsAt x (EO_iXIdx x Γ) = true) :
+    multiEIn x Γ = some (EO_iOut x Γ i₁ is₂ e₁) := by
   unfold multiEIn
   split
   · rename_i h
@@ -7590,7 +7594,7 @@ private theorem multiEIn_eq {x : Atom k n} {Γ : Graph k n} {i₁ : ℕ} {is₂ 
       rw [hL] at h2
       obtain rfl := Option.some.inj h2
       dsimp only
-      rw [ite_eq_right (by simpa [iXIdx] using hX)]
+      rw [ite_eq_right (by simpa [EO_iXIdx] using hX)]
       rfl
 
 private theorem edge_of_idx {Γ : Graph k n} {x : Atom k n} {ch : Charge} {out : Bool} {i : ℕ}
@@ -7603,12 +7607,12 @@ private theorem multiEHat_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : �
     (hdeg : 1 ≤ Γ.deg x) :
     ∃ E, multiEHat x Γ = some E ∧ ∀ T ∈ E, Classify C Γ x T := by
   have hsum := deg_eq_sum hN x
-  have hXout : ∀ Γ' : Graph k n, Γ'.Normal C → Γ'.xdotsAt x (oXIdx x Γ') = true := by
+  have hXout : ∀ Γ' : Graph k n, Γ'.Normal C → Γ'.xdotsAt x (EO_oXIdx x Γ') = true := by
     intro Γ' hN'
     refine xdotsAt_of_normal hN' x _ fun j hj => ?_
     obtain ⟨c, hc, ch, hk, hxy⟩ := mem_oXIdx.1 hj
     exact ⟨c, hc, by simp [hk, Kind.isSolid], by rcases hxy with ⟨h, -⟩ | ⟨h, -⟩ <;> simp [h]⟩
-  have hXin : ∀ Γ' : Graph k n, Γ'.Normal C → Γ'.xdotsAt x (iXIdx x Γ') = true := by
+  have hXin : ∀ Γ' : Graph k n, Γ'.Normal C → Γ'.xdotsAt x (EO_iXIdx x Γ') = true := by
     intro Γ' hN'
     refine xdotsAt_of_normal hN' x _ fun j hj => ?_
     obtain ⟨c, hc, ch, hk, hxy, -⟩ := mem_iXIdx.1 hj
@@ -7625,10 +7629,10 @@ private theorem multiEHat_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : �
         obtain ⟨e₁, hL⟩ := edge_of_idx (x := x) (i := i₁) (ch := .minus) (out := false)
           (by rw [hIP]; exact List.mem_cons_self ..)
         have Ctx := InCtx.conj_of hN hP hx hU hIP hL h1 h2
-        have hX' : Γ.conj.xdotsAt x (iXIdx x Γ.conj) = true := hXin _ (Graph.conj_Normal hN)
+        have hX' : Γ.conj.xdotsAt x (EO_iXIdx x Γ.conj) = true := hXin _ (Graph.conj_Normal hN)
         have hIP' : Γ.conj.edgeIdx x .plus false = i₁ :: is₂ := by rw [edgeIdx_conj]; exact hIP
         have hL' : Γ.conj.comps[i₁]? = some e₁.conj := by simp [Graph.conj_comps, hL]
-        refine ⟨(iOut x Γ.conj i₁ is₂ e₁.conj).map (fun t => ⟨t.nOut, t.g.conj, t.f⟩), ?_, ?_⟩
+        refine ⟨(EO_iOut x Γ.conj i₁ is₂ e₁.conj).map (fun t => ⟨t.nOut, t.g.conj, t.f⟩), ?_, ?_⟩
         · simp [multiEHat, h1, h2, h3, h4, multiEIn_eq hIP' hL' hX', TExpansion.conj]
         · intro T hT
           obtain ⟨T₀, hT₀, rfl⟩ := List.mem_map.1 hT
@@ -7637,16 +7641,16 @@ private theorem multiEHat_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : �
         obtain ⟨e₁, hL⟩ := edge_of_idx (x := x) (i := i₁) (ch := .plus) (out := false)
           (by rw [hIP]; exact List.mem_cons_self ..)
         have Ctx : InCtx C x Γ i₁ is₂ e₁ := ⟨hN, hP, hx, hU, hIP, hL, h1, h2⟩
-        refine ⟨iOut x Γ i₁ is₂ e₁, ?_, classify_iOut Ctx⟩
+        refine ⟨EO_iOut x Γ i₁ is₂ e₁, ?_, classify_iOut Ctx⟩
         simp [multiEHat, h1, h2, h3, multiEIn_eq hIP hL (hXin Γ hN)]
     · obtain ⟨i₁, is₂, hOP⟩ := List.exists_cons_of_ne_nil h2
       obtain ⟨e₁, hL⟩ := edge_of_idx (x := x) (i := i₁) (ch := .minus) (out := true)
         (by rw [hOP]; exact List.mem_cons_self ..)
       have Ctx := OutCtx.conj_of hN hP hx hU hOP hL
-      have hX' : Γ.conj.xdotsAt x (oXIdx x Γ.conj) = true := hXout _ (Graph.conj_Normal hN)
+      have hX' : Γ.conj.xdotsAt x (EO_oXIdx x Γ.conj) = true := hXout _ (Graph.conj_Normal hN)
       have hOP' : Γ.conj.edgeIdx x .plus true = i₁ :: is₂ := by rw [edgeIdx_conj]; exact hOP
       have hL' : Γ.conj.comps[i₁]? = some e₁.conj := by simp [Graph.conj_comps, hL]
-      refine ⟨(oOut x Γ.conj i₁ is₂ e₁.conj).map (fun t => ⟨t.nOut, t.g.conj, t.f⟩), ?_, ?_⟩
+      refine ⟨(EO_oOut x Γ.conj i₁ is₂ e₁.conj).map (fun t => ⟨t.nOut, t.g.conj, t.f⟩), ?_, ?_⟩
       · simp [multiEHat, h1, h2, multiEOut_eq hOP' hL' hX', TExpansion.conj]
       · intro T hT
         obtain ⟨T₀, hT₀, rfl⟩ := List.mem_map.1 hT
@@ -7655,7 +7659,7 @@ private theorem multiEHat_spec {C : ℕ} {x : Atom k n} {Γ : Graph k n} (hN : �
     obtain ⟨e₁, hL⟩ := edge_of_idx (x := x) (i := i₁) (ch := .plus) (out := true)
       (by rw [hOP]; exact List.mem_cons_self ..)
     have Ctx : OutCtx C x Γ i₁ is₂ e₁ := ⟨hN, hP, hx, hU, hOP, hL⟩
-    refine ⟨oOut x Γ i₁ is₂ e₁, ?_, classify_oOut Ctx⟩
+    refine ⟨EO_oOut x Γ i₁ is₂ e₁, ?_, classify_oOut Ctx⟩
     simp [multiEHat, h1, multiEOut_eq hOP hL (hXout Γ hN)]
 
 end HatSpec
@@ -7779,24 +7783,24 @@ variable {k n : ℕ}
 private theorem main0_gg {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' : Comp (Atom k n)}
     (Ctx : GGCtx C x Γ i j e e') (hxy : e'.x = e.y) (d : Coeff)
     (hP : PreT C Γ.ord x
-      ⟨n, ⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩, id⟩) :
-    Main0Data Γ.deg x e.y ⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ ∧
+      ⟨n, ⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩, id⟩) :
+    Main0Data Γ.deg x e.y ⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ ∧
       Γ.GGShapeAt x e.y := by
   obtain ⟨he_k, he_x, he_y⟩ := Ctx.espec
   obtain ⟨he'_k, he'_y, he'_x⟩ := Ctx.e'spec
-  have hg : (⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps =
-      ggF Γ i j ++ [mkC (.weight .plus) e.y e.y, mkC (.waved .plus) x e.y] := by
-    simp [ggMain, hxy, solidC]
-  have hΓ : ∀ v, Γ.deg v = (ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == v || c.y == v)) +
+  have hg : (⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps =
+      EO_ggF Γ i j ++ [mkC (.weight .plus) e.y e.y, mkC (.waved .plus) x e.y] := by
+    simp [EO_ggMain, hxy, solidC]
+  have hΓ : ∀ v, Γ.deg v = (EO_ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == v || c.y == v)) +
       [e, e'].countP (fun c => c.kind.isSolid && (c.x == v || c.y == v)) := by
     intro v
     rw [deg_eq_countP, ← Ctx.perm.countP_eq, List.countP_append]
-  have hg' : ∀ v, (⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).deg v =
-      (ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == v || c.y == v)) := by
+  have hg' : ∀ v, (⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).deg v =
+      (EO_ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == v || c.y == v)) := by
     intro v
     rw [deg_eq_countP, hg, List.countP_append]
     simp [mkC, Kind.isSolid]
-  have hx0 : (ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == x || c.y == x)) = 0 := by
+  have hx0 : (EO_ggF Γ i j).countP (fun c => c.kind.isSolid && (c.x == x || c.y == x)) = 0 := by
     rw [List.countP_eq_zero]
     intro c hc
     cases hs : c.kind with
@@ -7808,8 +7812,8 @@ private theorem main0_gg {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {
   have hdeg : Γ.deg x = 2 := by
     rw [hΓ x, hx0]
     simp [he_k, he'_k, Kind.isSolid, he_x, he'_y]
-  have hpart : ∀ c ∈ (⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps,
-      c.kind.isSolid = true → c ∈ ggF Γ i j := by
+  have hpart : ∀ c ∈ (⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps,
+      c.kind.isSolid = true → c ∈ EO_ggF Γ i j := by
     intro c hc hs
     rw [hg] at hc
     rcases List.mem_append.1 hc with h | h
@@ -7827,9 +7831,9 @@ private theorem main0_gg {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {
       have hcΓ : c ∈ Γ.comps := mem_eraseIdxs_of_mem hcF
       have hold : ∀ c ∈ Γ.comps, c.kind.isRandom = false →
           c.map (id : Atom k n → Atom k n) ∈
-            (⟨ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps := by
+            (⟨EO_ggMain Γ i j e e' ++ [mkC (.waved .plus) x e.y], d⟩ : Graph k n).comps := by
         intro c hc hr
-        have hcF : c ∈ ggF Γ i j ++ [e, e'] := Ctx.perm.symm.subset hc
+        have hcF : c ∈ EO_ggF Γ i j ++ [e, e'] := Ctx.perm.symm.subset hc
         rw [hg]
         rcases List.mem_append.1 hcF with h | h
         · refine List.mem_append_left _ ?_
@@ -7904,7 +7908,7 @@ private theorem ClassifyGG.conj {C : ℕ} {Γ : Graph k n} {x : Atom k n} {T : T
 
 private theorem classify_ggOut {C : ℕ} {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' : Comp (Atom
     k n)}
-    (Ctx : GGCtx C x Γ i j e e') : ∀ t ∈ ggOut x Γ i j e e', ClassifyGG C Γ x t := by
+    (Ctx : GGCtx C x Γ i j e e') : ∀ t ∈ EO_ggOut x Γ i j e e', ClassifyGG C Γ x t := by
   intro t ht
   obtain ⟨hP, hc⟩ := ggOut_spec Ctx t ht
   refine ⟨hP, ?_⟩
@@ -7962,7 +7966,7 @@ private theorem ggPos_eq {x : Atom k n} {Γ : Graph k n} {i j : ℕ} {e e' : Com
     (hdeg : Γ.deg x = 2) (hPO : Γ.edgeIdx x .plus true = [i])
     (hPI : Γ.edgeIdx x .plus false = [j]) (hi : Γ.comps[i]? = some e)
     (hj : Γ.comps[j]? = some e') (hX : Γ.xdotsAt x [i, j] = true) :
-    ggPos x Γ = some (ggOut x Γ i j e e') := by
+    ggPos x Γ = some (EO_ggOut x Γ i j e e') := by
   unfold ggPos
   rw [ite_eq_right (by simp [hdeg]), hPO, hPI]
   simp only [hi, hj]
@@ -8170,7 +8174,7 @@ theorem ggLemma (k n C : ℕ) (x y y' : Atom k n) (Γ : Graph k n) :
       rcases hm with rfl | rfl
       · exact ⟨e, hi, by simp [Ctx.espec.1, Kind.isSolid], Or.inl Ctx.espec.2.1⟩
       · exact ⟨e', hj, by simp [Ctx.e'spec.1, Kind.isSolid], Or.inr Ctx.e'spec.2.1⟩
-    have hE : oGGT x Γ = (ggOut x Γ i j e e').bind (fun _ g => oDotT g) := by
+    have hE : oGGT x Γ = (EO_ggOut x Γ i j e e').bind (fun _ g => oDotT g) := by
       unfold oGGT
       rw [ite_eq_right (by simp [hpl]), ggPos_eq hdeg hO hI hi hj hX]
     rw [hE]
@@ -8201,7 +8205,7 @@ theorem ggLemma (k n C : ℕ) (x y y' : Atom k n) (Γ : Graph k n) :
       rw [ite_eq_right (by simp [hdeg])]
       have : Γ.edgeIdx x .plus true = [] := hO'
       rw [this]
-    have hE : oGGT x Γ = (ggOut x Γ.conj i j e.conj e'.conj).conj.bind (fun _ g => oDotT g) := by
+    have hE : oGGT x Γ = (EO_ggOut x Γ.conj i j e.conj e'.conj).conj.bind (fun _ g => oDotT g) := by
       unfold oGGT
       rw [ite_eq_right (by simp [hpl]), hnone]
       simp only

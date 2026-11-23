@@ -1,5 +1,10 @@
-import RBM8D.Kernel.InfSymbol
-import RBM8D.Kernel.Circulant
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.Bounds
+public import RBM8D.Kernel.InfSymbol
+public import RBM8D.Kernel.Circulant
+
+@[expose] public section
 
 /-!
 # Shell kernels and decay on `ℤ^d`

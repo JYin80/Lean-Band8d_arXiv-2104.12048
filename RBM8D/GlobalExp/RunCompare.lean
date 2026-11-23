@@ -1,6 +1,30 @@
-import RBM8D.GlobalExp.TerminationC2
-import RBM8D.TExp.Closure
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.TerminationC2
+public import RBM8D.TExp.Closure
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Graph.Local.EdgeOrder
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.GlobalExp.TerminationB
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import RBM8D.TExp.Second
+import all RBM8D.Graph.Local.EdgeOrder
+import all RBM8D.Graph.Local.DotNorm
+import all RBM8D.GlobalExp.RunClauses
+import all RBM8D.GlobalExp.TerminationB
+import all RBM8D.GlobalExp.Termination
+import all RBM8D.GlobalExp.TerminationC2
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.GlobalGoodRows
+import all RBM8D.TExp.Closure
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # [II, (6.8)–(6.9)]: the run of the selector as a function, and the comparison of runs
@@ -1538,7 +1562,7 @@ end Steps
 
 section Main
 
-private theorem RunCompare_exists {𝔈 : QFam} {n D : ℕ} {𝒯 : TRec}
+theorem RunCompare_exists {𝔈 : QFam} {n D : ℕ} {𝒯 : TRec}
     (h : 3 ≤ n ∧ (∃ Sig, 𝒯.IsTExpStruct Sig (n - 1) D) ∧ QExpFamilyStmt 𝔈) :
     ∃ F, SelRunB n D 𝒯 𝔈 TerminationC_sel (h2Rec.A ++ h2Rec.Q) F ∧
       ∀ g ∈ F, TerminationC_Out n D g := by

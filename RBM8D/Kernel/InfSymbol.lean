@@ -1,6 +1,11 @@
-import RBM8D.Kernel.Lattice
-import RBM8D.Kernel.Dyadic
-import RBM8D.Kernel.Circulant
+module
+
+public import Mathlib.Analysis.Calculus.SmoothSeries
+public import RBM8D.Kernel.Lattice
+public import RBM8D.Kernel.Dyadic
+public import RBM8D.Kernel.Circulant
+
+@[expose] public section
 
 /-!
 # The symbol of an `InfKernel`

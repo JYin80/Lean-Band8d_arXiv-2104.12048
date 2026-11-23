@@ -1,8 +1,14 @@
-import Batteries.Tactic.OpenPrivate
-import RBM8D.Diffusion.ErrBound
-import RBM8D.Bound.Doubly
-import RBM8D.Bound.KeySum
-import RBM8D.Graph.DotBlocks
+module
+
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Diffusion.ErrBound
+public import RBM8D.Bound.Doubly
+public import RBM8D.Bound.KeySum
+public import RBM8D.Graph.DotBlocks
+import all RBM8D.Diffusion.ErrBound
+import all RBM8D.Bound.Doubly
+
+@[expose] public section
 
 /-!
 # The forms of [I, (8.20)]: the bounds with one or two fixed atoms

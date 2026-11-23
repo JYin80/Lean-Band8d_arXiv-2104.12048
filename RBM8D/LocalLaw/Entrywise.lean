@@ -1,7 +1,11 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.Prob.Net
-import RBM8D.Prob.PartialPoly
-import RBM8D.Profile.Decay
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.Prob.Net
+public import RBM8D.Prob.PartialPoly
+public import RBM8D.Profile.Decay
+
+@[expose] public section
 
 /-!
 # The entrywise bound on `T` [II, Lemma 7.4] = [I, Lemma 5.4]: base case

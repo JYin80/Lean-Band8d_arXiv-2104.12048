@@ -1,5 +1,9 @@
-import RBM8D.SelfEnergy.Entrywise
-import RBM8D.SelfEnergy.Step
+module
+
+public import RBM8D.SelfEnergy.Entrywise
+public import RBM8D.SelfEnergy.Step
+
+@[expose] public section
 
 /-!
 # The renormalized self-energies of [I, Def 8.2]

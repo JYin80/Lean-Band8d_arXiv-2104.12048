@@ -1,4 +1,31 @@
-import RBM8D.GlobalExp.TerminationK
+module
+
+public import RBM8D.GlobalExp.TerminationK
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.GlobalExp.TerminationB
+public import RBM8D.GlobalExp.TerminationC
+public import RBM8D.GlobalExp.GlobalGoodB
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.GlobalExp.Local
+public import RBM8D.Graph.MolCarry
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.TExp.Second
+public import RBM8D.TExp.Closure
+import all RBM8D.GlobalExp.RunClauses
+import all RBM8D.GlobalExp.TerminationK
+import all RBM8D.GlobalExp.TerminationB
+import all RBM8D.GlobalExp.TerminationC
+import all RBM8D.GlobalExp.GlobalGoodB
+import all RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.Termination
+import all RBM8D.GlobalExp.Local
+import all RBM8D.Graph.MolCarry
+import all RBM8D.Graph.Local.DotNorm
+import all RBM8D.TExp.Second
+import all RBM8D.TExp.Closure
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.8] in the block reading: the run of a selector ends

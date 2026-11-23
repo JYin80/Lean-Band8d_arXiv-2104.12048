@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml v0.4, for Palomar (https://palomar-registry.org/).
+version: "v0.4"
+
+project:
+  name: "Delocalization and quantum diffusion of random band matrices in high dimensions"
+  description: >-
+    A Lean 4 / Mathlib proof of the main results of Yang, Yau and Yin, "Delocalization and quantum
+    diffusion of random band matrices in high dimensions I: Self-energy renormalization"
+    (arXiv:2104.12048), proved together with part "II: T-expansion" (arXiv:2107.05795). The model
+    is the Gaussian random band matrix on the torus Z_L^d with band width W and a variance profile
+    given by a symmetric Schwartz function, for L^{c_1} <= W <= L^{1-c_0}. For every dimension
+    d >= 8: Theorem 1.3 of part I (weak delocalization of the bulk eigenvectors, (1.12) and
+    (1.13)), Theorem 1.4 (the local law (1.19), down to eta = W^2 / L^{2-eps}), and Theorem 1.5
+    with Corollaries 1.6 and 1.7 (quantum diffusion: the expansion of E T_{xy} and E|G_{xy}|^2
+    with the renormalized diffusive matrix, the bounds on the self-energies, and the diffusion
+    approximation in Fourier space). No result of another work is assumed; every result that the
+    papers use is proved in the library from Mathlib.
+  authors:
+    - "Jun Yin"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Jun Yin"
+
+classification:
+  arxiv: ["math.PR", "math-ph"]
+  msc2020: ["60B20", "15B52", "82B44"]
+
+sources:
+  - title: "Delocalization and quantum diffusion of random band matrices in high dimensions I: Self-energy renormalization"
+    authors:
+      - "Fan Yang"
+      - "Horng-Tzer Yau"
+      - "Jun Yin"
+    id: "arXiv:2104.12048"
+    type: "paper"
+    location: "https://arxiv.org/abs/2104.12048"
+    relationship: "formalizes"
+    note: >-
+      The Lean code follows the revised version paper/I/band_Part_I.pdf in this repository;
+      theorem and equation numbers in docs/PAPER-VS-LEAN.md refer to it. Jun Yin, a co-author of
+      the paper, is the author of the formalization.
+    license: "unknown"
+    author_endorsement: "not-contacted"
+  - title: "Delocalization and quantum diffusion of random band matrices in high dimensions II: T-expansion"
+    authors:
+      - "Fan Yang"
+      - "Horng-Tzer Yau"
+      - "Jun Yin"
+    id: "arXiv:2107.05795"
+    type: "paper"
+    location: "https://arxiv.org/abs/2107.05795"
+    relationship: "formalizes"
+    note: >-
+      Part II contains the proofs on which the main results of part I rest. The Lean code follows
+      the revised version paper/II/arxiv.pdf in this repository, whose Sections 7-9 differ from
+      the arXiv version.
+    license: "unknown"
+    author_endorsement: "not-contacted"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Formalized: the five main results of part I, as three Lean statements: Theorem 1.3, Theorem
+    1.4, and Theorem 1.5 with Corollaries 1.6 and 1.7 (one statement, because the corollaries use
+    the same self-energies and local correction as the theorem), for every d >= 8, together with
+    the results of parts I and II on which they rest. Not in the Lean statement: the
+    infinite-space limit of the self-energies ([I, Definition 2.13 (iii)]), which is an internal
+    object of the proof. docs/PAPER-VS-LEAN.md, Sections 1 and 2.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1", "claude-fable-5-2"]
+      framework: "Claude Code"
+      tool_setup: >-
+        AI-assisted: a team of Claude Code agents (a dispatcher, workers on ticket worktrees and
+        reviewing agents) wrote the Lean code and the comparison documents from the papers'
+        sources, under the direction of Jun Yin, who fixed the endpoint statements. The port to
+        the Lean module system and the Challenge/Solution files for Palomar were also written with
+        Claude.
+      cost:
+        wall_time: "about 164 hours of active work between 2026-10-25 and 2026-11-05 (537 commits in the work repository; the run was paused for long stretches in between)"
+        spend_usd: "not tracked"
+        hardware: "local machine"
+      prompting_notes: "n/a"
+  spend_usd: "not tracked"
+  notes: >-
+    The mathematical sources are two papers by Fan Yang, Horng-Tzer Yau and Jun Yin. The Lean
+    proofs were produced by AI agents; the statements of the main theorems and of the definitions
+    they use were fixed and checked by Jun Yin against the papers.
+
+fidelity:
+  divergences: >-
+    (1) "L sufficiently large" is a threshold L_0 that depends on the constants only. (2) The
+    probability bounds are stated for the failure events, as outer measures. (3) Theorem 1.3:
+    the failure events quantify over all orthonormal eigenbases and all unit eigenvectors, and
+    one L_0 serves all l in [W, L^{1-c_0}] (stronger than the printed statement). (4) Theorem 1.5
+    and Corollaries 1.6, 1.7 are one statement; (1.25) is stated for all z, and the statement
+    holds for every M. (5) The profile assumption is slightly more general than Assumption 1.2.
+    (6) Some internal steps take a different form from the papers. Details:
+    docs/PAPER-VS-LEAN.md, Sections 2 and 3.
+
+review:
+  status: "agent-reviewed"
+  reviewers: []
+  notes: >-
+    The Lean proof of each ticket was audited by a separate auditing agent, and a supervising
+    agent checked the final statements. Jun Yin checked the statements of the main theorems and
+    of the definitions they use against the papers. No independent human review has been
+    performed.
+
+alignment:
+  namespace: "RBM8D"
+  statements:
+    - source: "Part I, Theorem 1.3, (1.12)-(1.13)"
+      lean: "RBM8D.theorem_1_3"
+      module: "Challenge"
+      status: "proved"
+      note: "Proved in Solution.lean by RBM8D.thm13."
+    - source: "Part I, Theorem 1.4, (1.19)"
+      lean: "RBM8D.theorem_1_4"
+      module: "Challenge"
+      status: "proved"
+      note: "Proved by RBM8D.localLaw."
+    - source: "Part I, Theorem 1.5, Corollaries 1.6 and 1.7"
+      lean: "RBM8D.theorem_1_5"
+      module: "Challenge"
+      status: "proved"
+      note: "Proved by RBM8D.quantumDiffusion."
+
+acknowledgements: "Mathlib and the Lean community; Lean 4 (Lean FRO); Claude Code (Anthropic)."

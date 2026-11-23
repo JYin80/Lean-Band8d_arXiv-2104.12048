@@ -1,6 +1,11 @@
-import RBM8D.AvgBound.Defs
-import RBM8D.LocalLaw.QTerm
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.AvgBound.Defs
+public import RBM8D.LocalLaw.QTerm
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.LocalLaw.QTerm
+
+@[expose] public section
 
 /-!
 # The vanishing of `Q`-graphs in expectation

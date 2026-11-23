@@ -1,6 +1,10 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.Graph.QExp.PSteps
-import RBM8D.Graph.ValueLemmas
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.Graph.QExp.PSteps
+public import RBM8D.Graph.ValueLemmas
+
+@[expose] public section
 
 /-!
 # The error of the `T`-equation: the decomposition [I, (8.20)]

@@ -1,4 +1,21 @@
-import RBM8D.SelfEnergy.VR1Graph
+module
+
+public import RBM8D.SelfEnergy.VR1Graph
+public import RBM8D.Bound.ChainInf
+public import RBM8D.Bound.Chain
+public import RBM8D.SelfEnergy.RenormDiff
+public import RBM8D.SelfEnergy.InfBound
+public import RBM8D.Bound.AuxTreeZ
+public import RBM8D.SelfEnergy.ValZ
+import all RBM8D.Bound.ChainInf
+import all RBM8D.SelfEnergy.VR1Graph
+import all RBM8D.Bound.Chain
+import all RBM8D.SelfEnergy.RenormDiff
+import all RBM8D.SelfEnergy.InfBound
+import all RBM8D.Bound.AuxTreeZ
+import all RBM8D.SelfEnergy.ValZ
+
+@[expose] public section
 
 /-!
 # [I, Lemma 8.5]: the row sums of the self-energies on the torus against `ℤ^d`
@@ -1104,6 +1121,7 @@ private theorem VR1_tailD {c₁ η b : ℝ} {W : ℝ} (hc₁ : 0 < c₁) (hW : 1
     _ ≤ b ^ (-((d : ℝ) - 4)) * (η * W ^ (-4 : ℝ) * W ^ (-1 : ℝ)) := by gcongr
     _ = _ := by ring
 
+set_option maxHeartbeats 1000000 in
 /-- **The `Θ` factor.** The lift `θ` of the torus `Θ` cut at `R = ⌊L/(4(n+2))⌋` against `Θ_∞`:
 `|θ(α) − Θ_∞(α)| ≤ 2 η W^{-4} ⟨α⟩^{-(d-4-δ)}` and `≤ η W^δ W^{-4} ⟨α⟩^{-(d-4)}` for all
 `α ∈ ℤ^d` (for `|α| ≤ R` by [I, Lemma 7.2], beyond by `|Θ_∞(α)| ≤ W^{-2} ⟨α⟩^{-(d-2-δ')}` and
@@ -2653,6 +2671,7 @@ private theorem VR1_compVal_waved0 (P : Profile d) (W : ℕ) (K : KerInf d) (E :
   subst hc
   cases w <;> simp [ValZ.compVal, ValZ.rec, VR1Graph_wZ, hx, hy]
 
+set_option maxHeartbeats 1000000 in
 /-- **A diagonal graph without internal atom** on the torus and on `ℤ^d`: its value at `x = y = 0`
 is the coefficient times the product of its factors at offset `0`; with the factor comparisons
 (waved: `VR1Graph_wavedZ`; `Θ` edges: `(chain)` at `u = v = 0`; the coefficient: `m(z) → m(E)`),

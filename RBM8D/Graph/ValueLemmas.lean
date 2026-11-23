@@ -1,4 +1,8 @@
-import RBM8D.Graph.Value
+module
+
+public import RBM8D.Graph.Value
+
+@[expose] public section
 
 /-!
 # Value lemmas

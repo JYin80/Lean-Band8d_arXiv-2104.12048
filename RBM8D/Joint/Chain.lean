@@ -1,5 +1,9 @@
-import RBM8D.Joint.Words
-import RBM8D.TExp.Second
+module
+
+public import RBM8D.Joint.Words
+public import RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # The labelled `Θ` edge at `⊗` and the identity of the solved `T`-equation

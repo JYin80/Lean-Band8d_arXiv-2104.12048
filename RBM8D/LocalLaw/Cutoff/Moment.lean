@@ -1,9 +1,24 @@
-import RBM8D.LocalLaw.Cutoff.Defs
-import RBM8D.LocalLaw.Moment
-import RBM8D.LocalLaw.LabelPaths
-import RBM8D.LocalLaw.QTermOf
-import RBM8D.SelfEnergy.Lem512Zero
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.LocalLaw.Cutoff.Defs
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.LocalLaw.LabelPaths
+public import RBM8D.LocalLaw.QTermOf
+public import RBM8D.SelfEnergy.Lem512Zero
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.SelfEnergy.Lem512
+public import RBM8D.LocalLaw.QTerm
+public import RBM8D.Bound.Chain
+public import RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.LocalLaw.Moment
+import all RBM8D.SelfEnergy.Lem512
+import all RBM8D.LocalLaw.QTerm
+import all RBM8D.LocalLaw.QTermOf
+import all RBM8D.Bound.Chain
+import all RBM8D.SelfEnergy.Lem512Zero
+import all RBM8D.LocalLaw.LabelRemoval
+
+@[expose] public section
 
 /-!
 # The cutoff moment bound

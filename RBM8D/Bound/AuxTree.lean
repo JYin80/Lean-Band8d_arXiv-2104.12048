@@ -1,12 +1,16 @@
-import RBM8D.TExp.Defs
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.ZdCancel
-import RBM8D.Profile.Symbol
-import RBM8D.Input.Entry
-import RBM8D.Input.Sizes
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import RBM8D.Bound.KeySum
+module
+
+public import RBM8D.TExp.Defs
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.ZdCancel
+public import RBM8D.Profile.Symbol
+public import RBM8D.Input.Entry
+public import RBM8D.Input.Sizes
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import RBM8D.Bound.KeySum
+
+@[expose] public section
 
 /-!
 # Auxiliary graphs with a black and a blue spanning tree ([I, Claim 6.11])
@@ -550,9 +554,9 @@ section Elim
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- The edge `e` meets `v` in exactly one endpoint. -/
-private def Inc (v : V) (e : V × V) : Prop := (e.1 = v ∧ e.2 ≠ v) ∨ (e.2 = v ∧ e.1 ≠ v)
+def Inc (v : V) (e : V × V) : Prop := (e.1 = v ∧ e.2 ≠ v) ∨ (e.2 = v ∧ e.1 ≠ v)
 
-private instance (v : V) (e : V × V) : Decidable (Inc v e) := by unfold Inc; infer_instance
+instance (v : V) (e : V × V) : Decidable (Inc v e) := by unfold Inc; infer_instance
 
 /-- The endpoint of `e` other than `v`. -/
 private def oth (v : V) (e : V × V) : V := if e.1 = v then e.2 else e.1
@@ -996,6 +1000,7 @@ private theorem stF_nonneg {β : V → (V → Zd d L) → ℝ} (hβ0 : ∀ v g, 
   mul_nonneg (mul_nonneg (bProd_nonneg _ _) (Finset.prod_nonneg fun v _ => hβ0 v g))
     (boxF_nonneg _ _ _)
 
+set_option maxHeartbeats 1000000 in
 /-- Summing the vertices of `S` one at a time, the one of largest rank first: the sum of the
 summand of a state is at most `M^n` times the product of the single-vertex bounds times the bound
 `Φ` of the final edges. -/

@@ -1,7 +1,11 @@
-import RBM8D.Graph.Transpose
-import RBM8D.Graph.QExp.Defs
-import RBM8D.Graph.Local.EdgeOrder
-import RBM8D.Graph.Local.Doubly
+module
+
+public import RBM8D.Graph.Transpose
+public import RBM8D.Graph.QExp.Defs
+public import RBM8D.Graph.Local.EdgeOrder
+public import RBM8D.Graph.Local.Doubly
+
+@[expose] public section
 
 /-!
 # The transposed `GG` expansion
@@ -1011,16 +1015,16 @@ section Instances
 /-! ### Decidability on atomic graphs -/
 
 /-- Adjacency in the graph of waved and dotted components is decidable. -/
-private instance instDecAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance instDecAdjMolT {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
 /-- Being in one molecule is decidable. -/
-private instance instDecSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance instDecSameMolT {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
-      @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjMol Γ) u v
+      @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjMolT Γ) u v
     inferInstanceAs (Decidable (u = v ∨
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 

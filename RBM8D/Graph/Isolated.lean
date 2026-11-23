@@ -1,4 +1,8 @@
-import RBM8D.Graph.Molecule
+module
+
+public import RBM8D.Graph.Molecule
+
+@[expose] public section
 
 /-!
 # The molecular multigraph and isolated subsets

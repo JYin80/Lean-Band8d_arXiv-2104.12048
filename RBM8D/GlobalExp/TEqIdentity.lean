@@ -1,5 +1,9 @@
-import RBM8D.GlobalExp.TEqShape
-import RBM8D.Graph.ValueLemmas
+module
+
+public import RBM8D.GlobalExp.TEqShape
+public import RBM8D.Graph.ValueLemmas
+
+@[expose] public section
 
 /-!
 # The identity [II, (3.5)] of the construction of [II, (6.8)] and the classes of its correction graphs
@@ -127,17 +131,17 @@ private theorem TEqIdentity_sum2 {ι : Type} [Fintype ι] [DecidableEq ι] {N m 
   simp only [Fintype.sum_prod_type]
 
 /-- The first recollision term of [II, (4.15)]: `s_{⊗α} w⁺_α Ḡ_{α⊖} 1_{α = ⊕} 1_{α ≠ ⊖}`. -/
-private def TEqIdentity_T1 : List (Comp (Atom 3 1)) :=
+def TEqIdentity_T1 : List (Comp (Atom 3 1)) :=
   [mkC (.waved .s) (.inl 0) (.inr 0), mkC (.weight .plus) (.inr 0) (.inr 0),
     mkC (.G .minus) (.inr 0) (.inl 2), mkC .dot (.inr 0) (.inl 1), mkC .xdot (.inr 0) (.inl 2)]
 
 /-- The second recollision term of [II, (4.15)]: `s_{⊗α} G_{α⊕} w⁻_α 1_{α ≠ ⊕} 1_{α = ⊖}`. -/
-private def TEqIdentity_T2 : List (Comp (Atom 3 1)) :=
+def TEqIdentity_T2 : List (Comp (Atom 3 1)) :=
   [mkC (.waved .s) (.inl 0) (.inr 0), mkC (.G .plus) (.inr 0) (.inl 1),
     mkC (.weight .minus) (.inr 0) (.inr 0), mkC .xdot (.inr 0) (.inl 1), mkC .dot (.inr 0) (.inl 2)]
 
 /-- The third recollision term of [II, (4.15)]: `s_{⊗α} w⁺_α w⁻_α 1_{α = ⊕} 1_{α = ⊖}`. -/
-private def TEqIdentity_T3 : List (Comp (Atom 3 1)) :=
+def TEqIdentity_T3 : List (Comp (Atom 3 1)) :=
   [mkC (.waved .s) (.inl 0) (.inr 0), mkC (.weight .plus) (.inr 0) (.inr 0),
     mkC (.weight .minus) (.inr 0) (.inr 0), mkC .dot (.inr 0) (.inl 1), mkC .dot (.inr 0) (.inl 2)]
 
@@ -1205,7 +1209,7 @@ variable {N M m : ℕ} (x y α : Fin N) (e : Fin m ≃ {a : Fin N // a ≠ x ∧
   (ψ : Atom 2 m → Atom 3 M)
 
 /-- The new internal atom `α'` of a correction graph: the atom `α` of the substituted term. -/
-private abbrev TEqIdentity_αc : Atom 3 (M + 1) := .inr (Fin.natAdd M 0)
+abbrev TEqIdentity_αc : Atom 3 (M + 1) := .inr (Fin.natAdd M 0)
 
 /-- The atom of the host `Θ_{⊗x} 𝒮_{xy}` at an internal atom of the output graph other than `α`:
 `x`, `y` and `e j` go to the images under `ψ` of the atoms `0`, `1`, `j` of `𝒮`. -/

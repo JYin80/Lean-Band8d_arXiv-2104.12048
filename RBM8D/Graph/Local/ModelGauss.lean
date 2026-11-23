@@ -1,5 +1,9 @@
-import RBM8D.Prob.PartialPoly
-import RBM8D.Graph.Local.Model
+module
+
+public import RBM8D.Prob.PartialPoly
+public import RBM8D.Graph.Local.Model
+
+@[expose] public section
 
 /-!
 # The Gaussian instance of the model relations

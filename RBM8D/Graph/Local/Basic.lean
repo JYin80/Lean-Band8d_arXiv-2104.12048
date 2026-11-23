@@ -1,9 +1,13 @@
-import RBM8D.Graph.Order
-import RBM8D.Graph.Value
-import RBM8D.Graph.Molecule
-import RBM8D.Graph.Regular
-import RBM8D.Basic.Minor
-import RBM8D.Basic.Semicircle
+module
+
+public import RBM8D.Graph.Order
+public import RBM8D.Graph.Value
+public import RBM8D.Graph.Molecule
+public import RBM8D.Graph.Regular
+public import RBM8D.Basic.Minor
+public import RBM8D.Basic.Semicircle
+
+@[expose] public section
 
 /-!
 # Local expansions: basic objects

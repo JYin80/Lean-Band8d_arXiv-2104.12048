@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Fourier.AddCircleMulti
-import Mathlib.Analysis.PSeries
-import RBM8D.Profile.Basic
+module
+
+public import Mathlib.Analysis.Fourier.AddCircleMulti
+public import Mathlib.Analysis.PSeries
+public import RBM8D.Profile.Basic
+
+@[expose] public section
 
 /-!
 # Poisson summation on `ℝ^d`

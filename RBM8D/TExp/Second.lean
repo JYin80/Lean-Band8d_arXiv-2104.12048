@@ -1,4 +1,8 @@
-import RBM8D.TExp.Defs
+module
+
+public import RBM8D.TExp.Defs
+
+@[expose] public section
 
 /-!
 # The second order `T`-expansion
@@ -14,16 +18,16 @@ namespace RBM8D.Graphs
 
 section Helpers
 
-private instance instDecTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
+instance instDecTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
   inferInstanceAs (Decidable (_ = true))
 
-private instance instDecAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
+instance instDecAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-private instance instDecLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
+instance instDecLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
   inferInstanceAs (Decidable (∀ c ∈ Γ.comps, c.label = none))
 
-private instance instDecIsQGraph {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
+instance instDecIsQGraph {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
   inferInstanceAs (Decidable (∃ u : Atom k n, (∃ c ∈ Γ.comps, c.label = some (.Q, u)) ∧
     ∀ c ∈ Γ.comps, (c.kind.isRandom = true ∨ c.label.isSome = true) → c.label = some (.Q, u)))
 
@@ -69,7 +73,7 @@ private theorem h2Rec_shape (N : ℕ) (hN : N = 1 ∨ N = 2) (D : ℕ) : h2Rec.S
     doublyConnected_of_spans_empty _ hs⟩
 
 /-- [II, Def 3.3 (4)] with the bound `C` on the size of `𝒢`. -/
-private def ThetaRootedC {n : ℕ} (C : ℕ) (Γ : Graph 3 n) : Prop :=
+def ThetaRootedC {n : ℕ} (C : ℕ) (Γ : Graph 3 n) : Prop :=
   ∃ (j : Fin Γ.comps.length) (v : Atom 3 n), v ≠ .inl 0 ∧
     Γ.comps[j].kind = .theta [] ∧ Γ.comps[j].minor = [] ∧ Γ.comps[j].label = none ∧
     (Γ.comps[j].x = .inl 0 ∧ Γ.comps[j].y = v) ∧
@@ -78,7 +82,7 @@ private def ThetaRootedC {n : ℕ} (C : ℕ) (Γ : Graph 3 n) : Prop :=
     ((Γ.dropComp j).rootGraph v).2.Normal C
 
 set_option synthInstance.maxSize 512 in
-private instance instDecThetaRootedC {n : ℕ} (C : ℕ) (Γ : Graph 3 n) :
+instance instDecThetaRootedC {n : ℕ} (C : ℕ) (Γ : Graph 3 n) :
     Decidable (ThetaRootedC C Γ) := by
   unfold ThetaRootedC
   infer_instance
@@ -171,18 +175,18 @@ private theorem h2TEq_solvePM : h2TEq.solvePM 2 = h2Rec := by
   simp only [TEqRec.solvePM, TEqRec.solveLow, hQ]
   rfl
 
-private instance Second_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance Second_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 
-private instance Second_decColourInv' {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInv' := by
+instance Second_decColourInv' {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInv' := by
   unfold Graph.ColourInv'; infer_instance
 
-private instance Second_decColourInvB {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInvB := by
+instance Second_decColourInvB {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ColourInvB := by
   unfold Graph.ColourInvB; infer_instance
 
 set_option synthInstance.maxSize 4000 in
-private instance Second_decExtClause {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ExtClause := by
+instance Second_decExtClause {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.ExtClause := by
   unfold Graph.ExtClause Graph.HasDiffToPinned Graph.DiffToPinned; infer_instance
 
 /-- A molecular multigraph without proper isolated subset of its internal vertices has all its
@@ -193,13 +197,13 @@ private theorem Second_mis_eq {V E : Type} (G : MGraph V E) (h : ∀ Q, ¬ G.IsP
   unfold MGraph.MIS
   exact Finset.filter_true_of_mem fun v _ P hP => absurd hP (h P)
 
-private instance Second_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
+instance Second_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
   unfold Graph.NoLabDot; infer_instance
 
-private instance Second_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
+instance Second_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
   unfold Graph.RgCheck; infer_instance
 
-private instance Second_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance Second_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))

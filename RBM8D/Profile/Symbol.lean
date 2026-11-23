@@ -1,8 +1,12 @@
-import RBM8D.Profile.Poisson
-import RBM8D.Profile.Norm
-import RBM8D.Profile.Density
-import RBM8D.Profile.Decay
-import RBM8D.Kernel.PropagatorSymbol
+module
+
+public import RBM8D.Profile.Poisson
+public import RBM8D.Profile.Norm
+public import RBM8D.Profile.Density
+public import RBM8D.Profile.Decay
+public import RBM8D.Kernel.PropagatorSymbol
+
+@[expose] public section
 
 /-!
 # The symbol hypothesis of [I, Lemma 2.2] for `S_{W,L}`

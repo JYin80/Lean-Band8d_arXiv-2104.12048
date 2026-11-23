@@ -1,4 +1,8 @@
-import RBM8D.Graph.MolOps
+module
+
+public import RBM8D.Graph.MolOps
+
+@[expose] public section
 
 /-!
 # Merging molecules

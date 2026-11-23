@@ -1,6 +1,10 @@
-import RBM8D.Graph.QExp.SelRoundsCoh
-import RBM8D.Graph.QExp.SelStep1Coh
-import RBM8D.GlobalExp.QFamily
+module
+
+public import RBM8D.Graph.QExp.SelRoundsCoh
+public import RBM8D.Graph.QExp.SelStep1Coh
+public import RBM8D.GlobalExp.QFamily
+
+@[expose] public section
 
 /-!
 # The family of `Q`-expansions of [II, Lemma 4.15] with deterministic choices
@@ -629,15 +633,15 @@ section SelRunInstances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance SelRun_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance SelRun_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance SelRun_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance SelRun_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (SelRun_decAdjDot Γ) u v
 
-private instance SelRun_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance SelRun_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.IsQFormAt u) := by
   unfold Graph.IsQFormAt; infer_instance
 

@@ -1,7 +1,19 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.Diffusion.Fourier
-import RBM8D.SelfEnergy.MainCancel
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.Diffusion.Fourier
+public import RBM8D.SelfEnergy.MainCancel
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.SelfEnergy.Lem512Zero
+public import RBM8D.LocalLaw.Entrywise
+public import RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.SelfEnergy.Lem512Zero
+import all RBM8D.SelfEnergy.MainCancel
+import all RBM8D.LocalLaw.Entrywise
+import all RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.Diffusion.Fourier
+
+@[expose] public section
 
 /-!
 # The expectation of a graph of `Err` from the local law

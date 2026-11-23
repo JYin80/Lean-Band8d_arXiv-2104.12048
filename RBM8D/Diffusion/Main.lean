@@ -1,7 +1,21 @@
-import Batteries.Tactic.OpenPrivate
-import RBM8D.Diffusion.LocalCorr
-import RBM8D.Diffusion.Fourier
-import RBM8D.Diffusion.SelfEnergy
+module
+
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Diffusion.LocalCorr
+public import RBM8D.Diffusion.Fourier
+public import RBM8D.Diffusion.SelfEnergy
+public import RBM8D.Diffusion.Singular
+public import RBM8D.Diffusion.DiagMean
+public import RBM8D.Bound.Doubly
+public import RBM8D.Diffusion.ErrMain
+import all RBM8D.Diffusion.LocalCorr
+import all RBM8D.Diffusion.Singular
+import all RBM8D.Diffusion.DiagMean
+import all RBM8D.Bound.Doubly
+import all RBM8D.Diffusion.ErrMain
+import all RBM8D.Diffusion.Fourier
+
+@[expose] public section
 
 /-!
 # Quantum diffusion: [I, Theorem 1.5], [I, Corollary 1.6] and [I, Corollary 1.7]
@@ -768,6 +782,7 @@ end Fraction
 
 section Cor17
 
+set_option maxHeartbeats 1000000 in
 /-- **[I, Corollary 1.7]** for the local correction `𝒢^{(M)}` of an `n`-th order `T`-equation
 (`n ≥ 4`, error order `n + 2`), from [I, (1.22)], [I, (1.29)] in the form of `Main_part2`'s
 conclusion, [I, (1.28)] and [I, (1.33)]: (1.35) with `e₁ = 𝒢̂(p)` and (1.36) with

@@ -1,11 +1,15 @@
-import RBM8D.Prob.Model
-import RBM8D.Prob.StochDom
-import RBM8D.Prob.Partial
-import RBM8D.Basic.Minor
-import RBM8D.Basic.Domain
-import RBM8D.Basic.Semicircle
-import RBM8D.Profile.Basic
-import RBM8D.Input.GT
+module
+
+public import RBM8D.Prob.Model
+public import RBM8D.Prob.StochDom
+public import RBM8D.Prob.Partial
+public import RBM8D.Basic.Minor
+public import RBM8D.Basic.Domain
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Profile.Basic
+public import RBM8D.Input.GT
+
+@[expose] public section
 
 /-!
 # The diagonal input estimate [I, (5.3)] and the local law at `η = 1`

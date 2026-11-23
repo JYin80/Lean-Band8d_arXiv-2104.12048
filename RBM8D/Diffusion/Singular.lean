@@ -1,6 +1,10 @@
-import RBM8D.Diffusion.Rooting
-import RBM8D.Prob.PartialPoly
-import RBM8D.Graph.Local.ModelGauss
+module
+
+public import RBM8D.Diffusion.Rooting
+public import RBM8D.Prob.PartialPoly
+public import RBM8D.Graph.Local.ModelGauss
+
+@[expose] public section
 
 /-!
 # The identity of [I, Corollary 1.6] at a singular variance matrix
@@ -393,7 +397,7 @@ private theorem identity_of_det_ne (Sig : ℕ → Expansion 2) (n D : ℕ) (𝒬
 
 /-- A family of data records along a filter whose `m`, minors of `G` and remaining auxiliary
 fields are constant and whose `S`, `S^±`, `Θ` and self-energy matrices converge. -/
-private structure DLim (l : Filter ℝ) (D : ℝ → Data ι) (D0 : Data ι) : Prop where
+structure DLim (l : Filter ℝ) (D : ℝ → Data ι) (D0 : Data ι) : Prop where
   m : ∀ ε, (D ε).m = D0.m
   Gm : ∀ ε, (D ε).Gm = D0.Gm
   S : Tendsto (fun ε => (D ε).S) l (𝓝 D0.S)

@@ -1,12 +1,16 @@
-import RBM8D.GlobalExp.Local
-import RBM8D.Graph.QExp.Main
-import RBM8D.Graph.QExp.Clauses
-import RBM8D.Graph.QExp.FlatSchur
-import RBM8D.Graph.QExp.FlatSplit
-import RBM8D.Graph.Local.Strategy
-import RBM8D.TExp.Second
-import RBM8D.Graph.Local.DotNorm
-import RBM8D.Graph.Local.SolidMono
+module
+
+public import RBM8D.GlobalExp.Local
+public import RBM8D.Graph.QExp.Main
+public import RBM8D.Graph.QExp.Clauses
+public import RBM8D.Graph.QExp.FlatSchur
+public import RBM8D.Graph.QExp.FlatSplit
+public import RBM8D.Graph.Local.Strategy
+public import RBM8D.TExp.Second
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.Graph.Local.SolidMono
+
+@[expose] public section
 
 /-!
 # The global expansion strategy in the block reading: definitions and statements

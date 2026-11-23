@@ -1,7 +1,11 @@
-import RBM8D.SelfEnergy.Contract
-import RBM8D.Bound.GraphSum
-import RBM8D.Graph.QExp.PSteps
-import RBM8D.Graph.QExp.SelRun
+module
+
+public import RBM8D.SelfEnergy.Contract
+public import RBM8D.Bound.GraphSum
+public import RBM8D.Graph.QExp.PSteps
+public import RBM8D.Graph.QExp.SelRun
+
+@[expose] public section
 
 /-!
 # Contraction of the dotted edges of a self-energy graph

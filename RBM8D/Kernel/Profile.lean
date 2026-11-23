@@ -1,13 +1,17 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Topology.Instances.Matrix
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Prob.StochDom
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Prob.StochDom
+
+@[expose] public section
 
 /-!
 # Profile hypotheses

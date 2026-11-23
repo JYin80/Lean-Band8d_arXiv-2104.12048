@@ -1,6 +1,11 @@
-import RBM8D.Graph.Syntax
-import Mathlib.Data.Matrix.Mul
-import Mathlib.LinearAlgebra.Matrix.Notation
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Graph.Syntax
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.LinearAlgebra.Matrix.Notation
+
+@[expose] public section
 
 /-!
 # Values of atomic graphs
@@ -14,72 +19,6 @@ open scoped BigOperators
 
 namespace RBM8D.Graphs
 /-! ## Values -/
-
-/-- The data a value reads ([I, Def 2.6, Def 6.3]; [II, §4.4, (6.3), Def 9.4]), over a finite
-index type `ι`: `m`; the minors `Gm T = G^{(T)}` of the resolvent (`Gm ∅ = G`); `S`, `S⁺`, `S⁻`;
-`Θ`; the self-energy matrices `Sig o = Σ_o` of labelled `Θ` edges; `Θ^{(n)}_err`; the ghost
-factor `W²/L²`; auxiliary matrices. The relations between the fields are properties of the
-random band matrix model, not of this record. -/
-structure Data (ι : Type*) where
-  m : ℂ
-  Gm : Finset ι → Matrix ι ι ℂ
-  S : Matrix ι ι ℂ
-  Sp : Matrix ι ι ℂ
-  Sm : Matrix ι ι ℂ
-  Theta : Matrix ι ι ℂ
-  Sig : ℕ → Matrix ι ι ℂ
-  ThetaErr : ℕ → ℕ → Matrix ι ι ℂ
-  ghost : ℂ
-  aux : ℕ → Matrix ι ι ℂ
-
-/-- The chain `Θ Σ_{o₁} Θ ⋯ Σ_{o_l} Θ` of [I, (6.11)] = [II, (2.10)]. -/
-def Data.chain {ι : Type*} [Fintype ι] (D : Data ι) (o : List ℕ) : Matrix ι ι ℂ :=
-  o.foldl (fun M l => M * D.Sig l * D.Theta) D.Theta
-
-/-- The charge applied to a complex number: identity for `plus`, conjugation for `minus`. -/
-def Charge.apply : Charge → ℂ → ℂ
-  | .plus, z => z
-  | .minus, z => star z
-
-/-- The factor of one component at the labelling `σ` of the atoms. -/
-def Comp.val {ι V : Type*} [Fintype ι] [DecidableEq ι] (D : Data ι) (σ : V → ι)
-    (c : Comp V) : ℂ :=
-  let g : Matrix ι ι ℂ := D.Gm (c.minor.map σ).toFinset
-  let a := σ c.x
-  let b := σ c.y
-  match c.kind with
-  | .G ch => ch.apply (g a b)
-  | .weight ch => ch.apply (g a a)
-  | .light ch => ch.apply (g a a - D.m)
-  | .inv ch => ch.apply (g a a)⁻¹
-  | .wD ch d =>
-      ch.apply ((g a a)⁻¹ - D.m⁻¹ * ∑ j ∈ Finset.range (d + 1), (-(g a a - D.m) / D.m) ^ j)
-  | .waved .s => D.S a b
-  | .waved .plus => D.Sp a b
-  | .waved .minus => D.Sm a b
-  | .theta o => D.chain o a b
-  | .thetaErr n d => D.ThetaErr n d a b
-  | .ghost => D.ghost
-  | .aux j _ _ => D.aux j a b
-  | .dot => if a = b then 1 else 0
-  | .xdot => if a = b then 0 else 1
-
-/-- The product of the coefficient and of all component factors at the labelling `σ`. -/
-def Graph.term {k n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι] (Γ : Graph k n) (D : Data ι)
-    (σ : Atom k n → ι) : ℂ :=
-  Γ.coeff.eval D.m * (Γ.comps.map (Comp.val D σ)).prod
-
-/-- The value of a graph read without its `P`/`Q` labels ([I, Def 2.9] for a graph without
-labels): the sum over the labels `s` of the internal atoms of `term`, the external atoms being
-labelled by `e`. -/
-def Graph.val {k n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι] (Γ : Graph k n) (D : Data ι)
-    (e : Fin k → ι) : ℂ :=
-  ∑ s : Fin n → ι, Γ.term D (Sum.elim e s)
-
-/-- The value of a formal sum without labels: the sum of the values of its terms. -/
-def Expansion.val {k : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι] (E : Expansion k)
-    (D : Data ι) (e : Fin k → ι) : ℂ :=
-  (E.map fun g => g.2.val D e).sum
 
 /-- A family of conditional expectations `P_x`, `x ∈ ι`, on random variables `Ω → ℂ`
 ([I, §1.4]: `P_x` is the expectation over the `x`-th row and column of `H`). -/

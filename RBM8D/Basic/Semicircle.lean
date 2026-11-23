@@ -1,5 +1,10 @@
-import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+@[expose] public section
 
 /-!
 # The semicircle Stieltjes transform
@@ -48,23 +53,9 @@ theorem norm_mE {E : ℝ} (hE : |E| ≤ 2) : ‖mE E‖ = 1 := by
   have := norm_nonneg (mE E)
   nlinarith
 
-/-- A chosen square root of `z² - 4`. -/
-noncomputable def mscDisc (z : ℂ) : ℂ :=
-  Classical.choose (IsAlgClosed.exists_pow_nat_eq (k := ℂ) (z ^ 2 - 4) (n := 2) (by norm_num))
-
 theorem mscDisc_sq (z : ℂ) : mscDisc z ^ 2 = z ^ 2 - 4 :=
   Classical.choose_spec
     (IsAlgClosed.exists_pow_nat_eq (k := ℂ) (z ^ 2 - 4) (n := 2) (by norm_num))
-
-/-- The root `(-z + √(z² - 4)) / 2` of `m² + z m + 1 = 0`. -/
-noncomputable def mscRoot₁ (z : ℂ) : ℂ := (-z + mscDisc z) / 2
-
-/-- The root `(-z - √(z² - 4)) / 2` of `m² + z m + 1 = 0`. -/
-noncomputable def mscRoot₂ (z : ℂ) : ℂ := (-z - mscDisc z) / 2
-
-/-- The Stieltjes transform `m(z)` of the semicircle law, [I, (1.15)]: the root of
-`m² + z m + 1 = 0` with positive imaginary part when `Im z > 0`. -/
-noncomputable def msc (z : ℂ) : ℂ := if 0 < (mscRoot₁ z).im then mscRoot₁ z else mscRoot₂ z
 
 theorem msc_mul (z : ℂ) : msc z * (msc z + z) = -1 := by
   have hd := mscDisc_sq z

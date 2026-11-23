@@ -1,5 +1,9 @@
-import RBM8D.SelfEnergy.Renorm
-import RBM8D.AvgBound.GhostSize
+module
+
+public import RBM8D.SelfEnergy.Renorm
+public import RBM8D.AvgBound.GhostSize
+
+@[expose] public section
 
 /-!
 # [I, Lemma 8.3]: the renormalized self-energies are close to the self-energies

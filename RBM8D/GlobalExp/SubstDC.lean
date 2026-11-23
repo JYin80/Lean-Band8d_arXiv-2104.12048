@@ -1,5 +1,9 @@
-import RBM8D.GlobalExp.Strategy
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # [II, Lemma 5.7] and [II, Lemma 6.5 (5)] in the block reading

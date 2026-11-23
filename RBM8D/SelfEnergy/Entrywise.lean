@@ -1,5 +1,9 @@
-import RBM8D.SelfEnergy.ContractShape
-import RBM8D.SelfEnergy.Diag
+module
+
+public import RBM8D.SelfEnergy.ContractShape
+public import RBM8D.SelfEnergy.Diag
+
+@[expose] public section
 
 /-!
 # The entrywise bound for `Σ_n`

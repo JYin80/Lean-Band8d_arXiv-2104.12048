@@ -1,13 +1,18 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Topology.Instances.Matrix
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Prob.StochDom
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Prob.StochDom
+
+@[expose] public section
 
 /-!
 # Fourier analysis on `Z_L^d`
@@ -26,16 +31,8 @@ namespace RBM8D
 
 variable {d L : ℕ}
 
-/-- The character `x ↦ e^{i p·x}` of `Z_L^d` at the frequency `p = 2πk/L`. -/
-def zchar [NeZero L] (k x : Zd d L) : ℂ := ∏ i, ZMod.stdAddChar (k i * x i)
-
 /-- The discrete Fourier transform `f̂(k) = Σ_x e^{i p·x} f(x)`, `p = 2πk/L`. -/
 def zdft [NeZero L] (f : Zd d L → ℂ) (k : Zd d L) : ℂ := ∑ x, zchar k x * f x
-
-/-- The frequency `p = 2πk/L ∈ T_L^d` of [I, (1.30)], with each `k_i` taken in `(−L/2, L/2]`
-as in [I, (1.2)]. -/
-def zfreq (k : Zd d L) : EuclideanSpace ℝ (Fin d) :=
-  WithLp.toLp 2 fun i => 2 * Real.pi * ((k i).valMinAbs : ℝ) / L
 
 /-- The characters of `Z_L^d` are additive in the space variable. -/
 theorem zchar_add :

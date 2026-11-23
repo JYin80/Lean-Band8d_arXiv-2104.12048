@@ -1,12 +1,20 @@
-import RBM8D.SelfEnergy.ContractShape
-import RBM8D.SelfEnergy.Step
-import RBM8D.Bound.DoublyDet
-import RBM8D.Bound.ChainInf
-import RBM8D.Bound.AuxTreeZ
-import RBM8D.Kernel.ShellKernel
-import RBM8D.Kernel.Sinf
-import RBM8D.Profile.Density
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.SelfEnergy.ContractShape
+public import RBM8D.SelfEnergy.Step
+public import RBM8D.Bound.DoublyDet
+public import RBM8D.Bound.ChainInf
+public import RBM8D.Bound.AuxTreeZ
+public import RBM8D.Kernel.ShellKernel
+public import RBM8D.Kernel.Sinf
+public import RBM8D.Profile.Density
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.SelfEnergy.Contract
+import all RBM8D.Bound.DoublyDet
+import all RBM8D.SelfEnergy.Contract
+import all RBM8D.SelfEnergy.ContractShape
+
+@[expose] public section
 
 /-!
 # Values of deterministic graphs on `ℤ^d` ([I, Def 7.1, Cor 7.6, Def 8.2])
@@ -717,6 +725,7 @@ private theorem ValZ_final {Wr t CK Wx QR A B Wo e τ : ℝ} (hW : 1 ≤ Wr) (hW
     _ = (Wr ^ (τ / 4) * Wr ^ (τ / 4) * Wr ^ (-(τ / 2))) * (Wo * B * t ^ (-(e - τ))) := by ring
     _ = _ := by rw [hone, one_mul]
 
+set_option maxHeartbeats 1000000 in
 /-- [I, Cor 7.6] on `ℤ^d` for one family `k` of label kernels satisfying
 [I, (2.13), (2.14), (2.16)]: the bound holds uniformly in `|E| < 2 − κ`. The black and blue lists
 of components of the doubly connected internal form are spanning trees; each component is

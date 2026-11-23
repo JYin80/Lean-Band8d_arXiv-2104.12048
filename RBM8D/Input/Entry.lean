@@ -1,10 +1,15 @@
-import RBM8D.Prob.Model
-import RBM8D.Prob.StochDom
-import RBM8D.Prob.Partial
-import RBM8D.Basic.Minor
-import RBM8D.Basic.Domain
-import RBM8D.Basic.Semicircle
-import RBM8D.Profile.Basic
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Prob.Model
+public import RBM8D.Prob.StochDom
+public import RBM8D.Prob.Partial
+public import RBM8D.Basic.Minor
+public import RBM8D.Basic.Domain
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Profile.Basic
+
+@[expose] public section
 
 /-!
 # Entry bounds from the Schur complement formula
@@ -24,13 +29,6 @@ namespace RBM8D
 section Entry
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-/-- `G_{xy} − δ_{xy} m`. -/
-def entryErr (G : Matrix ι ι ℂ) (m : ℂ) (x y : ι) : ℂ := G x y - if x = y then m else 0
-
-/-- `T_{xy} = |m|² Σ_α s_{xα} |G_{αy}|²` ([I, (1.21)]). -/
-def Tvar (S : Matrix ι ι ℝ) (G : Matrix ι ι ℂ) (m : ℂ) (x y : ι) : ℝ :=
-  ‖m‖ ^ 2 * ∑ α, S x α * ‖G α y‖ ^ 2
 
 /-- The column form `|m|² Σ_α s_{xα} |G_{yα}|²`, which is `T_{xy}` at `z̄`. -/
 def TvarCol (S : Matrix ι ι ℝ) (G : Matrix ι ι ℂ) (m : ℂ) (x y : ι) : ℝ :=
@@ -199,7 +197,6 @@ theorem offDiagDet :
   have := mul_le_mul_of_nonneg_left hle (sq_nonneg ‖m‖)
   nlinarith [mul_le_mul_of_nonneg_left this (by positivity : (0 : ℝ) ≤ 16 * Φ)]
 
-
 /-- The column form: under the hypotheses of `offDiagDet` with the column large deviation
 bound, `|G_{ji}|² ≤ 16 Φ |m|² Σ_α s_{iα} |G_{jα}|²` for `i ≠ j`. -/
 theorem offDiagColDet :
@@ -258,7 +255,6 @@ theorem offDiagColDet :
   unfold TvarCol
   have := mul_le_mul_of_nonneg_left hle (sq_nonneg ‖m‖)
   nlinarith [mul_le_mul_of_nonneg_left this (by positivity : (0 : ℝ) ≤ 16 * Φ)]
-
 
 section Instances
 

@@ -1,15 +1,19 @@
-import RBM8D.TExp.Defs
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.ZdCancel
-import RBM8D.Profile.Symbol
-import RBM8D.Input.Entry
-import RBM8D.Input.Sizes
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import RBM8D.Bound.Norm
-import RBM8D.Bound.Chain
-import RBM8D.TExp.Closure
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
+module
+
+public import RBM8D.TExp.Defs
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.ZdCancel
+public import RBM8D.Profile.Symbol
+public import RBM8D.Input.Entry
+public import RBM8D.Input.Sizes
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import RBM8D.Bound.Norm
+public import RBM8D.Bound.Chain
+public import RBM8D.TExp.Closure
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+
+@[expose] public section
 
 /-!
 # Absolute values of graphs and the internal form
@@ -291,12 +295,12 @@ theorem two_le_ord :
 section Instances
 
 /-- Adjacency in the graph of all components is decidable. -/
-private instance instDecAdjEdgeGraph {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
+instance instDecAdjEdgeGraph {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.x = u ∧ c.y = v) ∨ (∃ c ∈ Γ.comps, c.x = v ∧ c.y = u))))
 
 /-- Adjacency in the graph of waved and diffusive components is decidable. -/
-private instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
+instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.wavedThetaGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
@@ -305,28 +309,28 @@ private instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
         c.x = v ∧ c.y = u))))
 
 /-- Adjacency in the graph of waved and dotted components is decidable. -/
-private instance instDecAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance instDecAdjMolA {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
 /-- Being in one molecule is decidable. -/
-private instance instDecSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance instDecSameMolA {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
-      @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjMol Γ) u v
+      @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjMolA Γ) u v
     inferInstanceAs (Decidable (u = v ∨
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 
 /-- Adjacency in a net is decidable. -/
-private instance instDecAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance instDecAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     DecidableRel (Γ.net B).Adj :=
   fun a b => inferInstanceAs (Decidable (a ≠ b ∧
     ((Γ.SameMol (.inr a) (.inr b) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr a ∧ Γ.comps[i].y = .inr b) ∨
       (Γ.SameMol (.inr b) (.inr a) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr b ∧ Γ.comps[i].y = .inr a))))
 
 /-- Regularity with a given bound is decidable. -/
-private instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Regular C) :=
+instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Regular C) :=
   haveI : DecidableRel Γ.edgeGraph.Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjEdgeGraph Γ)
   haveI : DecidableRel Γ.wavedThetaGraph.Reachable :=
@@ -340,14 +344,14 @@ private instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidab
 
 set_option synthInstance.maxSize 1024 in
 /-- Normal regularity with a given bound is decidable. -/
-private instance instDecNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Normal C) :=
+instance instDecNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Normal C) :=
   inferInstanceAs (Decidable (Γ.Regular C ∧ (∀ c ∈ Γ.comps, c.kind.isSolid = true → c.x ≠ c.y) ∧
     ∀ u v : Atom k n, u ≠ v →
       ((∃ c ∈ Γ.comps, c.kind = .xdot ∧ (c.x = u ∧ c.y = v ∨ c.x = v ∧ c.y = u)) ↔
         (∃ c ∈ Γ.comps, c.kind.isSolid = true ∧ (c.x = u ∧ c.y = v ∨ c.x = v ∧ c.y = u)))))
 
 /-- Spanning the internal molecules is decidable. -/
-private instance instDecSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance instDecSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     Decidable (Γ.Spans B) :=
   haveI : DecidableRel (Γ.net B).Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjNet Γ B)

@@ -1,5 +1,9 @@
-import RBM8D.Graph.QExp.SelStep2
-import RBM8D.Graph.QExp.SelStep1
+module
+
+public import RBM8D.Graph.QExp.SelStep2
+public import RBM8D.Graph.QExp.SelStep1
+
+@[expose] public section
 
 /-!
 # The rounds of [II, Lemma 4.15] with deterministic choices

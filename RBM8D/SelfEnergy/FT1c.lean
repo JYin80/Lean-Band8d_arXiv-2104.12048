@@ -1,7 +1,16 @@
-import RBM8D.SelfEnergy.VR2
-import RBM8D.SelfEnergy.FT1b
-import Batteries.Tactic.OpenPrivate
-import Mathlib.MeasureTheory.Function.Floor
+module
+
+public import RBM8D.SelfEnergy.VR2
+public import RBM8D.SelfEnergy.FT1b
+public import Batteries.Tactic.OpenPrivate
+public import Mathlib.MeasureTheory.Function.Floor
+public import RBM8D.SelfEnergy.FT1a
+public import RBM8D.SelfEnergy.ValZ
+import all RBM8D.SelfEnergy.FT1a
+import all RBM8D.SelfEnergy.FT1b
+import all RBM8D.SelfEnergy.ValZ
+
+@[expose] public section
 
 /-!
 # [I, (8.8)]: the scaling of the row sum `R(E, W)` ([I, (7.29)] → [I, (7.30)])
@@ -3056,6 +3065,7 @@ private theorem FT1c_labelOK_mono {N N' : ℕ} (h : N ≤ N') {o : List ℕ} (ho
   simp only [Bool.and_eq_true, decide_eq_true_eq] at this ⊢
   exact ⟨⟨this.1.1, le_trans this.1.2 h⟩, this.2⟩
 
+set_option maxHeartbeats 1000000 in
 /-- **The scaling of the momentum form of one graph of `Σ_l`** ([I, (7.29)] → [I, (7.30)] with
 `q = k/W`): for a momentum form `G` of a graph of `Σ_l` (`FT1b.MomGraph.Spec`) whose labelled `Θ`
 edges read `Σ̊^∞` of orders with `W`-free forms `Φ̊`, there is `δ > 0` with

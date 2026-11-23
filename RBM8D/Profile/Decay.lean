@@ -1,5 +1,9 @@
-import RBM8D.Profile.Norm
-import RBM8D.Profile.Density
+module
+
+public import RBM8D.Profile.Norm
+public import RBM8D.Profile.Density
+
+@[expose] public section
 
 /-!
 # [I, (1.8)]–[I, (1.10)]

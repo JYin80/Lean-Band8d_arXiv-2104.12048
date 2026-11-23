@@ -1,4 +1,8 @@
-import RBM8D.LocalLaw.Primed
+module
+
+public import RBM8D.LocalLaw.Primed
+
+@[expose] public section
 
 /-!
 # The cutoff-moment argument for the local law: definitions and statements

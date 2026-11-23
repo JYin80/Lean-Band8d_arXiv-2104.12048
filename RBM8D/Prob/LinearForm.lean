@@ -1,6 +1,10 @@
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.Independence.InfinitePi
-import Mathlib.Probability.HasLaw
+module
+
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.HasLaw
+
+@[expose] public section
 
 /-!
 # Linear forms of independent Gaussians; conditioning on an independent block

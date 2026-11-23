@@ -1,10 +1,24 @@
-import Batteries.Tactic.OpenPrivate
-import RBM8D.Diffusion.ErrMain
-import RBM8D.Diffusion.DiagMean
-import RBM8D.Diffusion.Singular
-import RBM8D.Diffusion.ModelSymm
-import RBM8D.SelfEnergy.Entrywise
-import RBM8D.SelfEnergy.MainCancel
+module
+
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Diffusion.ErrMain
+public import RBM8D.Diffusion.DiagMean
+public import RBM8D.Diffusion.Singular
+public import RBM8D.Diffusion.ModelSymm
+public import RBM8D.SelfEnergy.Entrywise
+public import RBM8D.SelfEnergy.MainCancel
+public import RBM8D.Diffusion.ErrBound
+public import RBM8D.Bound.Doubly
+public import RBM8D.LocalLaw.Moment
+import all RBM8D.Diffusion.ErrBound
+import all RBM8D.Diffusion.Singular
+import all RBM8D.Bound.Doubly
+import all RBM8D.SelfEnergy.MainCancel
+import all RBM8D.LocalLaw.Moment
+import all RBM8D.Diffusion.ErrMain
+import all RBM8D.Diffusion.DiagMean
+
+@[expose] public section
 
 /-!
 # The local correction: [I, (1.28)]

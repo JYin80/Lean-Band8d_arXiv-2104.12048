@@ -1,6 +1,10 @@
-import RBM8D.GlobalExp.Strategy
-import RBM8D.Bound.GraphAbs
-import RBM8D.Graph.QExp.MolMono
+module
+
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.Bound.GraphAbs
+public import RBM8D.Graph.QExp.MolMono
+
+@[expose] public section
 
 /-!
 # The family of `Q`-expansions as a hypothesis
@@ -74,19 +78,19 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance QFamily_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance QFamily_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance QFamily_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance QFamily_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (QFamily_decAdjDot Γ) u v
 
-private instance QFamily_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance QFamily_decIsQFormAt {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.IsQFormAt u) := by
   unfold Graph.IsQFormAt; infer_instance
 
-private instance QFamily_decUnlabelledFreeAtBlock {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance QFamily_decUnlabelledFreeAtBlock {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.UnlabelledFreeAtBlock u) := by
   unfold Graph.UnlabelledFreeAtBlock; infer_instance
 

@@ -1,6 +1,10 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Kernel.Decay
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Kernel.Decay
+
+@[expose] public section
 
 /-!
 # The high moment bound [II, Lemma 8.1]: auxiliary facts

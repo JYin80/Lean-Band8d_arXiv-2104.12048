@@ -1,4 +1,8 @@
-import RBM8D.Basic.Resolvent
+module
+
+public import RBM8D.Basic.Resolvent
+
+@[expose] public section
 
 /-!
 # Resolvent minors and the Schur complement formula

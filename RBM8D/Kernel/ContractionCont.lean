@@ -1,4 +1,8 @@
-import RBM8D.Kernel.Profile
+module
+
+public import RBM8D.Kernel.Profile
+
+@[expose] public section
 
 /-!
 # The continuum contraction

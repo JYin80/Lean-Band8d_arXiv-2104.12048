@@ -1,5 +1,12 @@
-import RBM8D.GlobalExp.RunCompare
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.RunCompare
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.TExp.Second
+import all RBM8D.TExp.Second
+import all RBM8D.GlobalExp.RunCompare
+
+@[expose] public section
 
 /-!
 # The `n`-th order `T`-equation read off the run of [II, Strategy 6.6]: the construction and `Σ_n`

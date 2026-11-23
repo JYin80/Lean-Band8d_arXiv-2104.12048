@@ -1,4 +1,8 @@
-import RBM8D.LocalLaw.Cutoff.Defs
+module
+
+public import RBM8D.LocalLaw.Cutoff.Defs
+
+@[expose] public section
 
 /-!
 # The local law from the cutoff moment bound

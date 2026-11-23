@@ -1,5 +1,9 @@
-import RBM8D.Joint.Words
-import RBM8D.AvgBound.Defs
+module
+
+public import RBM8D.Joint.Words
+public import RBM8D.AvgBound.Defs
+
+@[expose] public section
 
 /-!
 # Relabelling the `Θ` edge at `⊗`: the graph properties it keeps
@@ -264,7 +268,7 @@ theorem flatComp_mapC_y (c : Comp (Atom k n)) :
 
 omit hr in
 /-- The component with the index `i` of `mapC r Γ`. -/
-theorem getElem_mapC (i : Fin Γ.comps.length) :
+private theorem getElem_mapC (i : Fin Γ.comps.length) :
     (mapC r Γ).comps[Fin.cast (length_mapC Γ).symm i] = r Γ.comps[i] := by
   simp only [mapC, Fin.getElem_fin, List.getElem_map]
   rfl
@@ -667,7 +671,7 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance Relabel_decRootedAtExt {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RootedAtExt := by
+instance Relabel_decRootedAtExt {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RootedAtExt := by
   unfold Graph.RootedAtExt Graph.HasDiffToPinned Graph.DiffToPinned; infer_instance
 
 end Instances

@@ -1,6 +1,14 @@
-import RBM8D.LocalLaw.Cutoff.Defs
-import RBM8D.LocalLaw.QTerm
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.LocalLaw.Cutoff.Defs
+public import RBM8D.LocalLaw.QTerm
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Bound.Norm
+public import RBM8D.Bound.AuxTree
+import all RBM8D.Bound.Norm
+import all RBM8D.Bound.AuxTree
+
+@[expose] public section
 
 /-!
 # The hook graph sum

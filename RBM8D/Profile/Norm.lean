@@ -1,4 +1,8 @@
-import RBM8D.Profile.Poisson
+module
+
+public import RBM8D.Profile.Poisson
+
+@[expose] public section
 
 /-!
 # The normaliser `Z_{W,L}`

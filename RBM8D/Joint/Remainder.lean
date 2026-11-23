@@ -1,4 +1,8 @@
-import RBM8D.Joint.Relabel
+module
+
+public import RBM8D.Joint.Relabel
+
+@[expose] public section
 
 /-!
 # The remainder of the iterated `T`-equation
@@ -97,14 +101,14 @@ set_option maxRecDepth 100000
 
 local macro "kdec" : tactic => `(tactic| decide +kernel)
 
-private instance Remainder_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) :
+instance Remainder_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) :
     Decidable (Γ.TKinds N) :=
   inferInstanceAs (Decidable (_ = true))
 
-private instance Remainder_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
+instance Remainder_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-private instance Remainder_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
+instance Remainder_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
   unfold Graph.NoLabDot; infer_instance
 
 /-- The properties of a graph with the plain `Θ` edge at `⊗` that `G14.relabel` carries to its

@@ -1,5 +1,9 @@
-import RBM8D.Prob.Model
-import RBM8D.Prob.Stein
+module
+
+public import RBM8D.Prob.Model
+public import RBM8D.Prob.Stein
+
+@[expose] public section
 
 /-!
 # Gaussian integration by parts for functions of polynomial growth

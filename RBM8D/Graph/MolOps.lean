@@ -1,4 +1,8 @@
-import RBM8D.Graph.Deterministic
+module
+
+public import RBM8D.Graph.Deterministic
+
+@[expose] public section
 
 /-!
 # Operations on the molecular multigraph

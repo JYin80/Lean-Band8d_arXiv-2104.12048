@@ -1,7 +1,12 @@
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Order.Filter.AtTopBot.Basic
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Order.Filter.AtTopBot.Basic
+
+@[expose] public section
 
 /-!
 # Stochastic domination along a filter
@@ -19,10 +24,6 @@ universe u v w
 namespace RBM8D
 
 /-! ## Stochastic domination along a filter ([I, Definition 2.3]) -/
-
-/-- The window `adm(c₀, c₁) = {(W, L) | L^{c₁} ≤ W ≤ L^{1-c₀}}`. -/
-def adm (c₀ c₁ : ℝ) : Set (ℕ × ℕ) :=
-  {p | (p.2 : ℝ) ^ c₁ ≤ p.1 ∧ (p.1 : ℝ) ≤ (p.2 : ℝ) ^ (1 - c₀)}
 
 /-- `W → ∞` inside `adm(c₀, c₁)`. -/
 def admFilter (c₀ c₁ : ℝ) : Filter (ℕ × ℕ) := 𝓟 (adm c₀ c₁) ⊓ comap Prod.fst atTop

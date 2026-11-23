@@ -1,6 +1,10 @@
-import RBM8D.Graph.QExp.Defs
-import RBM8D.Graph.Standard
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+module
+
+public import RBM8D.Graph.QExp.Defs
+public import RBM8D.Graph.Standard
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+
+@[expose] public section
 
 /-!
 # The block reading of the dotted edges at `⊗`, `⊕`, `⊖`
@@ -20,20 +24,20 @@ namespace RBM8D.Graphs
 
 /-! ## Decidability of blocks and molecules -/
 
-private instance Graph.instDecAdjDotG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance Graph.instDecAdjDotG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance Graph.instDecSameBlockG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance Graph.instDecSameBlockG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (Graph.instDecAdjDotG Γ) u v
 
-private instance Graph.instDecAdjMolG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance Graph.instDecAdjMolG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
-private instance Graph.instDecSameMolG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance Graph.instDecSameMolG {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
       @SimpleGraph.instDecidableRelReachable _ _ _ _ (Graph.instDecAdjMolG Γ) u v
@@ -337,7 +341,7 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance MolRead_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance MolRead_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 

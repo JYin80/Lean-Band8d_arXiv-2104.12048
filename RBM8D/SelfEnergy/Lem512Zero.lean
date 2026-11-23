@@ -1,15 +1,24 @@
-import RBM8D.SelfEnergy.Lem512
-import RBM8D.Bound.GraphSum
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.Eta1
-import RBM8D.LocalLaw.Continuity
-import RBM8D.LocalLaw.Entrywise
-import RBM8D.LocalLaw.Moment
-import RBM8D.LocalLaw.QTermOf
-import RBM8D.LocalLaw.LabelPaths
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Prob.Net
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.SelfEnergy.Lem512
+public import RBM8D.Bound.GraphSum
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.Eta1
+public import RBM8D.LocalLaw.Continuity
+public import RBM8D.LocalLaw.Entrywise
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.LocalLaw.QTermOf
+public import RBM8D.LocalLaw.LabelPaths
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Prob.Net
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.LocalLaw.Moment
+import all RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.LocalLaw.Continuity
+import all RBM8D.LocalLaw.Entrywise
+import all RBM8D.SelfEnergy.Lem512
+
+@[expose] public section
 
 /-!
 # The bounds of [I, Lemma 5.12] on the graphs of `A` and `Err` without internal atoms
@@ -507,6 +516,7 @@ private theorem Lem512Zero_norm_le_three {κ ε : ℝ} {W L : ℕ} [NeZero L] (z
   rw [abs_of_pos him] at this
   linarith
 
+set_option maxHeartbeats 1000000 in
 /-- Eventually along the filter, every factor of a graph with the kinds of `Err` on the data
 record of the model is at most `W^K (1 + ‖ω‖)²`, at every `z ∈ 𝐃(κ, ε)`: the entries of `G` are at
 most `(Im z)⁻¹`, `|(G_{xx})⁻¹| ≤ C (1 + ‖ω‖)²` (Schur complement formula), `|m| ≥ 1/4`, and the

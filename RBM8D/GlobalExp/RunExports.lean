@@ -1,5 +1,19 @@
-import RBM8D.GlobalExp.RunOtimes
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.RunOtimes
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.TerminationC2
+public import RBM8D.GlobalExp.GlobalGoodB
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.TExp.Second
+public import RBM8D.GlobalExp.RunCompare
+import all RBM8D.GlobalExp.TerminationC2
+import all RBM8D.GlobalExp.GlobalGoodB
+import all RBM8D.GlobalExp.Termination
+import all RBM8D.TExp.Second
+import all RBM8D.GlobalExp.RunCompare
+
+@[expose] public section
 
 /-!
 # The invariant of a run and the run kinds on the output graphs of the selector

@@ -1,6 +1,10 @@
-import RBM8D.Prob.Partial
-import RBM8D.Prob.Wirtinger
-import RBM8D.Prob.Stein
+module
+
+public import RBM8D.Prob.Partial
+public import RBM8D.Prob.Wirtinger
+public import RBM8D.Prob.Stein
+
+@[expose] public section
 
 /-!
 # Gaussian integration by parts

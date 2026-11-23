@@ -1,9 +1,13 @@
-import RBM8D.SelfEnergy.Contract
-import RBM8D.SelfEnergy.Step
-import RBM8D.Bound.DoublyDet
-import RBM8D.Bound.GraphSum
-import RBM8D.Graph.QExp.PSteps
-import RBM8D.Graph.QExp.SelRun
+module
+
+public import RBM8D.SelfEnergy.Contract
+public import RBM8D.SelfEnergy.Step
+public import RBM8D.Bound.DoublyDet
+public import RBM8D.Bound.GraphSum
+public import RBM8D.Graph.QExp.PSteps
+public import RBM8D.Graph.QExp.SelRun
+
+@[expose] public section
 
 /-!
 # The diagonal bound for self-energy graphs

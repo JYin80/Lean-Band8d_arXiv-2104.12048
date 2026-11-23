@@ -1,5 +1,9 @@
-import RBM8D.Graph.MolMerge
-import RBM8D.Graph.MolSplit
+module
+
+public import RBM8D.Graph.MolMerge
+public import RBM8D.Graph.MolSplit
+
+@[expose] public section
 
 /-!
 # Operations on molecular multigraphs and the sequentially pre-deterministic property
@@ -102,66 +106,66 @@ private theorem mg_ext {G H : MGraph V E} (h1 : G.int = H.int) (h2 : G.ext = H.e
   subst h1 h2 h3 h4
   rfl
 
-@[simp] private theorem erase_int' [DecidableEq E] (G : MGraph V E) (e : E) :
+@[simp] theorem erase_int' [DecidableEq E] (G : MGraph V E) (e : E) :
     (G.erase e).int = G.int := rfl
-@[simp] private theorem erase_ext' [DecidableEq E] (G : MGraph V E) (e : E) :
+@[simp] theorem erase_ext' [DecidableEq E] (G : MGraph V E) (e : E) :
     (G.erase e).ext = G.ext := rfl
-@[simp] private theorem erase_ends' [DecidableEq E] (G : MGraph V E) (e : E) :
+@[simp] theorem erase_ends' [DecidableEq E] (G : MGraph V E) (e : E) :
     (G.erase e).ends = G.ends := rfl
-@[simp] private theorem erase_cls' [DecidableEq E] (G : MGraph V E) (e : E) :
+@[simp] theorem erase_cls' [DecidableEq E] (G : MGraph V E) (e : E) :
     (G.erase e).cls = Function.update G.cls e none := rfl
-@[simp] private theorem convert_int' [DecidableEq E] (G : MGraph V E) (l : List E) :
+@[simp] theorem convert_int' [DecidableEq E] (G : MGraph V E) (l : List E) :
     (G.convert l).int = G.int := rfl
-@[simp] private theorem convert_ext' [DecidableEq E] (G : MGraph V E) (l : List E) :
+@[simp] theorem convert_ext' [DecidableEq E] (G : MGraph V E) (l : List E) :
     (G.convert l).ext = G.ext := rfl
-@[simp] private theorem convert_ends' [DecidableEq E] (G : MGraph V E) (l : List E) :
+@[simp] theorem convert_ends' [DecidableEq E] (G : MGraph V E) (l : List E) :
     (G.convert l).ends = G.ends := rfl
-@[simp] private theorem convert_cls' [DecidableEq E] (G : MGraph V E) (l : List E) (x : E) :
+@[simp] theorem convert_cls' [DecidableEq E] (G : MGraph V E) (l : List E) (x : E) :
     (G.convert l).cls x = if x ∈ l ∧ G.cls x = some .plus then some .diff else G.cls x := rfl
-@[simp] private theorem induce_int' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
+@[simp] theorem induce_int' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
     (G.induce S).int = S := rfl
-@[simp] private theorem induce_ext' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
+@[simp] theorem induce_ext' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
     (G.induce S).ext = ∅ := rfl
-@[simp] private theorem induce_ends' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
+@[simp] theorem induce_ends' [DecidableEq V] (G : MGraph V E) (S : Finset V) :
     (G.induce S).ends = G.ends := rfl
-@[simp] private theorem induce_cls' [DecidableEq V] (G : MGraph V E) (S : Finset V) (x : E) :
+@[simp] theorem induce_cls' [DecidableEq V] (G : MGraph V E) (S : Finset V) (x : E) :
     (G.induce S).cls x =
       if (G.ends x).1 ∈ S ∧ (G.ends x).2 ∈ S then G.cls x else none := rfl
-@[simp] private theorem replace_int' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
+@[simp] theorem replace_int' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
     (S P : Finset V) (e₁ e₂ : E) : (G.replace S P e₁ e₂).int = S \ P := rfl
-@[simp] private theorem replace_ext' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
+@[simp] theorem replace_ext' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
     (S P : Finset V) (e₁ e₂ : E) : (G.replace S P e₁ e₂).ext = ∅ := rfl
-@[simp] private theorem replace_ends' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
+@[simp] theorem replace_ends' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
     (S P : Finset V) (e₁ e₂ x : E) : (G.replace S P e₁ e₂).ends x =
       if x = e₁ then (G.outer P e₁, G.outer P e₂) else G.ends x := rfl
-@[simp] private theorem replace_cls' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
+@[simp] theorem replace_cls' [DecidableEq V] [DecidableEq E] (G : MGraph V E)
     (S P : Finset V) (e₁ e₂ x : E) : (G.replace S P e₁ e₂).cls x =
       if x = e₁ then some .diff else if x = e₂ then none else (G.induce (S \ P)).cls x := rfl
-@[simp] private theorem recolor_int' [DecidableEq E] (G : MGraph V E) (e : E)
+@[simp] theorem recolor_int' [DecidableEq E] (G : MGraph V E) (e : E)
     (c : Option MClass) : (G.recolor e c).int = G.int := rfl
-@[simp] private theorem recolor_ext' [DecidableEq E] (G : MGraph V E) (e : E)
+@[simp] theorem recolor_ext' [DecidableEq E] (G : MGraph V E) (e : E)
     (c : Option MClass) : (G.recolor e c).ext = G.ext := rfl
-@[simp] private theorem recolor_ends' [DecidableEq E] (G : MGraph V E) (e : E)
+@[simp] theorem recolor_ends' [DecidableEq E] (G : MGraph V E) (e : E)
     (c : Option MClass) : (G.recolor e c).ends = G.ends := rfl
-@[simp] private theorem recolor_cls' [DecidableEq E] (G : MGraph V E) (e : E)
+@[simp] theorem recolor_cls' [DecidableEq E] (G : MGraph V E) (e : E)
     (c : Option MClass) : (G.recolor e c).cls = Function.update G.cls e c := rfl
-@[simp] private theorem setEdge_int' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
+@[simp] theorem setEdge_int' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
     (c : Option MClass) : (G.setEdge e u v c).int = G.int := rfl
-@[simp] private theorem setEdge_ext' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
+@[simp] theorem setEdge_ext' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
     (c : Option MClass) : (G.setEdge e u v c).ext = G.ext := rfl
-@[simp] private theorem setEdge_ends' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
+@[simp] theorem setEdge_ends' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
     (c : Option MClass) (x : E) :
     (G.setEdge e u v c).ends x = if x = e then (u, v) else G.ends x := rfl
-@[simp] private theorem setEdge_cls' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
+@[simp] theorem setEdge_cls' [DecidableEq E] (G : MGraph V E) (e : E) (u v : V)
     (c : Option MClass) : (G.setEdge e u v c).cls = Function.update G.cls e c := rfl
-@[simp] private theorem split_int' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) :
+@[simp] theorem split_int' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) :
     (G.split e e' w).int = G.int := rfl
-@[simp] private theorem split_ext' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) :
+@[simp] theorem split_ext' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) :
     (G.split e e' w).ext = G.ext := rfl
-@[simp] private theorem split_ends' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) (x : E) :
+@[simp] theorem split_ends' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) (x : E) :
     (G.split e e' w).ends x =
       if x = e then ((G.ends e).1, w) else if x = e' then (w, (G.ends e).2) else G.ends x := rfl
-@[simp] private theorem split_cls' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) (x : E) :
+@[simp] theorem split_cls' [DecidableEq E] (G : MGraph V E) (e e' : E) (w : V) (x : E) :
     (G.split e e' w).cls x = if x = e' then G.cls e else G.cls x := rfl
 
 /-- The empty list changes no edge. -/

@@ -1,4 +1,8 @@
-import RBM8D.GlobalExp.TEqShape
+module
+
+public import RBM8D.GlobalExp.TEqShape
+
+@[expose] public section
 
 /-!
 # The shape of the correction graphs of the `n`-th order `T`-equation

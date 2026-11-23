@@ -1,5 +1,9 @@
-import RBM8D.Graph.QExp.Step1
-import RBM8D.Graph.Local.DotNorm
+module
+
+public import RBM8D.Graph.QExp.Step1
+public import RBM8D.Graph.Local.DotNorm
+
+@[expose] public section
 
 /-!
 # The first step of the `Q`-expansions with deterministic choices

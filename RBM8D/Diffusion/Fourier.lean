@@ -1,5 +1,9 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.Diffusion.ThetaM
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.Diffusion.ThetaM
+
+@[expose] public section
 
 /-!
 # The symbol of `Θ^{(M)}` near `p = 0`

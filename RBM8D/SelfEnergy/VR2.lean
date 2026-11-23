@@ -1,4 +1,8 @@
-import RBM8D.SelfEnergy.VR1
+module
+
+public import RBM8D.SelfEnergy.VR1
+
+@[expose] public section
 
 /-!
 # [I, (8.13)]: the row sum of `Σ_n` on the torus against its value on `ℤ^d`

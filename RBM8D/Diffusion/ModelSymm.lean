@@ -1,7 +1,11 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.TExp.Closure
-import RBM8D.Kernel.PropagatorSymbol
-import RBM8D.Prob.Partial
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.TExp.Closure
+public import RBM8D.Kernel.PropagatorSymbol
+public import RBM8D.Prob.Partial
+
+@[expose] public section
 
 /-!
 # Translation invariance of the Gaussian model

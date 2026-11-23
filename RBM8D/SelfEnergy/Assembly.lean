@@ -1,7 +1,12 @@
-import RBM8D.SelfEnergy.MainCancel
-import RBM8D.SelfEnergy.Entrywise
-import RBM8D.SelfEnergy.FT1c
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.SelfEnergy.MainCancel
+public import RBM8D.SelfEnergy.Entrywise
+public import RBM8D.SelfEnergy.FT1c
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.SelfEnergy.MainCancel
+
+@[expose] public section
 
 /-!
 # [I, §8, proof of Theorem 1.4]: the bound part of [II, Lemma 3.9] = [I, Lemma 5.8]

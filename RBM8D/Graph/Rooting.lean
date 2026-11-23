@@ -1,5 +1,10 @@
-import RBM8D.Graph.MolRead
-import RBM8D.Graph.Local.Dot
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Graph.MolRead
+public import RBM8D.Graph.Local.Dot
+
+@[expose] public section
 
 /-!
 # Graph clauses on the external atoms, the dotted edges and the labels
@@ -20,12 +25,6 @@ namespace RBM8D.Graphs
 plain or labelled `Θ` edge ([II, (8.18)] and the line after it). -/
 def Graph.TensorDiffusive {n : ℕ} (Γ : Graph 3 n) : Prop :=
   Γ.comps.all (fun c => !(c.x == .inl 0 || c.y == .inl 0) || c.kind.isDiffusive) = true
-
-/-- The dotted edges form a forest without loops: their number plus the number of dotted blocks
-is the number of atoms. -/
-def Graph.DotsAcyclic {k n : ℕ} (Γ : Graph k n) : Prop :=
-  (Γ.comps.filter fun c => decide (c.kind = .dot)).length +
-    (dotBlocks (allAtoms k n) Γ.comps).length = k + n
 
 /-- `⊕` and `⊖` lie in one dotted block. -/
 def Graph.pmBlockB {n : ℕ} (Γ : Graph 3 n) : Bool :=

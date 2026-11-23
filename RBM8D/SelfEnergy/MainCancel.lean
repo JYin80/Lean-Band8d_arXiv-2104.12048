@@ -1,7 +1,18 @@
-import RBM8D.SelfEnergy.Step
-import RBM8D.SelfEnergy.Lem512Zero
-import RBM8D.SelfEnergy.MainCancelId
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.SelfEnergy.Step
+public import RBM8D.SelfEnergy.Lem512Zero
+public import RBM8D.SelfEnergy.MainCancelId
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.LocalLaw.Entrywise
+import all RBM8D.LocalLaw.Moment
+import all RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.LocalLaw.Entrywise
+import all RBM8D.SelfEnergy.Lem512Zero
+
+@[expose] public section
 
 /-!
 # [I, Lemma 5.11]: the cancellation of the row sum of `Σ_n` at the sizes `L_n`

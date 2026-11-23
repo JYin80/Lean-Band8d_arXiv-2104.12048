@@ -1,212 +1,220 @@
-import RBM8D.Prob.Stein
-import RBM8D.Prob.LinearForm
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Basic.Resolvent
-import RBM8D.Basic.Minor
-import RBM8D.Graph.Syntax
-import RBM8D.Graph.Order
-import RBM8D.Graph.Value
-import RBM8D.Graph.Molecule
-import RBM8D.Graph.Regular
-import RBM8D.Prob.Model
-import RBM8D.Prob.StochDom
-import RBM8D.Prob.Wirtinger
-import RBM8D.Prob.Partial
-import RBM8D.Graph.Local.Basic
-import RBM8D.Graph.Isolated
-import RBM8D.Prob.IBP
-import RBM8D.Graph.Local.Dot
-import RBM8D.Kernel.Fourier
-import RBM8D.Kernel.Propagator
-import RBM8D.Kernel.Profile
-import RBM8D.Kernel.ContractionCont
-import RBM8D.Graph.Deterministic
-import RBM8D.Kernel.Circulant
-import RBM8D.Kernel.PropagatorSymbol
-import RBM8D.Kernel.Contraction
-import RBM8D.Graph.Local.IBP
-import RBM8D.Graph.Local.Edge
-import RBM8D.Profile.Basic
-import RBM8D.Prob.PartialPoly
-import RBM8D.Basic.Domain
-import RBM8D.Graph.Standard
-import RBM8D.Graph.MolOps
-import RBM8D.TExp.Defs
-import RBM8D.TExp.Closure
-import RBM8D.TExp.Second
-import RBM8D.Graph.Glue
-import RBM8D.Graph.Local.Weight
-import RBM8D.Graph.Local.Model
-import RBM8D.Graph.MolMerge
-import RBM8D.Graph.Local.EdgeOrder
-import RBM8D.Graph.Local.Doubly
-import RBM8D.Graph.QExp.Steps
-import RBM8D.Graph.Local.ModelGauss
-import RBM8D.Profile.Poisson
-import RBM8D.Graph.MolSplit
-import RBM8D.Graph.QExp.Defs
-import RBM8D.Graph.QExp.Step1
-import RBM8D.Graph.IsolatedNest
-import RBM8D.Graph.QExp.Step3
-import RBM8D.Kernel.Lattice
-import RBM8D.Kernel.Dyadic
-import RBM8D.Kernel.Decay
-import RBM8D.Graph.QExp.PSteps
-import RBM8D.Graph.Transpose
-import RBM8D.Graph.QExp.Main
-import RBM8D.Graph.Local.Transposed
-import RBM8D.Profile.Norm
-import RBM8D.Profile.Density
-import RBM8D.Profile.Decay
-import RBM8D.Profile.Symbol
-import RBM8D.Kernel.Periodize
-import RBM8D.Kernel.InfSymbol
-import RBM8D.Kernel.ShellKernel
-import RBM8D.Graph.Local.Strategy
-import RBM8D.Kernel.Sinf
-import RBM8D.Kernel.ZdCancel
-import RBM8D.Graph.ValueLemmas
-import RBM8D.Prob.Union
-import RBM8D.Prob.Net
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.InfLimit
-import RBM8D.Input.Entry
-import RBM8D.Input.GaussPoly
-import RBM8D.Input.Chaos
-import RBM8D.Input.LDEQuad
-import RBM8D.Input.Sizes
-import RBM8D.Input.LDELin
-import RBM8D.Input.EntryDiag
-import RBM8D.Input.LDEDom
-import RBM8D.Input.GT
-import RBM8D.Input.GTDiag
-import RBM8D.Bound.Norm
-import RBM8D.Graph.MolRead
-import RBM8D.Bound.GraphAbs
-import RBM8D.Bound.Chain
-import RBM8D.Graph.QExp.Clauses
-import RBM8D.Bound.KeySum
-import RBM8D.Graph.MolCarry
-import RBM8D.Graph.MolDot
-import RBM8D.Graph.QExp.FlatSchur
-import RBM8D.Bound.AuxTree
-import RBM8D.Graph.QExp.FlatSplit
-import RBM8D.GlobalExp.Local
-import RBM8D.Graph.QExp.MainB
-import RBM8D.Bound.Doubly
-import RBM8D.Graph.Local.DotNorm
-import RBM8D.LocalLaw.Defs
-import RBM8D.Graph.Local.SolidMono
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Bound.GraphSum
-import RBM8D.LocalLaw.Moment
-import RBM8D.Deloc.Defs
-import RBM8D.Deloc.Det
-import RBM8D.Deloc.Ward
-import RBM8D.Graph.Rooting
-import RBM8D.Deloc.Eq113
-import RBM8D.Deloc.Lemma81
-import RBM8D.GlobalExp.Strategy
-import RBM8D.Graph.DotBlocks
-import RBM8D.LocalLaw.Bridge
-import RBM8D.LocalLaw.Eta1
-import RBM8D.GlobalExp.RunClauses
-import RBM8D.LocalLaw.Continuity
-import RBM8D.GlobalExp.GlobalGood
-import RBM8D.GlobalExp.GlueNormal
-import RBM8D.GlobalExp.SubstDC
-import RBM8D.Graph.QExp.MolMono
-import RBM8D.Graph.MolInsert
-import RBM8D.Graph.MolAddEdge
-import RBM8D.GlobalExp.SubstMol
-import RBM8D.Graph.QExp.MolMonoSteps
-import RBM8D.GlobalExp.QFamily
-import RBM8D.Graph.QExp.SelStep1
-import RBM8D.GlobalExp.SubstSPD
-import RBM8D.Graph.QExp.SelStep1Coh
-import RBM8D.LocalLaw.LabelPaths
-import RBM8D.LocalLaw.Entrywise
-import RBM8D.GlobalExp.GlobalGoodRows
-import RBM8D.Graph.QExp.SelStep3
-import RBM8D.LocalLaw.QTerm
-import RBM8D.Graph.QExp.SelStep2
-import RBM8D.Bound.DoublyDet
-import RBM8D.LocalLaw.QTermOf
-import RBM8D.Graph.QExp.SelRounds
-import RBM8D.Graph.QExp.SelRoundsCoh
-import RBM8D.Bound.ChainInf
-import RBM8D.LocalLaw.Primed
-import RBM8D.GlobalExp.GlobalGoodB
-import RBM8D.Graph.QExp.SelRun
-import RBM8D.Graph.QExp.SelRunIso
-import RBM8D.AvgBound.Defs
-import RBM8D.AvgBound.Trace
-import RBM8D.GlobalExp.Termination
-import RBM8D.Joint.Words
-import RBM8D.Diffusion.Defs
-import RBM8D.Joint.Relabel
-import RBM8D.GlobalExp.TerminationB
-import RBM8D.Joint.Overflow
-import RBM8D.Joint.Chain
-import RBM8D.Joint.Remainder
-import RBM8D.AvgBound.KeySum
-import RBM8D.AvgBound.GhostSize
-import RBM8D.Diffusion.Rooting
-import RBM8D.SelfEnergy.Step
-import RBM8D.SelfEnergy.Contract
-import RBM8D.Diffusion.ThetaM
-import RBM8D.GlobalExp.TerminationC
-import RBM8D.Diffusion.DiagMean
-import RBM8D.Diffusion.SelfEnergy
-import RBM8D.Diffusion.ModelSymm
-import RBM8D.Joint.Struct
-import RBM8D.Diffusion.Singular
-import RBM8D.Joint.Main
-import RBM8D.Diffusion.Fourier
-import RBM8D.SelfEnergy.Diag
-import RBM8D.SelfEnergy.Lem512
-import RBM8D.SelfEnergy.Lem512Zero
-import RBM8D.SelfEnergy.MainCancelId
-import RBM8D.SelfEnergy.ContractShape
-import RBM8D.SelfEnergy.Entrywise
-import RBM8D.SelfEnergy.MainCancel
-import RBM8D.Bound.AuxTreeZ
-import RBM8D.SelfEnergy.Renorm
-import RBM8D.SelfEnergy.ValZ
-import RBM8D.SelfEnergy.InfBound
-import RBM8D.SelfEnergy.RenormDiff
-import RBM8D.GlobalExp.TerminationK
-import RBM8D.SelfEnergy.FT1a
-import RBM8D.Diffusion.ErrBound
-import RBM8D.GlobalExp.TerminationC2
-import RBM8D.SelfEnergy.FT1b
-import RBM8D.SelfEnergy.VR1Graph
-import RBM8D.SelfEnergy.VR1
-import RBM8D.SelfEnergy.VR2
-import RBM8D.SelfEnergy.FT1c
-import RBM8D.SelfEnergy.Assembly
-import RBM8D.Diffusion.ErrForms
-import RBM8D.Diffusion.ErrExp
-import RBM8D.GlobalExp.RunCompare
-import RBM8D.Diffusion.ErrMain
-import RBM8D.GlobalExp.RunOtimes
-import RBM8D.Diffusion.LocalCorr
-import RBM8D.Diffusion.Main
-import RBM8D.Deloc.Thm13
-import RBM8D.GlobalExp.RunExports
-import RBM8D.GlobalExp.RunMinus
-import RBM8D.GlobalExp.TEqSigma
-import RBM8D.GlobalExp.TEqLeaf
-import RBM8D.GlobalExp.TEqShape
-import RBM8D.GlobalExp.TEqCorrShape
-import RBM8D.GlobalExp.TEqIdentity
-import RBM8D.GlobalExp.RunOutFacts
-import RBM8D.GlobalExp.TEquation
-import RBM8D.LocalLaw.Cutoff.Defs
-import RBM8D.LocalLaw.Cutoff.Bootstrap
-import RBM8D.LocalLaw.Cutoff.Hook
-import RBM8D.LocalLaw.Cutoff.Resample
-import RBM8D.LocalLaw.Cutoff.Moment
-import RBM8D.LocalLaw.Cutoff.Assembly
-import RBM8D.Endpoints
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Prob.Stein
+public import RBM8D.Prob.LinearForm
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Basic.Resolvent
+public import RBM8D.Basic.Minor
+public import RBM8D.Graph.Syntax
+public import RBM8D.Graph.Order
+public import RBM8D.Graph.Value
+public import RBM8D.Graph.Molecule
+public import RBM8D.Graph.Regular
+public import RBM8D.Prob.Model
+public import RBM8D.Prob.StochDom
+public import RBM8D.Prob.Wirtinger
+public import RBM8D.Prob.Partial
+public import RBM8D.Graph.Local.Basic
+public import RBM8D.Graph.Isolated
+public import RBM8D.Prob.IBP
+public import RBM8D.Graph.Local.Dot
+public import RBM8D.Kernel.Fourier
+public import RBM8D.Kernel.Propagator
+public import RBM8D.Kernel.Profile
+public import RBM8D.Kernel.ContractionCont
+public import RBM8D.Graph.Deterministic
+public import RBM8D.Kernel.Circulant
+public import RBM8D.Kernel.PropagatorSymbol
+public import RBM8D.Kernel.Contraction
+public import RBM8D.Graph.Local.IBP
+public import RBM8D.Graph.Local.Edge
+public import RBM8D.Profile.Basic
+public import RBM8D.Prob.PartialPoly
+public import RBM8D.Basic.Domain
+public import RBM8D.Graph.Standard
+public import RBM8D.Graph.MolOps
+public import RBM8D.TExp.Defs
+public import RBM8D.TExp.Closure
+public import RBM8D.TExp.Second
+public import RBM8D.Graph.Glue
+public import RBM8D.Graph.Local.Weight
+public import RBM8D.Graph.Local.Model
+public import RBM8D.Graph.MolMerge
+public import RBM8D.Graph.Local.EdgeOrder
+public import RBM8D.Graph.Local.Doubly
+public import RBM8D.Graph.QExp.Steps
+public import RBM8D.Graph.Local.ModelGauss
+public import RBM8D.Profile.Poisson
+public import RBM8D.Graph.MolSplit
+public import RBM8D.Graph.QExp.Defs
+public import RBM8D.Graph.QExp.Step1
+public import RBM8D.Graph.IsolatedNest
+public import RBM8D.Graph.QExp.Step3
+public import RBM8D.Kernel.Lattice
+public import RBM8D.Kernel.Dyadic
+public import RBM8D.Kernel.Decay
+public import RBM8D.Graph.QExp.PStepsPart1
+public import RBM8D.Graph.QExp.PSteps
+public import RBM8D.Graph.Transpose
+public import RBM8D.Graph.QExp.Main
+public import RBM8D.Graph.Local.Transposed
+public import RBM8D.Profile.Norm
+public import RBM8D.Profile.Density
+public import RBM8D.Profile.Decay
+public import RBM8D.Profile.Symbol
+public import RBM8D.Kernel.Periodize
+public import RBM8D.Kernel.InfSymbol
+public import RBM8D.Kernel.ShellKernel
+public import RBM8D.Graph.Local.StrategyPart1
+public import RBM8D.Graph.Local.Strategy
+public import RBM8D.Kernel.Sinf
+public import RBM8D.Kernel.ZdCancel
+public import RBM8D.Graph.ValueLemmas
+public import RBM8D.Prob.Union
+public import RBM8D.Prob.Net
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.InfLimit
+public import RBM8D.Input.Entry
+public import RBM8D.Input.GaussPoly
+public import RBM8D.Input.Chaos
+public import RBM8D.Input.LDEQuad
+public import RBM8D.Input.Sizes
+public import RBM8D.Input.LDELin
+public import RBM8D.Input.EntryDiag
+public import RBM8D.Input.LDEDom
+public import RBM8D.Input.GT
+public import RBM8D.Input.GTDiag
+public import RBM8D.Bound.Norm
+public import RBM8D.Graph.MolRead
+public import RBM8D.Bound.GraphAbs
+public import RBM8D.Bound.Chain
+public import RBM8D.Graph.QExp.Clauses
+public import RBM8D.Bound.KeySum
+public import RBM8D.Graph.MolCarry
+public import RBM8D.Graph.MolDot
+public import RBM8D.Graph.QExp.FlatSchur
+public import RBM8D.Bound.AuxTree
+public import RBM8D.Graph.QExp.FlatSplit
+public import RBM8D.GlobalExp.Local
+public import RBM8D.Graph.QExp.MainB
+public import RBM8D.Bound.Doubly
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.Graph.Local.SolidMono
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Bound.GraphSum
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.Deloc.Defs
+public import RBM8D.Deloc.Det
+public import RBM8D.Deloc.Ward
+public import RBM8D.Graph.Rooting
+public import RBM8D.Deloc.Eq113
+public import RBM8D.Deloc.Lemma81
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.Graph.DotBlocks
+public import RBM8D.LocalLaw.Bridge
+public import RBM8D.LocalLaw.Eta1
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.LocalLaw.Continuity
+public import RBM8D.GlobalExp.GlobalGood
+public import RBM8D.GlobalExp.GlueNormal
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.Graph.QExp.MolMono
+public import RBM8D.Graph.MolInsert
+public import RBM8D.Graph.MolAddEdge
+public import RBM8D.GlobalExp.SubstMol
+public import RBM8D.Graph.QExp.MolMonoSteps
+public import RBM8D.GlobalExp.QFamily
+public import RBM8D.Graph.QExp.SelStep1
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.Graph.QExp.SelStep1Coh
+public import RBM8D.LocalLaw.LabelPaths
+public import RBM8D.LocalLaw.Entrywise
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import RBM8D.Graph.QExp.SelStep3
+public import RBM8D.LocalLaw.QTerm
+public import RBM8D.Graph.QExp.SelStep2
+public import RBM8D.Bound.DoublyDet
+public import RBM8D.LocalLaw.QTermOf
+public import RBM8D.Graph.QExp.SelRounds
+public import RBM8D.Graph.QExp.SelRoundsCoh
+public import RBM8D.Bound.ChainInf
+public import RBM8D.LocalLaw.Primed
+public import RBM8D.GlobalExp.GlobalGoodB
+public import RBM8D.Graph.QExp.SelRun
+public import RBM8D.Graph.QExp.SelRunIso
+public import RBM8D.AvgBound.Defs
+public import RBM8D.AvgBound.Trace
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.Joint.Words
+public import RBM8D.Diffusion.Defs
+public import RBM8D.Joint.Relabel
+public import RBM8D.GlobalExp.TerminationB
+public import RBM8D.Joint.Overflow
+public import RBM8D.Joint.Chain
+public import RBM8D.Joint.Remainder
+public import RBM8D.AvgBound.KeySum
+public import RBM8D.AvgBound.GhostSize
+public import RBM8D.Diffusion.Rooting
+public import RBM8D.SelfEnergy.Step
+public import RBM8D.SelfEnergy.Contract
+public import RBM8D.Diffusion.ThetaM
+public import RBM8D.GlobalExp.TerminationC
+public import RBM8D.Diffusion.DiagMean
+public import RBM8D.Diffusion.SelfEnergy
+public import RBM8D.Diffusion.ModelSymm
+public import RBM8D.Joint.Struct
+public import RBM8D.Diffusion.Singular
+public import RBM8D.Joint.Main
+public import RBM8D.Diffusion.Fourier
+public import RBM8D.SelfEnergy.Diag
+public import RBM8D.SelfEnergy.Lem512
+public import RBM8D.SelfEnergy.Lem512Zero
+public import RBM8D.SelfEnergy.MainCancelId
+public import RBM8D.SelfEnergy.ContractShape
+public import RBM8D.SelfEnergy.Entrywise
+public import RBM8D.SelfEnergy.MainCancel
+public import RBM8D.Bound.AuxTreeZ
+public import RBM8D.SelfEnergy.Renorm
+public import RBM8D.SelfEnergy.ValZ
+public import RBM8D.SelfEnergy.InfBound
+public import RBM8D.SelfEnergy.RenormDiff
+public import RBM8D.GlobalExp.TerminationK
+public import RBM8D.SelfEnergy.FT1a
+public import RBM8D.Diffusion.ErrBound
+public import RBM8D.GlobalExp.TerminationC2
+public import RBM8D.SelfEnergy.FT1b
+public import RBM8D.SelfEnergy.VR1Graph
+public import RBM8D.SelfEnergy.VR1
+public import RBM8D.SelfEnergy.VR2
+public import RBM8D.SelfEnergy.FT1c
+public import RBM8D.SelfEnergy.Assembly
+public import RBM8D.Diffusion.ErrForms
+public import RBM8D.Diffusion.ErrExp
+public import RBM8D.GlobalExp.RunCompare
+public import RBM8D.Diffusion.ErrMain
+public import RBM8D.GlobalExp.RunOtimes
+public import RBM8D.Diffusion.LocalCorr
+public import RBM8D.Diffusion.Main
+public import RBM8D.Deloc.Thm13
+public import RBM8D.GlobalExp.RunExports
+public import RBM8D.GlobalExp.RunMinus
+public import RBM8D.GlobalExp.TEqSigma
+public import RBM8D.GlobalExp.TEqLeaf
+public import RBM8D.GlobalExp.TEqShape
+public import RBM8D.GlobalExp.TEqCorrShape
+public import RBM8D.GlobalExp.TEqIdentity
+public import RBM8D.GlobalExp.RunOutFacts
+public import RBM8D.GlobalExp.TEquation
+public import RBM8D.LocalLaw.Cutoff.Defs
+public import RBM8D.LocalLaw.Cutoff.Bootstrap
+public import RBM8D.LocalLaw.Cutoff.Hook
+public import RBM8D.LocalLaw.Cutoff.Resample
+public import RBM8D.LocalLaw.Cutoff.Moment
+public import RBM8D.LocalLaw.Cutoff.Assembly
+public import RBM8D.Endpoints
+
+@[expose] public section
+

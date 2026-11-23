@@ -1,6 +1,11 @@
-import RBM8D.Input.Sizes
-import RBM8D.Input.Entry
-import RBM8D.Basic.Resolvent
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Input.Sizes
+public import RBM8D.Input.Entry
+public import RBM8D.Basic.Resolvent
+
+@[expose] public section
 
 /-!
 # Weak delocalization of bulk eigenvectors: statements
@@ -23,34 +28,6 @@ open MeasureTheory Complex Matrix
 open scoped ENNReal
 
 namespace RBM8D
-
-/-- **[I, Theorem 1.4], (1.19)**: for `d ≥ 8`, a profile `ψ`, constants `c₀, c₁, κ > 0` and all
-`ε, τ, D > 0` there is `L₀` such that for `L ≥ L₀`, `L^{c₁} ≤ W ≤ L^{1−c₀}` and all `x, y`,
-`P(∃ E ∈ (−2+κ, 2−κ), ∃ η ∈ [W²/L^{2−ε}, 1], |G_xy(E+iη) − m(E+iη) δ_xy|² > W^τ B_xy) ≤ L^{−D}`. -/
-def LocalLawStmt : Prop :=
-  ∀ d : ℕ, 8 ≤ d → ∀ P : Profile d, ∀ c₀ c₁ κ : ℝ, 0 < c₀ → 0 < c₁ → 0 < κ →
-  ∀ ε τ D : ℝ, 0 < ε → 0 < τ → 0 < D →
-  ∃ L₀ : ℕ, ∀ p : SizeL, L₀ ≤ p.1.2 → p.1 ∈ adm c₀ c₁ → ∀ x y : Zd d p.1.2,
-    rbmLaw d P p {ω | ∃ E : ℝ, E ∈ Set.Ioo (-2 + κ) (2 - κ) ∧ ∃ η : ℝ,
-        (p.1.1 : ℝ) ^ 2 / (p.1.2 : ℝ) ^ (2 - ε) ≤ η ∧ η ≤ 1 ∧
-        (p.1.1 : ℝ) ^ τ * bB d p.1.2 p.1.1 x y <
-          ‖entryErr (green (hmat ω) ((E : ℂ) + (η : ℂ) * I)) (msc ((E : ℂ) + (η : ℂ) * I)) x y‖ ^ 2}
-      ≤ ENNReal.ofReal ((p.1.2 : ℝ) ^ (-D))
-
-/-- `(u_α, λ_α)_α` is an orthonormal eigenbasis of `H`: `⟨u_α, u_β⟩ = δ_αβ` and `H u_α = λ_α u_α`;
-the eigenvectors are indexed by the index set of `H` itself. -/
-def IsOrthoEigenbasis {ι : Type*} [Fintype ι] [DecidableEq ι] (H : Matrix ι ι ℂ)
-    (u : ι → ι → ℂ) (lam : ι → ℝ) : Prop :=
-  (∀ α β, ∑ x, star (u α x) * u β x = if α = β then 1 else 0) ∧
-  ∀ α, H *ᵥ u α = (lam α : ℂ) • u α
-
-open scoped Classical in
-/-- The set `𝓑_{γ,K,ℓ}` of [I, §1.2]: bulk indices `α` (`λ_α ∈ (−2+κ, 2−κ)`) with
-`min_{x₀} Σ_x |u_α(x)|² exp((‖x − x₀‖_L / ℓ)^γ) ≤ K`. -/
-def locSetB (d L : ℕ) [NeZero L] (κ γ K ℓ : ℝ) (u : Zd d L → Zd d L → ℂ) (lam : Zd d L → ℝ) :
-    Finset (Zd d L) :=
-  Finset.univ.filter fun α => lam α ∈ Set.Ioo (-2 + κ) (2 - κ) ∧
-    ∃ x₀ : Zd d L, ∑ x, ‖u α x‖ ^ 2 * Real.exp (((zdistInf d L (x - x₀) : ℝ) / ℓ) ^ γ) ≤ K
 
 open scoped Classical in
 /-- The set `𝓑̃_{M,K,ℓ}` of [I, §8]: bulk indices `α` with

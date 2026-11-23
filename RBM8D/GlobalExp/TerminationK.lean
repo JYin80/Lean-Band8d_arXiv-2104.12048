@@ -1,4 +1,8 @@
-import RBM8D.GlobalExp.TerminationC
+module
+
+public import RBM8D.GlobalExp.TerminationC
+
+@[expose] public section
 
 /-!
 # The component kinds along a run of [II, Strategy 6.6]

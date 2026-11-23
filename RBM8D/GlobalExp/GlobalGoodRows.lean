@@ -1,7 +1,14 @@
-import RBM8D.GlobalExp.SubstSPD
-import RBM8D.GlobalExp.RunClauses
-import RBM8D.Graph.MolAddEdge
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.Graph.MolAddEdge
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.GlobalExp.SubstDC
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.5 (3), (4)]: the graphs of `A` and the substituted `Q`-graphs in the block reading
@@ -941,19 +948,19 @@ section Reach
 variable {V : Type} [DecidableEq V]
 
 /-- One step of the closure: the vertices of `U` adjacent to `S` are added to `S`. -/
-private def GlobalGoodRows_grow (adj : V → V → Bool) (U S : List V) : List V :=
+def GlobalGoodRows_grow (adj : V → V → Bool) (U S : List V) : List V :=
   S ++ U.filter fun v => !S.contains v && S.any fun u => adj u v
 
 /-- `k` steps of the closure. -/
-private def GlobalGoodRows_iter (adj : V → V → Bool) (U : List V) : ℕ → List V → List V
+def GlobalGoodRows_iter (adj : V → V → Bool) (U : List V) : ℕ → List V → List V
   | 0, S => S
   | k + 1, S => GlobalGoodRows_iter adj U k (GlobalGoodRows_grow adj U S)
 
 /-- No vertex of `U` outside `S` is adjacent to `S`. -/
-private def GlobalGoodRows_closedB (adj : V → V → Bool) (U S : List V) : Bool :=
+def GlobalGoodRows_closedB (adj : V → V → Bool) (U S : List V) : Bool :=
   S.all fun u => U.all fun v => !adj u v || S.contains v
 
-private theorem GlobalGoodRows_iter_sound (G : SimpleGraph V) [DecidableRel G.Adj] (U : List V)
+theorem GlobalGoodRows_iter_sound (G : SimpleGraph V) [DecidableRel G.Adj] (U : List V)
     (u : V) : ∀ (k : ℕ) (S : List V), (∀ w ∈ S, G.Reachable u w) →
       ∀ w ∈ GlobalGoodRows_iter (fun a b => decide (G.Adj a b)) U k S, G.Reachable u w := by
   intro k
@@ -969,7 +976,7 @@ private theorem GlobalGoodRows_iter_sound (G : SimpleGraph V) [DecidableRel G.Ad
     · exact h w hw
     · exact (h v hv).trans hadj.reachable
 
-private theorem GlobalGoodRows_iter_mem (adj : V → V → Bool) (U : List V) :
+theorem GlobalGoodRows_iter_mem (adj : V → V → Bool) (U : List V) :
     ∀ (k : ℕ) (S : List V), ∀ w ∈ S, w ∈ GlobalGoodRows_iter adj U k S := by
   intro k
   induction k with
@@ -978,7 +985,7 @@ private theorem GlobalGoodRows_iter_mem (adj : V → V → Bool) (U : List V) :
     intro S w hw
     exact ih _ w (List.mem_append_left _ hw)
 
-private theorem GlobalGoodRows_closed (G : SimpleGraph V) [DecidableRel G.Adj] (U S : List V)
+theorem GlobalGoodRows_closed (G : SimpleGraph V) [DecidableRel G.Adj] (U S : List V)
     (hU : ∀ v, v ∈ U) (hc : GlobalGoodRows_closedB (fun a b => decide (G.Adj a b)) U S = true)
     {u v : V} (hu : u ∈ S) (h : G.Reachable u v) : v ∈ S := by
   rw [SimpleGraph.reachable_iff_reflTransGen] at h
@@ -993,7 +1000,7 @@ private theorem GlobalGoodRows_closed (G : SimpleGraph V) [DecidableRel G.Adj] (
 
 /-- Reachability decided by `fuel` steps of the closure from `u` when the result is closed, and
 by the general procedure otherwise. -/
-private def GlobalGoodRows_decReach [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+def GlobalGoodRows_decReach [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : List V) (hU : ∀ v, v ∈ U) (fuel : ℕ) (u v : V) : Decidable (G.Reachable u v) :=
   if hc : GlobalGoodRows_closedB (fun a b => decide (G.Adj a b)) U
       (GlobalGoodRows_iter (fun a b => decide (G.Adj a b)) U fuel [u]) = true then
@@ -1005,29 +1012,29 @@ private def GlobalGoodRows_decReach [Fintype V] (G : SimpleGraph V) [DecidableRe
 
 end Reach
 
-private theorem GlobalGoodRows_mem_allAtoms {k n : ℕ} (u : Atom k n) : u ∈ allAtoms k n := by
+theorem GlobalGoodRows_mem_allAtoms {k n : ℕ} (u : Atom k n) : u ∈ allAtoms k n := by
   rcases u with a | i <;> simp [allAtoms]
 
 /-! ### Decision procedures -/
 
-private instance GlobalGoodRows_decAdjDot {k n : ℕ} (Γ : Graph k n) :
+instance GlobalGoodRows_decAdjDot {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance GlobalGoodRows_decSameBlock {k n : ℕ} (Γ : Graph k n) :
+instance GlobalGoodRows_decSameBlock {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.SameBlock :=
   fun u v => @GlobalGoodRows_decReach _ _ _ _ (GlobalGoodRows_decAdjDot Γ) (allAtoms k n)
     GlobalGoodRows_mem_allAtoms (k + n) u v
 
-private instance GlobalGoodRows_decAdjMol {k n : ℕ} (Γ : Graph k n) :
+instance GlobalGoodRows_decAdjMol {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
-private instance GlobalGoodRows_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance GlobalGoodRows_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
       @GlobalGoodRows_decReach _ _ _ _ (GlobalGoodRows_decAdjMol Γ) (allAtoms k n)
@@ -1035,25 +1042,25 @@ private instance GlobalGoodRows_decSameMol {k n : ℕ} (Γ : Graph k n) : Decida
     inferInstanceAs (Decidable (u = v ∨
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 
-private instance GlobalGoodRows_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance GlobalGoodRows_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 
-private instance GlobalGoodRows_decIsRecollision {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin k)) :
+instance GlobalGoodRows_decIsRecollision {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin k)) :
     Decidable (Γ.IsRecollision B) :=
   inferInstanceAs (Decidable (∃ c ∈ Γ.comps, c.kind = .dot ∧
     ((∃ b ∈ B, c.x = Sum.inl b) ∧ c.y.isRight = true ∨
       (∃ b ∈ B, c.y = Sum.inl b) ∧ c.x.isRight = true)))
 
-private instance GlobalGoodRows_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
+instance GlobalGoodRows_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
   unfold Graph.RgCheck; infer_instance
 
-private instance GlobalGoodRows_decAdjEdge {k n : ℕ} (Γ : Graph k n) :
+instance GlobalGoodRows_decAdjEdge {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.edgeGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.x = u ∧ c.y = v) ∨ (∃ c ∈ Γ.comps, c.x = v ∧ c.y = u))))
 
-private instance GlobalGoodRows_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
+instance GlobalGoodRows_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.wavedThetaGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
@@ -1061,7 +1068,7 @@ private instance GlobalGoodRows_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
       (∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
         c.x = v ∧ c.y = u))))
 
-private instance GlobalGoodRows_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
+instance GlobalGoodRows_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
     Decidable (Γ.Regular C) :=
   haveI : DecidableRel Γ.edgeGraph.Reachable :=
     @GlobalGoodRows_decReach _ _ _ _ (GlobalGoodRows_decAdjEdge Γ) (allAtoms k n)
@@ -1076,7 +1083,7 @@ private instance GlobalGoodRows_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n
       ∀ c ∈ Γ.comps, c.kind = .dot → c.x.isLeft = true ∨ c.y.isLeft = true)
     ⟨fun ⟨h1, h2, h3, h4⟩ => ⟨h1, h2, h3, h4⟩, fun ⟨h1, h2, h3, h4⟩ => ⟨h1, h2, h3, h4⟩⟩
 
-private instance GlobalGoodRows_decNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
+instance GlobalGoodRows_decNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
     Decidable (Γ.Normal C) :=
   inferInstanceAs (Decidable (Γ.Regular C ∧
     (∀ c ∈ Γ.comps, c.kind.isSolid = true → c.x ≠ c.y) ∧

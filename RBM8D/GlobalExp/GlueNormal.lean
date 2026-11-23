@@ -1,5 +1,9 @@
-import RBM8D.GlobalExp.Strategy
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # The `O_dot` forms of a substituted graph
@@ -1710,40 +1714,40 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance gn_decAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance gn_decAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
-private instance gn_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance gn_decSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
       @SimpleGraph.instDecidableRelReachable _ _ _ _ (gn_decAdjMol Γ) u v
     inferInstanceAs (Decidable (u = v ∨
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 
-private instance gn_decAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance gn_decAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     DecidableRel (Γ.net B).Adj :=
   fun a b => inferInstanceAs (Decidable (a ≠ b ∧
     ((Γ.SameMol (.inr a) (.inr b) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr a ∧ Γ.comps[i].y = .inr b) ∨
       (Γ.SameMol (.inr b) (.inr a) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr b ∧ Γ.comps[i].y = .inr a))))
 
-private instance gn_decSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance gn_decSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     Decidable (Γ.Spans B) :=
   haveI : DecidableRel (Γ.net B).Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (gn_decAdjNet Γ B)
   inferInstanceAs (Decidable (∀ a b, (Γ.net B).Reachable a b))
 
-private instance gn_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
+instance gn_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
   inferInstanceAs (Decidable (∀ c ∈ Γ.comps, c.label = none))
 
-private instance gn_decOtimesNoDot {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.OtimesNoDot := by
+instance gn_decOtimesNoDot {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.OtimesNoDot := by
   unfold Graph.OtimesNoDot; infer_instance
 
-private instance gn_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
+instance gn_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
   unfold Graph.NoLabDot; infer_instance
 
-private instance gn_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
+instance gn_decRgCheck {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.RgCheck := by
   unfold Graph.RgCheck; infer_instance
 
 end Instances

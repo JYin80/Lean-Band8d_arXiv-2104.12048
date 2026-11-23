@@ -1,4 +1,8 @@
-import RBM8D.TExp.Defs
+module
+
+public import RBM8D.TExp.Defs
+
+@[expose] public section
 
 /-!
 # Words of self-energy orders and the labelled `Θ` edges they give

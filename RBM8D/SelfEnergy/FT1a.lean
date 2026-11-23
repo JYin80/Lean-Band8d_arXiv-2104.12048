@@ -1,8 +1,12 @@
-import RBM8D.Kernel.Lattice
-import RBM8D.Bound.AuxTree
-import Mathlib.Analysis.Fourier.AddCircleMulti
-import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
+module
+
+public import RBM8D.Kernel.Lattice
+public import RBM8D.Bound.AuxTree
+public import Mathlib.Analysis.Fourier.AddCircleMulti
+public import Mathlib.Analysis.Normed.Group.Tannery
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+
+@[expose] public section
 
 /-!
 # The momentum form of a graph value on `ℤ^d` ([I, (7.29)–(7.30)])

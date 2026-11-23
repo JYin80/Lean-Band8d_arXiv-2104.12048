@@ -1,8 +1,12 @@
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Bound.GraphSum
-import RBM8D.Bound.KeySum
-import RBM8D.Input.LDELin
-import RBM8D.Graph.Local.Model
+module
+
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Bound.GraphSum
+public import RBM8D.Bound.KeySum
+public import RBM8D.Input.LDELin
+public import RBM8D.Graph.Local.Model
+
+@[expose] public section
 
 /-!
 # The `Q`-graphs in the high moment ([II, Claim 8.7])

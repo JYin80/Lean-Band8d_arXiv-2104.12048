@@ -1,4 +1,9 @@
-import RBM8D.Graph.Local.Basic
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Graph.Local.Basic
+
+@[expose] public section
 
 /-!
 # Dotted edge operations
@@ -11,19 +16,6 @@ noncomputable section
 open scoped BigOperators
 
 namespace RBM8D.Graphs
-
-/-- The atoms of a graph, externals first. -/
-def allAtoms (k n : ℕ) : List (Atom k n) :=
-  (List.finRange k).map Sum.inl ++ (List.finRange n).map Sum.inr
-
-/-- The partition `P` with the blocks of `u` and `v` joined. -/
-def joinBlocks {V : Type*} [DecidableEq V] (P : List (List V)) (u v : V) : List (List V) :=
-  P.filter (fun B => !(B.contains u || B.contains v)) ++
-    [(P.filter fun B => B.contains u || B.contains v).flatten]
-
-/-- The partition of the atoms `as` into the classes of atoms joined by paths of dotted edges. -/
-def dotBlocks {V : Type*} [DecidableEq V] (as : List V) (cs : List (Comp V)) : List (List V) :=
-  cs.foldl (fun P c => if c.kind = .dot then joinBlocks P c.x c.y else P) (as.map fun a => [a])
 
 /-- The representative of the block of `u`: its first atom. -/
 def blockRep {V : Type*} [DecidableEq V] (P : List (List V)) (u : V) : V :=

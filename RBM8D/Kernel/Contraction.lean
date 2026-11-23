@@ -1,5 +1,10 @@
-import RBM8D.Kernel.PropagatorSymbol
-import RBM8D.Kernel.ContractionCont
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.Bounds
+public import RBM8D.Kernel.PropagatorSymbol
+public import RBM8D.Kernel.ContractionCont
+
+@[expose] public section
 
 /-!
 # Contraction on the torus

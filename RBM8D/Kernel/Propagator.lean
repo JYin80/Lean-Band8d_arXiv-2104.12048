@@ -1,13 +1,18 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Topology.Instances.Matrix
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Prob.StochDom
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Topology.Instances.Matrix
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Prob.StochDom
+
+@[expose] public section
 
 /-!
 # The propagators `Θ`, `S^±`, `b`
@@ -25,20 +30,6 @@ open scoped FourierTransform SchwartzMap ComplexConjugate
 namespace RBM8D
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-/-- The complexification of a real kernel. -/
-def cmat (S : Matrix ι ι ℝ) : Matrix ι ι ℂ := S.map ((↑) : ℝ → ℂ)
-
-/-- `Θ = |m|² S (1 − |m|² S)⁻¹`, [I, (1.16)]. -/
-def Theta (m : ℂ) (S : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
-  (‖m‖ ^ 2 • S) * Ring.inverse (1 - ‖m‖ ^ 2 • S)
-
-/-- `S^+ = m² S (1 − m² S)⁻¹`, [I, (2.1)]. -/
-def Splus (m : ℂ) (S : Matrix ι ι ℝ) : Matrix ι ι ℂ :=
-  (m ^ 2 • cmat S) * Ring.inverse (1 - m ^ 2 • cmat S)
-
-/-- `S^- = conj S^+`, [I, (2.1)]. -/
-def Sminus (m : ℂ) (S : Matrix ι ι ℝ) : Matrix ι ι ℂ := (Splus m S).map (starRingEnd ℂ)
 
 /-- The inverse of a symmetric matrix is symmetric. -/
 private theorem transpose_ringInverse {R : Type*} [CommRing R] (B : Matrix ι ι R) (hB : Bᵀ = B) :

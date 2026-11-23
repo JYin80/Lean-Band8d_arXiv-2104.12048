@@ -1,6 +1,16 @@
-import RBM8D.SelfEnergy.ValZ
-import RBM8D.SelfEnergy.Diag
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.SelfEnergy.ValZ
+public import RBM8D.SelfEnergy.Diag
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Bound.AuxTreeZ
+public import RBM8D.Kernel.Sinf
+import all RBM8D.SelfEnergy.Diag
+import all RBM8D.SelfEnergy.ValZ
+import all RBM8D.Bound.AuxTreeZ
+import all RBM8D.Kernel.Sinf
+
+@[expose] public section
 
 /-!
 # The renormalized self-energies on `ℤ^d` ([I, Lemma 8.4, (8.6)–(8.7)], [I, Def 8.2])

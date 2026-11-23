@@ -1,5 +1,9 @@
-import RBM8D.Joint.Relabel
-import RBM8D.Joint.Words
+module
+
+public import RBM8D.Joint.Relabel
+public import RBM8D.Joint.Words
+
+@[expose] public section
 
 /-!
 # The leading term beyond `Σ_T^{(n)}`
@@ -48,16 +52,16 @@ set_option maxRecDepth 100000
 
 local macro "kdec" : tactic => `(tactic| decide +kernel)
 
-private instance Overflow_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
+instance Overflow_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
   inferInstanceAs (Decidable (_ = true))
 
-private instance Overflow_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
+instance Overflow_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-private instance Overflow_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
+instance Overflow_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
   inferInstanceAs (Decidable (∀ c ∈ Γ.comps, c.label = none))
 
-private instance Overflow_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
+instance Overflow_decNoLabDot {k n : ℕ} (Γ : Graph k n) : Decidable Γ.NoLabDot := by
   unfold Graph.NoLabDot; infer_instance
 
 /-- A graph without internal atom is doubly connected (empty nets). -/

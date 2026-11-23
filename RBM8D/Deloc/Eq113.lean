@@ -1,4 +1,8 @@
-import RBM8D.Deloc.Det
+module
+
+public import RBM8D.Deloc.Det
+
+@[expose] public section
 
 /-!
 # [I, Theorem 1.3], (1.13), from the local law

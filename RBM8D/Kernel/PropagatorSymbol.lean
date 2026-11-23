@@ -1,5 +1,9 @@
-import RBM8D.Kernel.Circulant
-import RBM8D.Kernel.Propagator
+module
+
+public import RBM8D.Kernel.Circulant
+public import RBM8D.Kernel.Propagator
+
+@[expose] public section
 
 /-!
 # Symbols of the propagators

@@ -1,5 +1,9 @@
-import RBM8D.Joint.Overflow
-import RBM8D.TExp.Second
+module
+
+public import RBM8D.Joint.Overflow
+public import RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # The solved `T`-equation: graph properties, coherence and the error order
@@ -142,7 +146,7 @@ theorem labelOK_of_mem_nil_cons {n : ℕ} {o : List ℕ} (ho : o ∈ [] :: chain
 /-- The plain label leaves a graph unchanged. -/
 theorem relabelRoot_nil {n : ℕ} (Γ : Graph 3 n) : Γ.relabelRoot [] = Γ := by
   rcases Γ with ⟨comps, coeff⟩
-  simp only [Graph.relabelRoot, Graph.mk.injEq, and_true]
+  simp only [Graph.relabelRoot, RBM8D.Graphs.Graph.mk.injEq, and_true]
   conv_rhs => rw [← List.map_id comps]
   refine List.map_congr_left fun c _ => ?_
   split_ifs with h

@@ -1,5 +1,9 @@
-import RBM8D.TExp.Defs
-import RBM8D.Bound.GraphAbs
+module
+
+public import RBM8D.TExp.Defs
+public import RBM8D.Bound.GraphAbs
+
+@[expose] public section
 
 /-!
 # Contraction of a dotted edge between an internal and an external atom

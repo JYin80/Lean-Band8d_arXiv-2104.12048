@@ -1,4 +1,8 @@
-import RBM8D.Diffusion.Defs
+module
+
+public import RBM8D.Diffusion.Defs
+
+@[expose] public section
 
 /-!
 # The rooted `T`-equation

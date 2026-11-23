@@ -1,4 +1,8 @@
-import RBM8D.Deloc.Defs
+module
+
+public import RBM8D.Deloc.Defs
+
+@[expose] public section
 
 /-!
 # The estimate (8.2) of [I, §8] in deterministic form

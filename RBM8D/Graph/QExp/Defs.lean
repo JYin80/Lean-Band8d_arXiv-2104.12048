@@ -1,5 +1,9 @@
-import RBM8D.Graph.QExp.Steps
-import RBM8D.Graph.Local.Edge
+module
+
+public import RBM8D.Graph.QExp.Steps
+public import RBM8D.Graph.Local.Edge
+
+@[expose] public section
 
 /-!
 # Blocks, elementary steps and the statements of the `Q`-expansions

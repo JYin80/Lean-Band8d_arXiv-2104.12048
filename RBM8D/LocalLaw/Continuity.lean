@@ -1,5 +1,9 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.Eta1
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.Eta1
+
+@[expose] public section
 
 /-!
 # The continuity step [II, Lemma 7.3] = [I, Lemma 5.3]: a box sum of `B`

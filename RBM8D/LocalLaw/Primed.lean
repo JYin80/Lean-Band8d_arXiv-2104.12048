@@ -1,12 +1,16 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.Eta1
-import RBM8D.LocalLaw.Continuity
-import RBM8D.LocalLaw.Entrywise
-import RBM8D.LocalLaw.Moment
-import RBM8D.LocalLaw.QTermOf
-import RBM8D.LocalLaw.LabelPaths
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Prob.Net
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.Eta1
+public import RBM8D.LocalLaw.Continuity
+public import RBM8D.LocalLaw.Entrywise
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.LocalLaw.QTermOf
+public import RBM8D.LocalLaw.LabelPaths
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Prob.Net
+
+@[expose] public section
 
 /-!
 # The local law from a T-expansion with the error order chosen after the moment index

@@ -1,4 +1,8 @@
-import RBM8D.Kernel.ShellKernel
+module
+
+public import RBM8D.Kernel.ShellKernel
+
+@[expose] public section
 
 /-!
 # Cancellation on `ℤ^d`

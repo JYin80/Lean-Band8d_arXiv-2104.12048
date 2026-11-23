@@ -1,5 +1,9 @@
-import RBM8D.Deloc.Det
-import RBM8D.Deloc.Ward
+module
+
+public import RBM8D.Deloc.Det
+public import RBM8D.Deloc.Ward
+
+@[expose] public section
 
 /-!
 # [I, Lemma 8.1] and [I, Theorem 1.3], (1.12), from the local law

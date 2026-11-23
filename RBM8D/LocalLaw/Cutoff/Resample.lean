@@ -1,4 +1,8 @@
-import RBM8D.LocalLaw.Cutoff.Defs
+module
+
+public import RBM8D.LocalLaw.Cutoff.Defs
+
+@[expose] public section
 
 /-!
 # The improvement on the cutoff event and the pair event

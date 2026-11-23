@@ -1,5 +1,9 @@
-import RBM8D.Graph.MolMerge
-import RBM8D.Graph.Standard
+module
+
+public import RBM8D.Graph.MolMerge
+public import RBM8D.Graph.Standard
+
+@[expose] public section
 
 /-!
 # Splitting an edge through a molecule
@@ -18,7 +22,7 @@ variable {V E : Type}
 /-! ## Comparing molecular graphs -/
 
 /-- Two pairs of vertices are equal up to order. -/
-private def SameEnds (p q : V × V) : Prop := p = q ∨ p = q.swap
+def SameEnds (p q : V × V) : Prop := p = q ∨ p = q.swap
 
 /-- The edge `x` is present, has internal ends and is not a loop. -/
 private def MGraph.Pres (X : MGraph V E) (x : E) : Prop :=
@@ -1013,7 +1017,7 @@ private theorem preDet_of_dropPlus [DecidableEq E] {X : MGraph V E} (hX : X.drop
 /-- The data of a chain of proper isolated subsets of a sequentially pre-deterministic graph
 without ghost edges: the chain `P` with `k` members, the component `lev v` of each vertex, and the
 two crossing edges `cc l` (diffusive) and `cc' l` (diffusive or blue solid) of `P (l + 1)`. -/
-private structure Ctx [DecidableEq V] [DecidableEq E] (G : MGraph V E) where
+structure SplitCtx [DecidableEq V] [DecidableEq E] (G : MGraph V E) where
   k : ℕ
   P : ℕ → Finset V
   lev : V → ℕ
@@ -1064,7 +1068,7 @@ private theorem ends_of_cut [DecidableEq V] {G : MGraph V E} {P : Finset V} {e :
 /-- The chain data of a sequentially pre-deterministic graph without ghost edges. -/
 private theorem ctx_exists [DecidableEq V] [DecidableEq E] [Nonempty E] {G : MGraph V E} {k : ℕ}
     {P : ℕ → Finset V} (hs : G.SPD) (hc : G.IsChain k P) (hng : ∀ e, G.cls e ≠ some .ghost) :
-    ∃ C : Ctx G, C.k = k ∧ C.P = P := by
+    ∃ C : SplitCtx G, C.k = k ∧ C.P = P := by
   classical
   have hdc := hs.1
   have Pint : ∀ m ≤ k, P m ⊆ G.int := fun m hm => hc.1 ▸ chain_anti hc (Nat.zero_le m) hm
@@ -1282,18 +1286,18 @@ private theorem induce_induce [DecidableEq V] (X : MGraph V E) {A B : Finset V} 
   · simp [hb]
 
 /-- The vertices of the components `a, …, b - 1` of the chain. -/
-private def Ctx.Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G) (a b : ℕ) :
+def SplitCtx.Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G) (a b : ℕ) :
     Finset V :=
   G.int.filter fun v => a ≤ C.lev v ∧ C.lev v < b
 
 /-- Membership in the components `a, …, b - 1`. -/
-private theorem Ctx.mem_Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G)
+private theorem SplitCtx.mem_Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G)
     {a b : ℕ} {v : V} : v ∈ C.Lvl a b ↔ v ∈ G.int ∧ a ≤ C.lev v ∧ C.lev v < b := by
-  unfold Ctx.Lvl
+  unfold SplitCtx.Lvl
   rw [Finset.mem_filter]
 
 /-- The subgraph induced on the components `a, …, b - 1` of the chain is doubly connected. -/
-private theorem Ctx.dc_Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G)
+private theorem SplitCtx.dc_Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G)
     {a : ℕ} (b : ℕ) (ha : a ≤ C.k) : (G.induce (C.Lvl a b)).DC := by
   classical
   have hdc := C.spd.1
@@ -1356,7 +1360,7 @@ private theorem Ctx.dc_Lvl [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C :
 /-! ## The components of the chain -/
 
 /-- The ends of the crossing edges of `P (l + 1)`: internal, in the components `l` and `l + 1`. -/
-private theorem Ctx.cc_lev [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G) {l : ℕ}
+private theorem SplitCtx.cc_lev [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G) {l : ℕ}
     (hl : l < C.k) {x : E} (hx : x = C.cc l ∨ x = C.cc' l) :
     (G.ends x).1 ∈ G.int ∧ (G.ends x).2 ∈ G.int ∧
       ((C.lev (G.ends x).1 = l ∧ C.lev (G.ends x).2 = l + 1) ∨
@@ -1369,7 +1373,7 @@ private theorem Ctx.cc_lev [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C :
 
 /-- The subgraph induced on the components `a, …, b - 1` of the chain is doubly connected, also
 when it is empty. -/
-private theorem Ctx.dc_Lvl' [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G)
+private theorem SplitCtx.dc_Lvl' [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G)
     (a b : ℕ) : (G.induce (C.Lvl a b)).DC := by
   by_cases ha : a ≤ C.k
   · exact C.dc_Lvl b ha
@@ -1456,7 +1460,7 @@ private theorem exists_chain {G : MGraph V E} :
 
 
 /-- Membership in the members of the chain. -/
-private theorem Ctx.mem_P [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : Ctx G) {m : ℕ}
+private theorem SplitCtx.mem_P [DecidableEq V] [DecidableEq E] {G : MGraph V E} (C : SplitCtx G) {m : ℕ}
     (hm : m ≤ C.k) (v : V) : v ∈ C.P m ↔ v ∈ G.int ∧ m ≤ C.lev v :=
   ⟨fun h => ⟨C.Psub m hm h, (C.memP v (C.Psub m hm h) m hm).1 h⟩,
     fun ⟨h1, h2⟩ => (C.memP v h1 m hm).2 h2⟩
@@ -1676,7 +1680,7 @@ end Split
 
 /-- The setting of [II, Lemma 5.12]: the chain data of a sequentially pre-deterministic graph
 without ghost edges, a blue solid edge `e`, an absent edge `e'` and an internal vertex `w`. -/
-private structure SC [DecidableEq V] [DecidableEq E] (G : MGraph V E) extends Ctx G where
+structure SC [DecidableEq V] [DecidableEq E] (G : MGraph V E) extends SplitCtx G where
   e : E
   e' : E
   w : V
@@ -1691,7 +1695,7 @@ namespace SC
 variable [DecidableEq V] [DecidableEq E] {G : MGraph V E} (S : SC G)
 
 /-- The graph after operation (B). -/
-private abbrev Gt : MGraph V E := G.split S.e S.e' S.w
+abbrev Gt : MGraph V E := G.split S.e S.e' S.w
 
 /-- The outer end of the diffusive crossing edge of `P (l + 1)`. -/
 private abbrev u (l : ℕ) : V := G.outer (S.P (l + 1)) (S.cc l)
@@ -1700,10 +1704,10 @@ private abbrev u (l : ℕ) : V := G.outer (S.P (l + 1)) (S.cc l)
 private abbrev u' (l : ℕ) : V := G.outer (S.P (l + 1)) (S.cc' l)
 
 private theorem mem_P {m : ℕ} (hm : m ≤ S.k) (v : V) : v ∈ S.P m ↔ v ∈ G.int ∧ m ≤ S.lev v :=
-  S.toCtx.mem_P hm v
+  S.toSplitCtx.mem_P hm v
 
 private theorem mem_Lvl {a b : ℕ} {v : V} : v ∈ S.Lvl a b ↔ v ∈ G.int ∧ a ≤ S.lev v ∧ S.lev v < b :=
-  S.toCtx.mem_Lvl
+  S.toSplitCtx.mem_Lvl
 
 private theorem e_ne_cc {l : ℕ} (hl : l < S.k) : S.e ≠ S.cc l := fun h => by
   have := S.cc_diff l hl
@@ -1749,7 +1753,7 @@ private theorem jump' {x : E} (hc : G.cls x ≠ none) (hm : G.cls x ≠ some .mi
       ((S.lev (G.ends x).1 = l ∧ S.lev (G.ends x).2 = l + 1) ∨
         (S.lev (G.ends x).1 = l + 1 ∧ S.lev (G.ends x).2 = l)) := by
   obtain ⟨l, hl, hx⟩ := S.jump x hc hm h1 h2 hne
-  obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hl hx
+  obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hl hx
   exact ⟨l, hl, hx, h⟩
 
 /-- A blue solid edge between internal vertices joins vertices of one component or of two
@@ -1770,8 +1774,8 @@ private theorem lev_plus {x : E} (hx : G.cls x = some .plus) (h1 : (G.ends x).1 
 /-- The crossing edges of different members of the chain are different. -/
 private theorem cc_inj {l l' : ℕ} (hl : l < S.k) (hl' : l' < S.k) {x : E} (hx : x = S.cc l ∨ x = S.cc' l)
     (hx' : x = S.cc l' ∨ x = S.cc' l') : l = l' := by
-  obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hl hx
-  obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hl' hx'
+  obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hl hx
+  obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hl' hx'
   omega
 
 /-! ### The graphs of the components -/
@@ -1783,7 +1787,7 @@ private abbrev R (l : ℕ) : MGraph V E := G.replace (S.P l) (S.P (l + 1)) (S.cc
 /-- The graph of the last component, or of the component `b` with `P (b + 1)` and its two
 external edges `x₁`, `x₂` replaced by one `Θ` edge: its internal vertices are those of the
 component, its edges those of `G` inside the component and the `Θ` edge. -/
-private structure IsB (Z : MGraph V E) (b : ℕ) (x₁ x₂ : E) : Prop where
+structure IsB (Z : MGraph V E) (b : ℕ) (x₁ x₂ : E) : Prop where
   int : ∀ v, v ∈ Z.int ↔ v ∈ G.int ∧ S.lev v = b
   pres : ∀ x, Z.cls x ≠ none → (b < S.k ∧ x = x₁ ∧ Z.cls x = some .diff ∧
       Z.ends x = (G.outer (S.P (b + 1)) x₁, G.outer (S.P (b + 1)) x₂)) ∨
@@ -1835,7 +1839,7 @@ private theorem isB_replace {b : ℕ} (hb : b < S.k) {x₁ x₂ : E} (hx₁ : x�
   · have hcr : ∀ y, (y = S.cc b ∨ y = S.cc' b) → ¬ (S.lev (G.ends y).1 = b ∧
         S.lev (G.ends y).2 = b) := by
       intro y hy ⟨h1, h2⟩
-      obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hb hy
+      obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hb hy
       omega
     unfold MGraph.IsIntPlus
     rw [MGraph.replace]
@@ -1924,7 +1928,7 @@ private theorem mem_ordR {c : ℕ} (hc : c < S.k) (x : E) : x ∈ S.ordR c ↔ G
 /-- The graph on the components `a, …, b` after operation (B): the subgraph induced on `P a`
 (for `b = k`), or the graph with `P (b + 1)` and its two external edges `x₁`, `x₂` replaced by one
 `Θ` edge (for `b < k`). -/
-private structure IsX (Z : MGraph V E) (a b : ℕ) (x₁ x₂ : E) : Prop where
+structure IsX (Z : MGraph V E) (a b : ℕ) (x₁ x₂ : E) : Prop where
   int : ∀ v, v ∈ Z.int ↔ v ∈ G.int ∧ a ≤ S.lev v ∧ S.lev v ≤ b
   gen : ∀ x, (b < S.k → x ≠ x₁ ∧ x ≠ x₂) → Z.ends x = S.Gt.ends x ∧
     Z.cls x = if (S.Gt.ends x).1 ∈ Z.int ∧ (S.Gt.ends x).2 ∈ Z.int then S.Gt.cls x else none
@@ -1982,7 +1986,7 @@ private theorem IsX.dc_lower {Z : MGraph V E} {a b : ℕ} {x₁ x₂ : E} (hZ : 
     (hac : a ≤ c) (hcb : c < b) (hbk : b ≤ S.k)
     (he : ¬ ((G.ends S.e).1 ∈ S.Lvl (c + 1) (b + 1) ∧ (G.ends S.e).2 ∈ S.Lvl (c + 1) (b + 1)))
     (l : List E) : ((Z.convert l).induce (S.Lvl (c + 1) (b + 1))).DC := by
-  refine dc_le (S.toCtx.dc_Lvl (b + 1) (by omega)) ⟨rfl, fun x hx => ?_⟩
+  refine dc_le (S.toSplitCtx.dc_Lvl (b + 1) (by omega)) ⟨rfl, fun x hx => ?_⟩
   obtain ⟨hc, h1, h2, -⟩ := hx
   have hin : (G.ends x).1 ∈ S.Lvl (c + 1) (b + 1) ∧ (G.ends x).2 ∈ S.Lvl (c + 1) (b + 1) := by
     by_contra hn
@@ -2175,7 +2179,7 @@ private theorem convert_cls_of_not_mem {X : MGraph V E} {l : List E} {x : E} (h 
 
 /-- The setting of case (i) of [II, Lemma 5.12]: the ends of `e` in the component `i`, `w` in the
 component `j > i`. -/
-private structure CaseI (S : SC G) (i j : ℕ) : Prop where
+structure CaseI (S : SC G) (i j : ℕ) : Prop where
   hij : i < j
   hjk : j ≤ S.k
   ha : (G.ends S.e).1 ∈ G.int
@@ -2186,7 +2190,7 @@ private structure CaseI (S : SC G) (i j : ℕ) : Prop where
 
 private theorem CaseI.e_ne_cc' {i j : ℕ} (hC : S.CaseI i j) {l : ℕ} (hl : l < S.k) : S.e ≠ S.cc' l := by
   intro h
-  obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hl (Or.inr h)
+  obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hl (Or.inr h)
   have := hC.hla
   have := hC.hlb
   omega
@@ -2234,7 +2238,7 @@ private theorem CaseI.le_A3 {i j : ℕ} (hC : S.CaseI i j) {Z : MGraph V E} {x�
   have hcross : ∀ y, (y = S.cc c ∨ y = S.cc' c) → Z.ends y = G.ends y ∧ Z.cls y = G.cls y ∧
       y ∉ l := by
     intro y hy
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hck hy
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hck hy
     have hye : y ≠ S.e := by rcases hy with rfl | rfl; exacts [ec.symm, ec'.symm]
     have hye' : y ≠ S.e' := by rcases hy with rfl | rfl; exacts [e'c.symm, e'c'.symm]
     obtain ⟨h1, h2⟩ := hZ.edge hye hye' g1 (by omega) (by omega) g2 (by omega) (by omega)
@@ -2402,7 +2406,7 @@ private theorem CaseI.le_A4 {i j : ℕ} (hC : S.CaseI i j) {Z : MGraph V E} {x�
   -- the crossing edges of `P (c + 1)`
   have hcross : ∀ y, (y = S.cc c ∨ y = S.cc' c) → Z.ends y = G.ends y ∧ Z.cls y = G.cls y := by
     intro y hy
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hck hy
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hck hy
     have hye : y ≠ S.e := by rcases hy with rfl | rfl; exacts [ec.symm, ec'.symm]
     have hye' : y ≠ S.e' := by rcases hy with rfl | rfl; exacts [e'c.symm, e'c'.symm]
     exact hZ.edge hye hye' g1 (by omega) (by omega) g2 (by omega) (by omega)
@@ -2627,13 +2631,13 @@ private theorem dc_Rep_quot {i c : ℕ} (hic : i < c) (hck : c < S.k) (m : List 
   have hnotR : ∀ y, (y = S.cc (c - 1) ∨ y = S.cc' (c - 1)) → ¬ (G.induce (S.Lvl i c)).Pres y := by
     intro y hy hp
     obtain ⟨h1, h2, -⟩ := hRp y hp
-    obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hc1 hy
+    obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hc1 hy
     have := (S.mem_Lvl.1 h1).2.2
     have := (S.mem_Lvl.1 h2).2.2
     omega
   refine dc_path (R := G.induce (S.Lvl i c)) (N := S.u c) (g := S.cc (c - 1))
     (g₁ := S.cc (c - 1)) (g₂ := S.cc' (c - 1)) (y₁ := S.cc (c - 1)) (y₂ := S.cc' (c - 1))
-    (m₁ := S.u (c - 1)) (m₂ := S.u' (c - 1)) (S.toCtx.dc_Lvl c (by omega)) ?_ ?_ ?_ ?_
+    (m₁ := S.u (c - 1)) (m₂ := S.u' (c - 1)) (S.toSplitCtx.dc_Lvl c (by omega)) ?_ ?_ ?_ ?_
   · ext v
     rw [mem_collapse_int hΓ huΓ, Finset.mem_insert, convert_int, Rep_int hic.le hck]
     change _ ↔ v = S.u c ∨ v ∈ S.Lvl i c
@@ -2650,9 +2654,9 @@ private theorem dc_Rep_quot {i c : ℕ} (hic : i < c) (hck : c < S.k) (m : List 
     obtain ⟨a1i, a1a, a1b⟩ := S.mem_Lvl.1 a1
     obtain ⟨a2i, a2a, a2b⟩ := S.mem_Lvl.1 a2
     have n1 : f ≠ S.cc c := fun h => by
-      obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inl h); omega
+      obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inl h); omega
     have n2 : f ≠ S.cc' c := fun h => by
-      obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inr h); omega
+      obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inr h); omega
     have hin' : (G.ends f).1 ∈ S.Lvl i (c + 1) ∧ (G.ends f).2 ∈ S.Lvl i (c + 1) :=
       ⟨S.mem_Lvl.2 ⟨a1i, a1a, by omega⟩, S.mem_Lvl.2 ⟨a2i, a2a, by omega⟩⟩
     refine ⟨?_, ?_⟩
@@ -2687,7 +2691,7 @@ private theorem red_Rep {i c : ℕ} (hic : i ≤ c) (hck : c < S.k) {t : ℕ} (h
       obtain ⟨h1, h2, h3⟩ := S.mem_Lvl.1 hv
       exact S.mem_Lvl.2 ⟨h1, by omega, h3⟩
     have n1 : (S.ordR c)[t] ≠ S.cc c := fun h => by
-      obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inl h); omega
+      obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inl h); omega
     have hin : (((S.Rep i c).convert ((S.ordR c).take t)).ends (S.ordR c)[t]).1 ∈ S.Lvl c (c + 1) ∧
         (((S.Rep i c).convert ((S.ordR c).take t)).ends (S.ordR c)[t]).2 ∈ S.Lvl c (c + 1) := by
       rw [convert_ends, Rep_ends n1]
@@ -2708,7 +2712,7 @@ private theorem red_Rep {i c : ℕ} (hic : i ≤ c) (hck : c < S.k) {t : ℕ} (h
         (G.ends (S.ordR c)[t]).2 ∈ S.Lvl i (c + 1) :=
       ⟨S.mem_Lvl.2 ⟨a1, by omega, by omega⟩, S.mem_Lvl.2 ⟨b1, by omega, by omega⟩⟩
     have n2 : (S.ordR c)[t] ≠ S.cc' c := fun h => by
-      obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inr h); omega
+      obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inr h); omega
     rw [convert_cls_of_not_mem hnt]
     simp only [MGraph.induce]
     rw [Rep_ends n1, if_pos hinG, Rep_cls hic hck n1 n2, if_pos hinG', hp]
@@ -2743,7 +2747,7 @@ private theorem J_or {c : ℕ} (hck : c < S.k) : G.cls (S.cc' c) = some .diff �
 /-- An edge of the induced subgraph on the components `i, …, c` crossing `P (c + 1)` is absent. -/
 private theorem induce_cls_cross {i c : ℕ} (hck : c < S.k) {y : E} (hy : y = S.cc c ∨ y = S.cc' c) :
     (G.induce (S.Lvl i (c + 1))).cls y = none := by
-  obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hck hy
+  obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hck hy
   have : ¬ ((G.ends y).1 ∈ S.Lvl i (c + 1) ∧ (G.ends y).2 ∈ S.Lvl i (c + 1)) := by
     rintro ⟨h1, h2⟩
     have := (S.mem_Lvl.1 h1).2.2
@@ -3001,7 +3005,7 @@ private theorem CaseI.stepJ {c : ℕ} (hic : i ≤ c) (hcj : c < j) {pre : List 
   unfold J
   split_ifs with hp
   · rw [steps_single]
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hck (Or.inr rfl)
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hck (Or.inr rfl)
     obtain ⟨z1, z2⟩ := hZ.edge (hC.e_ne_cc' hck).symm (S.e'_ne_cc' hck).symm g1 (by omega)
       (by omega) g2 (by omega) (by omega)
     have hx : ¬ (((Z.convert pre).ends (S.cc' c)).1 ∈ S.Lvl (c + 1) (j + 1) ∧
@@ -3018,7 +3022,7 @@ private theorem CaseI.stepJ {c : ℕ} (hic : i ≤ c) (hcj : c < j) {pre : List 
       obtain ⟨hu, hlu⟩ := S.u_mem hck
       obtain ⟨hu', hlu'⟩ := S.u'_mem hck
       refine MGraph.claimA3 V E _ S.w (S.u c) (S.u' c) S.e (S.cc c) (S.cc' c) S.e'
-        (S.toCtx.dc_Lvl (c + 1) (by omega)) (fun h => by
+        (S.toSplitCtx.dc_Lvl (c + 1) (by omega)) (fun h => by
           have := (S.mem_Lvl.1 h).2.2; omega) (by simp [MGraph.induce])
         (S.mem_Lvl.2 ⟨hu, by omega, by omega⟩) (S.mem_Lvl.2 ⟨hu', by omega, by omega⟩)
         (by simp [MGraph.induce, aL, bL, S.ce]) aL bL ?_ (induce_cls_cross hck (Or.inl rfl))
@@ -3116,7 +3120,7 @@ private theorem CaseI.tier_mid {c : ℕ} (hic : i < c) (hcj : c < j) {pre : List
     simp only [List.mem_append, not_or]
     refine ⟨⟨fun h => hxL (hpre _ h), fun h => ?_⟩, getElem_not_mem_take hnd ht⟩
     obtain ⟨h, -⟩ := mem_J h
-    obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inr h)
+    obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inr h)
     omega
   refine hC.stepA hZ hic.le hcj (m := (S.ordR c).take t) (fun y hy => ?_) (fun y hy => by
     simp [hy]) ?_ ?_ hxL hxe (red_Rep hic.le hck ht) (by rw [convert_cls_of_not_mem hxl, z2, hp])
@@ -3216,7 +3220,7 @@ private theorem CaseI.tier_top {pre : List E}
     have := (lev_ord y hy).1; rw [h, S.ce'] at this; cases this
   have c'ord : ∀ y ∈ S.ordR i, y ≠ S.cc' i := fun y hy h => by
     obtain ⟨-, -, a, -, b⟩ := lev_ord y hy
-    obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hik (Or.inr h)
+    obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hik (Or.inr h)
     omega
   have notpre : ∀ y, ¬ ((Z.ends y).1 ∈ S.Lvl (i + 1) (j + 1) ∧
       (Z.ends y).2 ∈ S.Lvl (i + 1) (j + 1)) → y ∉ pre := fun y h h' => h (hpre y h')
@@ -3403,14 +3407,14 @@ private theorem CaseI.botQ {l : List E} (hel : S.e ∉ l) (hel' : S.e' ∉ l) :
   have hnotR : ∀ y, (y = S.cc (j - 1) ∨ y = S.cc' (j - 1)) → ¬ (G.induce (S.Lvl i j)).Pres y := by
     intro y hy hp
     obtain ⟨h1, h2, -⟩ := hRp y hp
-    obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hj1 hy
+    obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hj1 hy
     have := (S.mem_Lvl.1 h1).2.2
     have := (S.mem_Lvl.1 h2).2.2
     omega
   have hy : ∀ y, (y = S.cc (j - 1) ∨ y = S.cc' (j - 1)) →
       Z.ends y = G.ends y ∧ Z.cls y = G.cls y := by
     intro y hy
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hj1 hy
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hj1 hy
     have hye : y ≠ S.e := by
       rcases hy with rfl | rfl
       · exact (S.e_ne_cc hj1).symm
@@ -3433,7 +3437,7 @@ private theorem CaseI.botQ {l : List E} (hel : S.e ∉ l) (hel' : S.e' ∉ l) :
   have hRe : (G.induce (S.Lvl i j)).cls S.e = some .plus := by simp [MGraph.induce, aL, bL, S.ce]
   refine dc_path (R := G.induce (S.Lvl i j)) (N := S.w) (g := S.e) (g₁ := S.e) (g₂ := S.e')
     (y₁ := S.cc (j - 1)) (y₂ := S.cc' (j - 1)) (m₁ := S.u (j - 1)) (m₂ := S.u' (j - 1))
-    (S.toCtx.dc_Lvl j (by omega)) ?_ ?_ ?_ ?_
+    (S.toSplitCtx.dc_Lvl j (by omega)) ?_ ?_ ?_ ?_
   · rw [collapse_convert, convert_int]
     have := hZ.collapse_int (c := j - 1) (by omega) (by omega) (by omega) (by omega)
     rw [hjj] at this
@@ -3524,7 +3528,7 @@ private theorem CaseI.preDet {B : MGraph V E} (hB : S.IsB B j x₁ x₂) (hBpd :
         S.lev (G.ends y).2 = c + 1) ∨ (S.lev (G.ends y).1 = c + 1 ∧ S.lev (G.ends y).2 = c)) := by
     intro c hc y hy
     obtain ⟨rfl, hp⟩ := mem_J hy
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hc (Or.inr rfl)
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hc (Or.inr rfl)
     exact ⟨hp, (hC.e_ne_cc' hc).symm, (S.e'_ne_cc' hc).symm, g1, g2, g3⟩
   have ordlev : ∀ c, c < S.k → ∀ y ∈ S.ordR c, G.cls y = some .plus ∧ (G.ends y).1 ∈ G.int ∧
       S.lev (G.ends y).1 = c ∧ (G.ends y).2 ∈ G.int ∧ S.lev (G.ends y).2 = c :=
@@ -3623,7 +3627,7 @@ variable [DecidableEq V] [DecidableEq E] {G : MGraph V E} {S : SC G}
 /-- The setting of cases (iii) and (v) of [II, Lemma 5.12]: `e` joins the vertex `t` of the
 component `s` to a vertex `v` outside `P s` (in the component `s - 1`, or external); `w` lies in
 the component `j > s`; after the operation, `y` joins `w` to `t` and `z` joins `w` to `v`. -/
-private structure CaseT (S : SC G) (s j : ℕ) (y z : E) (t v : V) : Prop where
+structure CaseT (S : SC G) (s j : ℕ) (y z : E) (t v : V) : Prop where
   hsj : s < j
   hjk : j ≤ S.k
   hyz : (y = S.e ∧ z = S.e') ∨ (y = S.e' ∧ z = S.e)
@@ -3656,7 +3660,7 @@ private theorem CaseT.e_out (hT : S.CaseT s j y z t v) {a : ℕ} (hsa : s ≤ a)
 private theorem CaseT.e_ne_cc (hT : S.CaseT s j y z t v) {l : ℕ} (hl : l < S.k) (hsl : s ≤ l) {x : E}
     (hx : x = S.cc l ∨ x = S.cc' l) : S.e ≠ x := by
   rintro rfl
-  obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hl hx
+  obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hl hx
   exact hT.e_out hsl ⟨g1, by omega, g2, by omega⟩
 
 /-- The edge `y`: a blue solid edge between `w` and `t`. -/
@@ -3742,7 +3746,7 @@ private theorem CaseT.stepY {l : List E} (hyl : y ∉ l) : (Z.convert l).IsRedun
     simp only [id, MGraph.induce, hin, and_self, ↓reduceIte]
     rw [z1, z2]
     exact ⟨Or.inl rfl, sameEnds_refl _⟩
-  have hdc := S.toCtx.dc_Lvl (j + 1) (a := s) (by omega)
+  have hdc := S.toSplitCtx.dc_Lvl (j + 1) (a := s) (by omega)
   have hle' := le_trans' hle (le_convert Z l)
   refine ⟨by rw [convert_cls_of_not_mem hyl]; exact yc, dc_le hdc hle',
     dc_le hdc ⟨hle'.1, fun x hx => ?_⟩⟩
@@ -3772,7 +3776,7 @@ private theorem CaseT.cross {c : ℕ} (hsc : s ≤ c) (hcj : c < j) {x : E}
     (hx : x = S.cc c ∨ x = S.cc' c) : Z.ends x = G.ends x ∧ Z.cls x = G.cls x ∧
       ¬ ((Z.ends x).1 ∈ S.Lvl (c + 1) (j + 1) ∧ (Z.ends x).2 ∈ S.Lvl (c + 1) (j + 1)) := by
   have hck : c < S.k := by have := hT.hjk; omega
-  obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hck hx
+  obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hck hx
   have hxe : x ≠ S.e := fun h => hT.e_ne_cc hck hsc hx h.symm
   have hxe' : x ≠ S.e' := by
     rcases hx with rfl | rfl
@@ -3987,7 +3991,7 @@ private theorem CaseT.tier {c : ℕ} (hsc : s ≤ c) (hcj : c < j) {pre : List E
         · exact z3 h'
         · exact yc2 h'.symm
       obtain ⟨-, -, -, hA6⟩ := MGraph.claimA6 V E (G.induce (S.Lvl s (c + 1))) S.w (S.u c)
-        (S.u' c) t (S.cc c) (S.cc' c) y (S.toCtx.dc_Lvl (c + 1) (by omega))
+        (S.u' c) t (S.cc c) (S.cc' c) y (S.toSplitCtx.dc_Lvl (c + 1) (by omega))
         (fun h => by have := (S.mem_Lvl.1 h).2.2; omega) (by simp [MGraph.induce])
         (S.mem_Lvl.2 ⟨hu, by omega, by omega⟩) (S.mem_Lvl.2 ⟨hu', by omega, by omega⟩)
         (S.mem_Lvl.2 ⟨hT.ht, by omega, by omega⟩) hnd3 (induce_cls_cross hck (Or.inl rfl))
@@ -4019,7 +4023,7 @@ private theorem CaseT.tier {c : ℕ} (hsc : s ≤ c) (hcj : c < j) {pre : List E
         · exact hxL h'
         · exact hxy h'
       · obtain ⟨h, -⟩ := mem_J h
-        obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hck (Or.inr h)
+        obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hck (Or.inr h)
         omega
     have hr := red_Rep (S := S) hsc hck ht'
     obtain ⟨t1, t2, t3⟩ := Rep_θ (S := S) (i := s) hck
@@ -4085,7 +4089,7 @@ private theorem CaseT.botQ (l : List E) : ((Z.convert l).collapse (S.Lvl j (j + 
   have hnotR : ∀ x, (x = S.cc (j - 1) ∨ x = S.cc' (j - 1)) → ¬ (G.induce (S.Lvl s j)).Pres x := by
     intro x hx hp
     obtain ⟨h1, h2, -⟩ := hRp x hp
-    obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hj1 hx
+    obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hj1 hx
     have := (S.mem_Lvl.1 h1).2.2
     have := (S.mem_Lvl.1 h2).2.2
     omega
@@ -4099,7 +4103,7 @@ private theorem CaseT.botQ (l : List E) : ((Z.convert l).collapse (S.Lvl j (j + 
   obtain ⟨hu2, hlu2⟩ := S.u'_mem hj1
   refine dc_path (R := G.induce (S.Lvl s j)) (N := S.w) (g := S.cc (j - 1))
     (g₁ := S.cc (j - 1)) (g₂ := S.cc' (j - 1)) (y₁ := S.cc (j - 1)) (y₂ := S.cc' (j - 1))
-    (m₁ := S.u (j - 1)) (m₂ := S.u' (j - 1)) (S.toCtx.dc_Lvl j (by omega)) ?_ ?_ ?_ ?_
+    (m₁ := S.u (j - 1)) (m₂ := S.u' (j - 1)) (S.toSplitCtx.dc_Lvl j (by omega)) ?_ ?_ ?_ ?_
   · rw [collapse_convert, convert_int]
     have := hZ.collapse_int (c := j - 1) (by omega) (by omega) (by omega) (by omega)
     rw [hjj] at this
@@ -4187,7 +4191,7 @@ private theorem CaseT.preDet {B : MGraph V E} (hB : S.IsB B j x₁ x₂) (hBpd :
         S.lev (G.ends x).2 = c + 1) ∨ (S.lev (G.ends x).1 = c + 1 ∧ S.lev (G.ends x).2 = c)) := by
     intro c hc hsc x hx
     obtain ⟨rfl, hp⟩ := mem_J hx
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hc (Or.inr rfl)
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hc (Or.inr rfl)
     exact ⟨hp, fun h => hT.e_ne_cc hc hsc (Or.inr rfl) h.symm, (S.e'_ne_cc' hc).symm, g1, g2, g3⟩
   have ordlev : ∀ c, c < S.k → ∀ x ∈ S.ordR c, G.cls x = some .plus ∧ (G.ends x).1 ∈ G.int ∧
       S.lev (G.ends x).1 = c ∧ (G.ends x).2 ∈ G.int ∧ S.lev (G.ends x).2 = c :=
@@ -4360,7 +4364,7 @@ variable {j i : ℕ} {vv : V}
 
 variable (S) in
 /-- The map of operation (A) identifying `vv` with `w`. -/
-private abbrev fm (vv : V) : V → V := fun v => if v = vv then S.w else v
+abbrev fm (vv : V) : V → V := fun v => if v = vv then S.w else v
 
 /-- The image of a vertex lies in the image of a member `P a` of the chain, `a ≤ j`, exactly when
 the vertex lies in `P a`, if `vv` and `w` lie in `P a`. -/
@@ -4411,7 +4415,7 @@ private theorem fm_mem_Γ (hvv : vv ∈ S.Lvl i (i + 1)) (u : V) :
 /-- The graph of [II, Lemma 5.11] on the components `j, …, i` with `vv` (in the component `i`)
 identified with `w` (in the component `j`): its internal vertices, edges and the `Θ` edge replacing
 `P (i + 1)`, and the pre-deterministic property. -/
-private structure IsW (W : MGraph V E) (j i : ℕ) (vv : V) : Prop where
+structure IsW (W : MGraph V E) (j i : ℕ) (vv : V) : Prop where
   int : ∀ u, S.fm vv u ∈ W.int ↔ u ∈ G.int ∧ j ≤ S.lev u ∧ S.lev u ≤ i
   int' : ∀ u, u ∈ W.int → ∃ u', u' ∈ G.int ∧ j ≤ S.lev u' ∧ S.lev u' ≤ i ∧ S.fm vv u' = u
   gen : ∀ x, (i < S.k → x ≠ S.cc i ∧ x ≠ S.cc' i) →
@@ -4491,9 +4495,9 @@ private theorem isW_replace (hji : j < i) (hik : i < S.k) (hvv : vv ∈ G.int) (
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
     · rw [hmerge]; simp only [MGraph.mapV]; rw [S.cc_diff i hik]; simp
     · rw [hmerge]; simp only [MGraph.mapV]; rw [S.cc_diff i hik]; simp
-    · obtain ⟨g1, -, -⟩ := S.toCtx.cc_lev hik (Or.inl rfl)
+    · obtain ⟨g1, -, -⟩ := S.toSplitCtx.cc_lev hik (Or.inl rfl)
       exact Or.inl (by rw [hmerge]; exact Finset.mem_image_of_mem _ g1)
-    · obtain ⟨-, g2, -⟩ := S.toCtx.cc_lev hik (Or.inl rfl)
+    · obtain ⟨-, g2, -⟩ := S.toSplitCtx.cc_lev hik (Or.inl rfl)
       exact Or.inl (by rw [hmerge]; exact Finset.mem_image_of_mem _ g2)
     · have := ((S.cross i hik (S.cc i)).2 (Or.inl rfl)).2.2.2.2
       rw [hmerge]
@@ -4503,9 +4507,9 @@ private theorem isW_replace (hji : j < i) (hik : i < S.k) (hvv : vv ∈ G.int) (
       rcases S.cc'_cls i hik with h | h <;> rw [h] <;> simp
     · rw [hmerge]; simp only [MGraph.mapV]
       rcases S.cc'_cls i hik with h | h <;> rw [h] <;> simp
-    · obtain ⟨g1, -, -⟩ := S.toCtx.cc_lev hik (Or.inr rfl)
+    · obtain ⟨g1, -, -⟩ := S.toSplitCtx.cc_lev hik (Or.inr rfl)
       exact Or.inl (by rw [hmerge]; exact Finset.mem_image_of_mem _ g1)
-    · obtain ⟨-, g2, -⟩ := S.toCtx.cc_lev hik (Or.inr rfl)
+    · obtain ⟨-, g2, -⟩ := S.toSplitCtx.cc_lev hik (Or.inr rfl)
       exact Or.inl (by rw [hmerge]; exact Finset.mem_image_of_mem _ g2)
     · have := ((S.cross i hik (S.cc' i)).2 (Or.inr rfl)).2.2.2.2
       rw [hmerge]
@@ -4568,7 +4572,7 @@ private theorem IsW.quot {W : MGraph V E} (hW : S.IsW W j i vv) (hji : j < i) (h
   have hwΓ : S.w ∈ (S.Lvl i (i + 1)).image (S.fm vv) :=
     Finset.mem_image.2 ⟨vv, hvvΓ, by simp [fm]⟩
   refine preDet_convert (preDet_quot hW.pd hΓ hwΓ ?_) _
-  refine dc_le (dc_mapV' (S.fm vv) (S.toCtx.dc_Lvl (i + 1) hik)) ⟨rfl, fun x hx => ?_⟩
+  refine dc_le (dc_mapV' (S.fm vv) (S.toSplitCtx.dc_Lvl (i + 1) hik)) ⟨rfl, fun x hx => ?_⟩
   obtain ⟨hc, -, -, -⟩ := hx
   have hin : (G.ends x).1 ∈ S.Lvl i (i + 1) ∧ (G.ends x).2 ∈ S.Lvl i (i + 1) := by
     by_contra hn
@@ -4580,8 +4584,8 @@ private theorem IsW.quot {W : MGraph V E} (hW : S.IsW W j i vv) (hji : j < i) (h
   have hn : i < S.k → x ≠ S.cc i ∧ x ≠ S.cc' i := by
     intro hk
     refine ⟨fun h => ?_, fun h => ?_⟩ <;> subst h
-    · obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hk (Or.inl rfl); omega
-    · obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hk (Or.inr rfl); omega
+    · obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hk (Or.inl rfl); omega
+    · obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hk (Or.inr rfl); omega
   obtain ⟨w1, w2⟩ := hW.gen x hn
   have hin' : (W.ends x).1 ∈ (S.Lvl i (i + 1)).image (S.fm vv) ∧
       (W.ends x).2 ∈ (S.Lvl i (i + 1)).image (S.fm vv) := by
@@ -4812,7 +4816,7 @@ private theorem IsX.dc_part {Z : MGraph V E} {a b : ℕ} {x₁ x₂ : E} (hZ : S
     (ha : a ≤ a') (hc : c' ≤ b + 1) (hk : a' ≤ S.k)
     (he : ¬ ((G.ends S.e).1 ∈ S.Lvl a' c' ∧ (G.ends S.e).2 ∈ S.Lvl a' c'))
     (l : List E) : ((Z.convert l).induce (S.Lvl a' c')).DC := by
-  refine dc_le (S.toCtx.dc_Lvl c' hk) ⟨rfl, fun x hx => ?_⟩
+  refine dc_le (S.toSplitCtx.dc_Lvl c' hk) ⟨rfl, fun x hx => ?_⟩
   obtain ⟨hc', h1, h2, -⟩ := hx
   have hin : (G.ends x).1 ∈ S.Lvl a' c' ∧ (G.ends x).2 ∈ S.Lvl a' c' := by
     by_contra hn
@@ -5010,7 +5014,7 @@ variable [DecidableEq V] [DecidableEq E] {G : MGraph V E} {S : SC G}
 
 /-- The setting of case (ii) of [II, Lemma 5.12]: the ends of `e` in the component `i`, `w` in the
 component `j < i`. -/
-private structure CaseII (S : SC G) (j i : ℕ) : Prop where
+structure CaseII (S : SC G) (j i : ℕ) : Prop where
   hji : j < i
   hik : i ≤ S.k
   ha : (G.ends S.e).1 ∈ G.int
@@ -5051,7 +5055,7 @@ private theorem CaseII.x12 (hb : i < S.k) : x₁ ≠ S.e ∧ x₁ ≠ S.e' ∧ x
   have hlb := hC.hlb
   have ne : ∀ x, (x = S.cc i ∨ x = S.cc' i) → x ≠ S.e ∧ x ≠ S.e' := by
     intro x hx
-    obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hb hx
+    obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hb hx
     refine ⟨by rintro rfl; omega, ?_⟩
     rintro rfl
     rcases hx with h' | h'
@@ -5093,7 +5097,7 @@ private theorem CaseII.hyps {l m : List E}
   have hcc : ∀ y, (y = S.cc (i - 1) ∨ y = S.cc' (i - 1)) → Z.ends y = G.ends y ∧
       Z.cls y = G.cls y ∧ y ≠ S.e ∧ y ≠ S.e' := by
     intro y hy
-    obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hi1 hy
+    obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hi1 hy
     have hye : y ≠ S.e := by rintro rfl; omega
     have hye' : y ≠ S.e' := by
       rcases hy with rfl | rfl
@@ -5179,8 +5183,8 @@ private theorem CaseII.facts :
     S.e'_ne_cc hi1, S.e'_ne_cc' hi1⟩
   · obtain ⟨z1, z2⟩ := hZ.edge hfe hfe' a1 (by omega) (by omega) b1 (by omega) (by omega)
     exact ⟨z1, z2, by rw [z1]; exact fun h => notU _ a2 h.1⟩
-  · intro h; obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hi1 (Or.inl h); omega
-  · intro h; obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev hi1 (Or.inr h); omega
+  · intro h; obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hi1 (Or.inl h); omega
+  · intro h; obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev hi1 (Or.inr h); omega
 
 /-- The internal vertices of the graph of the component `i`. -/
 private theorem CaseII.Bint (m : List E) : ∀ v, v ∈ (B.convert m).int ↔ v ∈ G.int ∧ S.lev v = i := by
@@ -5199,10 +5203,10 @@ private theorem CaseII.stepX {l m : List E} {x : E}
   obtain ⟨z1, z2, z3⟩ := F x hx1 hx2 hx3 hx4 hxe hxe'
   obtain ⟨h1, h2, h3⟩ := hC.hyps hZ hB hlm he1 he2
   have hxc : x ≠ S.cc (i - 1) := by
-    intro h; obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev (by have := hC.hik; have := hC.hji; omega)
+    intro h; obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev (by have := hC.hik; have := hC.hji; omega)
       (Or.inl h); omega
   have hxc' : x ≠ S.cc' (i - 1) := by
-    intro h; obtain ⟨-, -, h'⟩ := S.toCtx.cc_lev (by have := hC.hik; have := hC.hji; omega)
+    intro h; obtain ⟨-, -, h'⟩ := S.toSplitCtx.cc_lev (by have := hC.hik; have := hC.hji; omega)
       (Or.inr h); omega
   obtain ⟨h1', h2', h3'⟩ := pathU_erase h1 h2 h3 hxe hxe hxe' hxc hxc'
   refine hZ.stepU hC.hji hC.hik hC.hlw he z3 ?_ ?_ ?_
@@ -5638,7 +5642,7 @@ variable [DecidableEq V] [DecidableEq E] {G : MGraph V E} {S : SC G}
 /-- The setting of case (iv) of [II, Lemma 5.12]: `e` joins `p` (component `i`) to `q` (component
 `i + 1`), `w` lies in the component `j < i`; after the operation `y` joins `p` to `w` and `z` joins
 `w` to `q`. -/
-private structure CaseIV (S : SC G) (j i : ℕ) (y z : E) (p q : V) : Prop where
+structure CaseIV (S : SC G) (j i : ℕ) (y z : E) (p q : V) : Prop where
   hji : j < i
   hik : i < S.k
   hyz : (y = S.e ∧ z = S.e') ∨ (y = S.e' ∧ z = S.e)
@@ -5796,10 +5800,10 @@ private theorem CaseIV.facts :
     hyx.2, fun x hx => ?_⟩
   · have hfe : f ≠ S.e := by
       rintro rfl; rw [he] at a2 b2
-      obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hik (Or.inr rfl); omega
+      obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hik (Or.inr rfl); omega
     have hfe' : f ≠ S.e' := by rintro rfl; exact hf S.ce'
     have hfc : f ≠ S.cc i := by
-      rintro rfl; obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hik (Or.inl rfl); omega
+      rintro rfl; obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hik (Or.inl rfl); omega
     have hfyz : f ≠ y ∧ f ≠ z := by
       constructor <;> intro h <;> rcases (hmem f).1 (by tauto) with h' | h'
       all_goals first | exact hfe h' | exact hfe' h'
@@ -5809,7 +5813,7 @@ private theorem CaseIV.facts :
     rcases hx12 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · rw [oc, oz]; exact Or.inl rfl
     · rw [oz, oc]; exact Or.inr rfl
-  · obtain ⟨g1, g2, g3⟩ := S.toCtx.cc_lev hi1 hx
+  · obtain ⟨g1, g2, g3⟩ := S.toSplitCtx.cc_lev hi1 hx
     have hxe : x ≠ S.e := by
       rintro rfl; rw [he] at hx; have := S.cc_inj hi1 hik hx (Or.inr rfl); omega
     have hxe' : x ≠ S.e' := by
@@ -5875,7 +5879,7 @@ private theorem CaseIV.stepY : Z.IsRedundant y := by
     obtain ⟨h1, -⟩ := F y hc a1 a2 b1 b2
     obtain ⟨-, -, -, h, -⟩ := F y hc a1 a2 b1 b2
     exact h rfl
-  have hdc := S.toCtx.dc_Lvl (i + 1) (a := i) (by omega)
+  have hdc := S.toSplitCtx.dc_Lvl (i + 1) (a := i) (by omega)
   have key : ∀ Y : MGraph V E, Y.int = Z.int → Y.ends = Z.ends →
       (∀ f, f ≠ y → Y.cls f = Z.cls f) → (Y.collapse (S.Lvl j i) S.w).DC := by
     intro Y hYi hYe hYc
@@ -5932,11 +5936,11 @@ private theorem CaseIV.stepB {x₁' x₂' : E}
   have hxU : ¬ ((Z.ends x).1 ∈ S.Lvl j i ∧ (Z.ends x).2 ∈ S.Lvl j i) := by
     rw [zx1]; exact fun h => by have := (S.mem_Lvl.1 h.1).2.2; omega
   have hxg : x ≠ x₁' := by
-    rintro rfl; obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hik hx₁'; omega
+    rintro rfl; obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hik hx₁'; omega
   have hxcc : x ≠ S.cc (i - 1) ∧ x ≠ S.cc' (i - 1) := by
     constructor <;> rintro rfl
-    · obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hi1 (Or.inl rfl); omega
-    · obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hi1 (Or.inr rfl); omega
+    · obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hi1 (Or.inl rfl); omega
+    · obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hi1 (Or.inr rfl); omega
   have hgc : x₁' ≠ S.cc (i - 1) ∧ x₁' ≠ S.cc' (i - 1) := by
     constructor <;> intro h
     · have := S.cc_inj hik hi1 hx₁' (Or.inl h); omega
@@ -6169,7 +6173,7 @@ private theorem CaseIV.preDet : Z.PreDet := by
   refine preDet_glue hSS hwS ?_ ?_
   · refine preDet_of_dropPlus ?_ (m := S.allPlus ++ [S.e']) ?_
     · refine dc_path (R := G.induce (S.Lvl i (i + 1))) (N := S.w) (g := y) (g₁ := y) (g₂ := y)
-        (y₁ := x₁) (y₂ := y) (m₁ := S.u i) (m₂ := p) (S.toCtx.dc_Lvl (i + 1) (by omega)) ?_ ?_
+        (y₁ := x₁) (y₂ := y) (m₁ := S.u i) (m₂ := p) (S.toSplitCtx.dc_Lvl (i + 1) (by omega)) ?_ ?_
         (fun hP => ?_) ?_
       · rw [dropPlus_int]; change insert S.w (S.Lvl i (i + 1)) = insert S.w (S.Lvl i (i + 1)); rfl
       · intro f hf hfy
@@ -7068,7 +7072,7 @@ variable [DecidableEq V] [DecidableEq E] {G : MGraph V E} {S : SC G}
 
 /-- Adjacent members, case (γ): `e` joins `p` in the component `s` to `q` in the component
 `s + 1`; after the operation `y` is the edge from `p` to `w` and `z` the edge from `w` to `q`. -/
-private structure CaseG (S : SC G) (s : ℕ) (y z : E) (p q : V) : Prop where
+structure CaseG (S : SC G) (s : ℕ) (y z : E) (p q : V) : Prop where
   hs : s < S.k
   hyz : (y = S.e ∧ z = S.e') ∨ (y = S.e' ∧ z = S.e)
   hp : p ∈ G.int
@@ -7146,11 +7150,11 @@ private theorem CaseG.inner {Z : MGraph V E} {x₁ x₂ : E} (hZ : S.IsX Z s s x
   have he := hC.e_eq
   obtain ⟨-, hmem⟩ := hC.yz_ne
   have hfc' : f ≠ S.cc' s := by
-    rintro rfl; obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hs (Or.inr rfl); omega
+    rintro rfl; obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hs (Or.inr rfl); omega
   have hfe : f ≠ S.e := by rw [he]; exact hfc'
   have hfe' : f ≠ S.e' := by rintro rfl; exact hf S.ce'
   have hfc : f ≠ S.cc s := by
-    rintro rfl; obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hs (Or.inl rfl); omega
+    rintro rfl; obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hs (Or.inl rfl); omega
   have hfyz : f ≠ y ∧ f ≠ z := by
     constructor <;> intro h <;> rcases (hmem f).1 (by tauto) with h' | h'
     all_goals first | exact hfe h' | exact hfe' h'
@@ -7166,7 +7170,7 @@ private theorem CaseG.ipB {B : MGraph V E} {x₁ x₂ : E} (hB : S.IsB B s x₁ 
   obtain ⟨c, a1, a2, b1, b2⟩ := (hB.ip x).1 h
   rcases hx with rfl | rfl
   · rw [hC.e_eq] at a2 b2
-    obtain ⟨-, -, h⟩ := S.toCtx.cc_lev hs (Or.inr rfl); omega
+    obtain ⟨-, -, h⟩ := S.toSplitCtx.cc_lev hs (Or.inr rfl); omega
   · rw [S.ce'] at c; cases c
 
 /-- The graph of the component `s` before the operation with the crossing edge `x₁` of `P (s + 1)`
@@ -7352,7 +7356,7 @@ private theorem CaseG.preDet1 (hlw : S.lev S.w = s) {Z : MGraph V E} {x₁ x₂ 
       simp only [id]
       rw [erase_cls, if_neg n, hG, erase_ends, z1]
       exact ⟨Or.inl z2, sameEnds_refl _⟩
-  have hD := S.toCtx.dc_Lvl' s (s + 1)
+  have hD := S.toSplitCtx.dc_Lvl' s (s + 1)
   have hZdc : Z.DC := dc_le hD (le_trans' hle (le_erase_self Z y))
   have stepY : Z.IsRedundant y := ⟨yZc, hZdc, dc_le hD hle⟩
   -- the graph before the operation

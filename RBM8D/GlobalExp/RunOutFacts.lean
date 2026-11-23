@@ -1,6 +1,17 @@
-import RBM8D.GlobalExp.RunOtimes
-import RBM8D.GlobalExp.TEqSigma
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.RunOtimes
+public import RBM8D.GlobalExp.TEqSigma
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.RunCompare
+public import RBM8D.GlobalExp.Local
+public import RBM8D.TExp.Second
+import all RBM8D.GlobalExp.RunCompare
+import all RBM8D.GlobalExp.RunOtimes
+import all RBM8D.GlobalExp.Local
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # The kinds, the internal atoms and the scaling orders of the output graphs of the run

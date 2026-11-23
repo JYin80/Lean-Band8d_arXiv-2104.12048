@@ -1,7 +1,22 @@
-import RBM8D.GlobalExp.GlobalGoodRows
-import RBM8D.GlobalExp.QFamily
-import RBM8D.Graph.QExp.MolMonoSteps
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import RBM8D.GlobalExp.QFamily
+public import RBM8D.Graph.QExp.MolMonoSteps
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.SubstMol
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.Graph.QExp.MolMono
+public import RBM8D.Graph.Local.StrategyPart1
+public import RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.SubstMol
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.Graph.QExp.MolMono
+import all RBM8D.Graph.Local.StrategyPart1
+import all RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.GlobalGoodRows
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.5] with row (4) read on a family of `Q`-expansions
@@ -47,15 +62,9 @@ open private SubstSPD_unpinned_zero SubstSPD_flat_unpinned SubstSPD_flat_pinned 
   SubstSPD_swap_noLabDot SubstSPD_swap_tensor SubstSPD_swap_sameBlock SubstSPD_swap_pmBlock
   SubstSPD_tVar_ord SubstSPD_mgext from RBM8D.GlobalExp.SubstSPD
 open private MolMono_rep_map' from RBM8D.Graph.QExp.MolMono
-open private MergeSpec.sameBlock_of_f_eq from RBM8D.Graph.Local.Strategy
+open private MergeSpec.sameBlock_of_f_eq from RBM8D.Graph.Local.StrategyPart1
 open private SubstDC_swap_rgCheck from RBM8D.GlobalExp.SubstDC
-open private
-  GlobalGoodRows_decAdjDot GlobalGoodRows_decSameBlock GlobalGoodRows_decAdjMol
-  GlobalGoodRows_decSameMol GlobalGoodRows_decUnpinned
-  GlobalGoodRows_decIsRecollision GlobalGoodRows_decRgCheck
-  GlobalGoodRows_decAdjEdge GlobalGoodRows_decAdjWavedTheta
-  GlobalGoodRows_decRegular GlobalGoodRows_decNormal
-  from RBM8D.GlobalExp.GlobalGoodRows
+-- (the names formerly opened from RBM8D.GlobalExp.GlobalGoodRows are public)
 
 /-! ## Crossing counts read on the components -/
 

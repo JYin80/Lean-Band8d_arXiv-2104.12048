@@ -1,4 +1,8 @@
-import RBM8D.Graph.Isolated
+module
+
+public import RBM8D.Graph.Isolated
+
+@[expose] public section
 
 /-!
 # Nesting of isolated subsets

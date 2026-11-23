@@ -1,7 +1,11 @@
-import RBM8D.Graph.QExp.FlatSchur
-import RBM8D.Graph.QExp.FlatSplit
-import RBM8D.Graph.QExp.Clauses
-import RBM8D.Graph.QExp.Main
+module
+
+public import RBM8D.Graph.QExp.FlatSchur
+public import RBM8D.Graph.QExp.FlatSplit
+public import RBM8D.Graph.QExp.Clauses
+public import RBM8D.Graph.QExp.Main
+
+@[expose] public section
 
 /-!
 # [II, Lemma 5.13] in the block reading
@@ -337,11 +341,11 @@ end Multi
 
 /-! ## Blocks, molecules and the block normal form -/
 
-private instance MainB_instInhAtom {n : ℕ} : Inhabited (Atom 3 n) := ⟨.inl 0⟩
+instance MainB_instInhAtom {n : ℕ} : Inhabited (Atom 3 n) := ⟨.inl 0⟩
 
-private instance MainB_instInhE {L : ℕ} : Inhabited (Fin L ⊕ Fin 3) := ⟨.inr 0⟩
+instance MainB_instInhE {L : ℕ} : Inhabited (Fin L ⊕ Fin 3) := ⟨.inr 0⟩
 
-private instance MainB_instInhE' {L m : ℕ} : Inhabited ((Fin L ⊕ Fin 3) ⊕ Fin m) := ⟨.inl (.inr 0)⟩
+instance MainB_instInhE' {L m : ℕ} : Inhabited ((Fin L ⊕ Fin 3) ⊕ Fin m) := ⟨.inl (.inr 0)⟩
 
 section Generic
 

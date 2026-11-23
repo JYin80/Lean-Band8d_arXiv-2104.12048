@@ -1,9 +1,13 @@
-import RBM8D.Graph.MolInsert
-import RBM8D.Graph.Local.Strategy
-import RBM8D.Graph.DotBlocks
-import RBM8D.Graph.Glue
-import RBM8D.GlobalExp.Strategy
-import RBM8D.Graph.QExp.MolMono
+module
+
+public import RBM8D.Graph.MolInsert
+public import RBM8D.Graph.Local.Strategy
+public import RBM8D.Graph.DotBlocks
+public import RBM8D.Graph.Glue
+public import RBM8D.GlobalExp.Strategy
+public import RBM8D.Graph.QExp.MolMono
+
+@[expose] public section
 
 /-!
 # The molecular graph of the block reading under `O_merge` and under the substitution

@@ -1,11 +1,16 @@
-import RBM8D.Deloc.Defs
-import RBM8D.LocalLaw.Defs
-import RBM8D.TExp.Second
-import RBM8D.Bound.Chain
-import RBM8D.Bound.GraphAbs
-import RBM8D.Kernel.Circulant
-import RBM8D.Kernel.Propagator
-import RBM8D.Input.Entry
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Deloc.Defs
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.TExp.Second
+public import RBM8D.Bound.Chain
+public import RBM8D.Bound.GraphAbs
+public import RBM8D.Kernel.Circulant
+public import RBM8D.Kernel.Propagator
+public import RBM8D.Input.Entry
+
+@[expose] public section
 
 /-!
 # Quantum diffusion: statements
@@ -38,152 +43,7 @@ open Graphs
 
 /-! ## Objects of [I, §1.2–§1.3] -/
 
-/-- A family of matrices `Σ_l(W, L, z)` on `Z_L^d`, indexed by the order `l`, the band width `W`,
-the side length `L` and the spectral parameter `z`. -/
-abbrev SigmaFam (d : ℕ) : Type :=
-  ℕ → ℕ → ∀ (L : ℕ) [NeZero L], ℂ → Matrix (Zd d L) (Zd d L) ℂ
-
-/-- A family of matrices `𝒢(W, L, z)` on `Z_L^d`, indexed by `W`, `L` and `z`. -/
-abbrev LocCorr (d : ℕ) : Type :=
-  ℕ → ∀ (L : ℕ) [NeZero L], ℂ → Matrix (Zd d L) (Zd d L) ℂ
-
-/-- The size `(W, L)` with `L ≠ 0`. -/
-def sizeOf (W L : ℕ) [NeZero L] : SizeL := ⟨(W, L), NeZero.ne L⟩
-
-/-- `E T_{xy}(z)` for `T_{xy} = |m|² Σ_α s_{xα} |G_{αy}|²` ([I, (1.21)]) under the law of
-[I, Assumption 1.1] on `Z_L^d`. -/
-def expT (d : ℕ) (P : Profile d) (W L : ℕ) [NeZero L] (z : ℂ) (x y : Zd d L) : ℝ :=
-  ∫ ω, Tvar (Smat P.ψ W L) (green (hmat ω) z) (msc z) x y ∂(rbmLaw d P (sizeOf W L))
-
-/-- `E |G_{xy}(z)|²` under the law of [I, Assumption 1.1] on `Z_L^d`. -/
-def expG2 (d : ℕ) (P : Profile d) (W L : ℕ) [NeZero L] (z : ℂ) (x y : Zd d L) : ℝ :=
-  ∫ ω, ‖green (hmat ω) z x y‖ ^ 2 ∂(rbmLaw d P (sizeOf W L))
-
-/-- `|m(z)|²` as a complex number. -/
-def mAbs2 (z : ℂ) : ℂ := ((‖msc z‖ ^ 2 : ℝ) : ℂ)
-
-/-- `|m|² S` as a complex matrix. -/
-def amat {ι : Type*} [Fintype ι] [DecidableEq ι] (S : Matrix ι ι ℝ) (z : ℂ) : Matrix ι ι ℂ :=
-  mAbs2 z • cmat S
-
-/-- The self-energy correction `Σ̃^{(M)} = Σ_{l=4}^{M} Σ_l` of [I, Theorem 1.5]. -/
-def sigTildeM {d : ℕ} (Sg : SigmaFam d) (M W L : ℕ) [NeZero L] (z : ℂ) :
-    Matrix (Zd d L) (Zd d L) ℂ :=
-  ∑ l ∈ Finset.Icc 4 M, Sg l W L z
-
-/-- The renormalized diffusive matrix `Θ^{(M)} = (1 − |m|² S X)⁻¹ |m|² S` of [I, (1.23)], with
-`X = 1 + Σ̃^{(M)}`. -/
-def thetaM {ι : Type*} [Fintype ι] [DecidableEq ι] (S : Matrix ι ι ℝ) (X : Matrix ι ι ℂ)
-    (z : ℂ) : Matrix ι ι ℂ :=
-  Ring.inverse (1 - amat S z * X) * amat S z
-
-/-- The matrix `(1 − X |m|² S)⁻¹` of [I, (1.29)], with `X = 1 + Σ̃^{(M)}`. -/
-def resM {ι : Type*} [Fintype ι] [DecidableEq ι] (S : Matrix ι ι ℝ) (X : Matrix ι ι ℂ)
-    (z : ℂ) : Matrix ι ι ℂ :=
-  Ring.inverse (1 - X * amat S z)
-
-/-- `r(E) = √(4 − E²)/2` of [I, §1.3]. -/
-def rE (E : ℝ) : ℝ := Real.sqrt (4 - E ^ 2) / 2
-
-/-- The diffusion matrix `𝒟_{ij}(E) = (r(E)/2) Σ_x (x_i x_j / W²) s_{0x}` of [I, §1.3], with the
-sum over `x ∈ Z_L^d` and `x_i ∈ (−L/2, L/2]`. -/
-def diffD {d L : ℕ} [NeZero L] (S : Matrix (Zd d L) (Zd d L) ℝ) (W : ℕ) (E : ℝ) :
-    Matrix (Fin d) (Fin d) ℂ :=
-  Matrix.of fun i j => ((rE E / 2 * ∑ x : Zd d L,
-    ((x i).valMinAbs : ℝ) * ((x j).valMinAbs : ℝ) / (W : ℝ) ^ 2 * S 0 x : ℝ) : ℂ)
-
-/-- The matrix `(𝒟_l)_{ij} = W^{(l−2)d/2} (1/2) Σ_x (x_i x_j / W²) (Σ_l)_{0x}` of [I, §1.3], with
-the sum over `x ∈ Z_L^d`. -/
-def diffDl {d L : ℕ} [NeZero L] (K : Matrix (Zd d L) (Zd d L) ℂ) (W l : ℕ) :
-    Matrix (Fin d) (Fin d) ℂ :=
-  Matrix.of fun i j => (((W : ℝ) ^ (((l : ℝ) - 2) * d / 2) / 2 : ℝ) : ℂ) * ∑ x : Zd d L,
-    ((((x i).valMinAbs : ℝ) * ((x j).valMinAbs : ℝ) / (W : ℝ) ^ 2 : ℝ) : ℂ) * K 0 x
-
-/-- `𝒟_eff^{(M)}(z) = 𝒟(E) + r(E) Σ_{l=4}^{M} W^{−(l−2)d/2} 𝒟_l(z)` of [I, §1.3], `E = Re z`. -/
-def diffEff {d : ℕ} (P : Profile d) (Sg : SigmaFam d) (M W L : ℕ) [NeZero L] (z : ℂ) :
-    Matrix (Fin d) (Fin d) ℂ :=
-  diffD (Smat P.ψ W L) W z.re + ((rE z.re : ℝ) : ℂ) • ∑ l ∈ Finset.Icc 4 M,
-    (((W : ℝ) ^ (-(((l : ℝ) - 2) * d / 2)) : ℝ) : ℂ) • diffDl (Sg l W L z) W l
-
-/-- The quadratic form `W² p·𝒟 p` at the frequency `p = 2πk/L ∈ 𝕋_L^d`. -/
-def qform {d L : ℕ} (W : ℕ) (k : Zd d L) (Dm : Matrix (Fin d) (Fin d) ℂ) : ℂ :=
-  ((W : ℂ) ^ 2) * ∑ i, ∑ j, ((zfreq k i : ℝ) : ℂ) * Dm i j * ((zfreq k j : ℝ) : ℂ)
-
 /-! ## The target statements -/
-
-/-- The self-energies of [I, Theorem 1.5] (with [I, Def 2.13 (i)]): `Sig l` has the shape of an
-`l`-th order self-energy for `l ≥ 4`; `Σ_l(W, L, z)` is the value of `Sig l` on the deterministic
-record of `S_{W,L}` wherever `S_{W,L}` is symmetric; and [I, (1.25)] holds exactly for all
-`W, L, z, x, a`. -/
-def SigmaOf (d : ℕ) (P : Profile d) (Sig : ℕ → Expansion 2) (Sg : SigmaFam d) : Prop :=
-  (∀ l, 4 ≤ l → SelfEnergyShape l (Sig l)) ∧
-  (∀ l, 4 ≤ l → ∀ (W L : ℕ) [NeZero L] (z : ℂ), (Smat P.ψ W L).IsSymm →
-    Sg l W L z = sigMat Sig (Smat P.ψ W L) z l) ∧
-  (∀ l, 4 ≤ l → ∀ (W L : ℕ) [NeZero L] (z : ℂ) (x a : Zd d L),
-    Sg l W L z x (x + a) = Sg l W L z 0 a ∧ Sg l W L z 0 a = Sg l W L z 0 (-a))
-
-/-- The conclusions of [I, Theorem 1.5] and [I, Corollary 1.6] at order `M`: for every `τ > 0`
-there is `L₀` such that for `L ≥ L₀`, `(W, L) ∈ adm(c₀, c₁)`, `z ∈ 𝐃(κ, ε)`:
-`1 − |m|² S (1 + Σ̃^{(M)})` is invertible, (1.24), (1.26), (1.27) for `4 ≤ l ≤ M`, and (1.28);
-and there are `C`, `L₀` with (1.22) and (1.29) for `L ≥ L₀`, `(W, L) ∈ adm(c₀, c₁)`,
-`z ∈ 𝐃(κ, ε)` and all `x, y`. In (1.26) the diagonal term `L^τ W^{−(l−2)d/2} 1_{x=0}` is added:
-`|Σ_l(0, x)| ≤ L^τ W^{−(l−4)d/2} B_{0x}² + L^τ W^{−(l−2)d/2} 1_{x=0}` (as in
-`SelfEnergyBound`). -/
-def thm15Concl (d : ℕ) (P : Profile d) (c₀ c₁ κ ε : ℝ) (Sg : SigmaFam d) (M : ℕ)
-    (Gc : LocCorr d) : Prop :=
-  (∀ τ : ℝ, 0 < τ → ∃ L₀ : ℕ, ∀ (W L : ℕ) [NeZero L], L₀ ≤ L → (W, L) ∈ adm c₀ c₁ →
-    ∀ z ∈ specDom κ ε W L,
-      IsUnit (1 - amat (Smat P.ψ W L) z * (1 + sigTildeM Sg M W L z)) ∧
-      (∀ x y : Zd d L, ‖thetaM (Smat P.ψ W L) (1 + sigTildeM Sg M W L z) z x y‖ ≤
-        (L : ℝ) ^ τ * bB d L W x y) ∧
-      (∀ l, 4 ≤ l → l ≤ M → ∀ x : Zd d L, ‖Sg l W L z 0 x‖ ≤
-        (L : ℝ) ^ τ * (W : ℝ) ^ (-(((l : ℝ) - 4) * d / 2)) * bB d L W 0 x ^ 2 +
-          (if x = 0 then (L : ℝ) ^ τ * (W : ℝ) ^ (-(((l : ℝ) - 2) * d / 2)) else 0)) ∧
-      (∀ l, 4 ≤ l → l ≤ M → ‖∑ x : Zd d L, Sg l W L z 0 x‖ ≤
-        (L : ℝ) ^ τ * z.im * (W : ℝ) ^ (-(((l : ℝ) - 2) * d / 2))) ∧
-      (∀ x y : Zd d L, ‖Gc W L z x y‖ ≤ (L : ℝ) ^ τ * bB d L W x y ^ ((3 : ℝ) / 2))) ∧
-  (∃ C : ℝ, ∃ L₀ : ℕ, ∀ (W L : ℕ) [NeZero L], L₀ ≤ L → (W, L) ∈ adm c₀ c₁ →
-    ∀ z ∈ specDom κ ε W L, ∀ x y : Zd d L,
-      ‖(expT d P W L z x y : ℂ) - (thetaM (Smat P.ψ W L) (1 + sigTildeM Sg M W L z) z *
-          (mAbs2 z • 1 + Gc W L z)) x y‖ ≤ C * (W : ℝ) ^ (-((M : ℝ) * d / 2)) ∧
-      ‖(expG2 d P W L z x y : ℂ) - (resM (Smat P.ψ W L) (1 + sigTildeM Sg M W L z) z *
-          (mAbs2 z • 1 + Gc W L z)) x y‖ ≤ C * (W : ℝ) ^ (-((M : ℝ) * d / 2)))
-
-/-- The conclusions of [I, Corollary 1.7] at order `M` (quantified form): for all `δ, τ > 0`
-there are `C`, `L₀` such that for `L ≥ L₀`, `(W, L) ∈ adm(c₀, c₁)` with `W^M ≥ L⁴`,
-`|E| < 2 − κ`, `η ∈ [W²/L^{2−ε}, W^{−δ}]` and `p = 2πk/L` with `|p| ≤ W^{−1−δ}`, at `z = E + iη`:
-(1.35) `Σ_x E T_{0x} e^{ip·x} = Θ̂^{(M)}(p)(|m|² + e₁) + e₃`, and (1.36)
-`Σ_x E|G_{0x}|² e^{ip·x} = r(E)(|m|² + e₁)/(η + W² p·𝒟_eff^{(M)} p + e₂) + e₃` with a nonzero
-denominator, where `|e₁| ≤ C W^{−d/2+τ}`, `|e₂| ≤ C(η² + W^{−d+τ}η + W³|p|³)`,
-`|e₃| ≤ C W^{−M}`. -/
-def cor17Concl (d : ℕ) (P : Profile d) (c₀ c₁ κ ε : ℝ) (Sg : SigmaFam d) (M : ℕ) : Prop :=
-  ∀ δ τ : ℝ, 0 < δ → 0 < τ → ∃ C : ℝ, ∃ L₀ : ℕ, ∀ (W L : ℕ) [NeZero L], L₀ ≤ L →
-    (W, L) ∈ adm c₀ c₁ → (L : ℝ) ^ 4 ≤ (W : ℝ) ^ M →
-    ∀ E η : ℝ, |E| < 2 - κ → (W : ℝ) ^ 2 / (L : ℝ) ^ (2 - ε) ≤ η → η ≤ (W : ℝ) ^ (-δ) →
-    ∀ k : Zd d L, ‖zfreq k‖ ≤ (W : ℝ) ^ (-1 - δ) →
-      (∃ e₁ e₃ : ℂ, ‖e₁‖ ≤ C * (W : ℝ) ^ (-((d : ℝ) / 2) + τ) ∧
-        ‖e₃‖ ≤ C * (W : ℝ) ^ (-(M : ℝ)) ∧
-        ∑ x : Zd d L, zchar k x * (expT d P W L (E + η * I) 0 x : ℂ) =
-          symbol (thetaM (Smat P.ψ W L) (1 + sigTildeM Sg M W L (E + η * I)) (E + η * I)) k *
-            (mAbs2 (E + η * I) + e₁) + e₃) ∧
-      (∃ e₁ e₂ e₃ : ℂ, ‖e₁‖ ≤ C * (W : ℝ) ^ (-((d : ℝ) / 2) + τ) ∧
-        ‖e₂‖ ≤ C * (η ^ 2 + (W : ℝ) ^ (-(d : ℝ) + τ) * η + (W : ℝ) ^ 3 * ‖zfreq k‖ ^ 3) ∧
-        ‖e₃‖ ≤ C * (W : ℝ) ^ (-(M : ℝ)) ∧
-        (η : ℂ) + qform W k (diffEff P Sg M W L (E + η * I)) + e₂ ≠ 0 ∧
-        ∑ x : Zd d L, zchar k x * (expG2 d P W L (E + η * I) 0 x : ℂ) =
-          (rE E : ℂ) * (mAbs2 (E + η * I) + e₁) /
-            ((η : ℂ) + qform W k (diffEff P Sg M W L (E + η * I)) + e₂) + e₃)
-
-/-- **[I, Theorem 1.5] + [I, Corollary 1.6] + [I, Corollary 1.7]** (joint): for `d ≥ 8`, a
-profile `P` and constants `c₀, c₁, κ, ε > 0` there is one family of self-energies `Σ_l`
-(before `M`), and for every order `M` a local correction `𝒢^{(M)}`, such that the conclusions of
-[I, Theorem 1.5] and [I, Corollary 1.6] (`thm15Concl`) and of [I, Corollary 1.7]
-(`cor17Concl`) hold. -/
-def quantumDiffusionStmt : Prop :=
-  ∀ d : ℕ, 8 ≤ d → ∀ P : Profile d, ∀ c₀ c₁ κ ε : ℝ, 0 < c₀ → 0 < c₁ → 0 < κ → 0 < ε →
-    ∃ Sg : SigmaFam d, (∃ Sig : ℕ → Expansion 2, SigmaOf d P Sig Sg) ∧
-      ∀ M : ℕ, ∃ Gc : LocCorr d,
-        thm15Concl d P c₀ c₁ κ ε Sg M Gc ∧ cor17Concl d P c₀ c₁ κ ε Sg M
 
 /-! ## The rooted `T`-equation and the local correction ([I, (8.14)–(8.20)]) -/
 

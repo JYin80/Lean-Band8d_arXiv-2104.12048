@@ -1,6 +1,36 @@
-import RBM8D.GlobalExp.Termination
-import RBM8D.GlobalExp.GlobalGoodB
-import RBM8D.Graph.QExp.SelRunIso
+module
+
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.GlobalExp.GlobalGoodB
+public import RBM8D.Graph.QExp.SelRunIso
+public import RBM8D.Graph.Local.SolidMono
+public import RBM8D.Graph.Local.StrategyPart1
+public import RBM8D.Graph.Local.Strategy
+public import RBM8D.GlobalExp.Local
+public import RBM8D.Graph.Local.DotNorm
+public import RBM8D.GlobalExp.SubstSPD
+public import RBM8D.GlobalExp.SubstMol
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.GlobalExp.GlobalGoodRows
+public import RBM8D.TExp.Second
+public import RBM8D.Graph.Local.Weight
+import all RBM8D.Graph.Local.SolidMono
+import all RBM8D.Graph.Local.StrategyPart1
+import all RBM8D.Graph.Local.Strategy
+import all RBM8D.GlobalExp.Termination
+import all RBM8D.GlobalExp.Local
+import all RBM8D.Graph.Local.DotNorm
+import all RBM8D.GlobalExp.SubstSPD
+import all RBM8D.GlobalExp.SubstMol
+import all RBM8D.GlobalExp.RunClauses
+import all RBM8D.GlobalExp.SubstDC
+import all RBM8D.GlobalExp.GlobalGoodRows
+import all RBM8D.TExp.Second
+import all RBM8D.GlobalExp.GlobalGoodB
+import all RBM8D.Graph.Local.Weight
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.8] in the block reading: the descent of Steps 2–3 and the leaf invariants
@@ -34,7 +64,8 @@ open scoped BigOperators
 namespace RBM8D.Graphs
 
 open private SolidMono.dotExcess_zero SolidMono.lwN_oDotT from RBM8D.Graph.Local.SolidMono
-open private Kind.isRg oGGTT_normal from RBM8D.Graph.Local.Strategy
+-- (the names formerly opened from RBM8D.Graph.Local.StrategyPart1 are public)
+open private oGGTT_normal from RBM8D.Graph.Local.Strategy
 open private Termination_randomFirstInt from RBM8D.GlobalExp.Termination
 open private Local_localOp_good from RBM8D.GlobalExp.Local
 open private Termination_dup_facts Termination_sameBlock_mem Termination_not_qGraph Termination_inv1
@@ -1599,8 +1630,7 @@ end InvSubst
 
 section LocPM
 
-open private card_cc_le_of_reach dg_cons_dot_adj dg_reach_mono length_filter_le_add
-  MergeSpec.sameBlock_of_map from RBM8D.Graph.Local.Strategy
+open private card_cc_le_of_reach dg_cons_dot_adj dg_reach_mono length_filter_le_add MergeSpec.sameBlock_of_map from RBM8D.Graph.Local.StrategyPart1
 open private oDotT_normal_self from RBM8D.Graph.Local.Weight
 
 /-- An atom without dotted edge of a list is reachable only from itself. -/

@@ -1,5 +1,18 @@
-import RBM8D.GlobalExp.RunCompare
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.RunCompare
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.GlobalExp.Local
+public import RBM8D.GlobalExp.TerminationC
+public import RBM8D.GlobalExp.TerminationC2
+public import RBM8D.TExp.Second
+import all RBM8D.GlobalExp.Local
+import all RBM8D.GlobalExp.TerminationC
+import all RBM8D.GlobalExp.TerminationC2
+import all RBM8D.TExp.Second
+import all RBM8D.GlobalExp.RunCompare
+
+@[expose] public section
 
 /-!
 # The component at `⊗`, the label atoms and the minors along the run of the selector

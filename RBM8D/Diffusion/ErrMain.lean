@@ -1,7 +1,17 @@
-import Batteries.Tactic.OpenPrivate
-import RBM8D.Diffusion.ErrExp
-import RBM8D.Diffusion.ErrForms
-import RBM8D.LocalLaw.LabelPaths
+module
+
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Diffusion.ErrExp
+public import RBM8D.Diffusion.ErrForms
+public import RBM8D.LocalLaw.LabelPaths
+public import RBM8D.Diffusion.ErrBound
+public import RBM8D.Bound.Doubly
+public import RBM8D.SelfEnergy.MainCancel
+import all RBM8D.Diffusion.ErrBound
+import all RBM8D.Bound.Doubly
+import all RBM8D.SelfEnergy.MainCancel
+
+@[expose] public section
 
 /-!
 # The error of the `n`-th order `T`-equation: [I, (8.17)]
@@ -1664,6 +1674,7 @@ private theorem ErrMain_sumBound {d : ℕ} (P : Profile d) (Sig : ℕ → Expans
 
 end Sum
 
+set_option maxHeartbeats 1000000 in
 /-- **[I, (8.17)] with [I, (8.20)]**: under the local law [I, Theorem 1.4], for an `n`-th order
 `T`-equation `𝒬` with error order `D ≥ n + 2` and self-energies `Σ_4, …, Σ_n`, the expectation of
 the graphs of `A` in which `⊕`, `⊖` do not lie in one dotted block and of the graphs of `Err`,

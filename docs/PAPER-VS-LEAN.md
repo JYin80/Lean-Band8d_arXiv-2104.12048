@@ -24,9 +24,9 @@ Theorem 1.5".
 
 | Paper | Lean statement (file) | Lean theorem | Hypotheses other than parameters |
 |---|---|---|---|
-| [I, Theorem 1.3], (1.12) and (1.13) | `Thm13Stmt` (`RBM8D/Deloc/Thm13.lean`) | `thm13 : Thm13Stmt` | none |
-| [I, Theorem 1.4], (1.19) | `LocalLawStmt` (`RBM8D/Deloc/Defs.lean`) | `localLaw : LocalLawStmt` | none |
-| [I, Theorem 1.5], (1.22)–(1.28); [I, Corollary 1.6], (1.29); [I, Corollary 1.7], (1.35)–(1.36) | `quantumDiffusionStmt`, with `SigmaOf`, `thm15Concl`, `cor17Concl` (`RBM8D/Diffusion/Defs.lean`) | `quantumDiffusion : quantumDiffusionStmt` | none |
+| [I, Theorem 1.3], (1.12) and (1.13) | `Thm13Stmt` (`RBM8D/MainDefs.lean`) | `thm13 : Thm13Stmt` | none |
+| [I, Theorem 1.4], (1.19) | `LocalLawStmt` (`RBM8D/MainDefs.lean`) | `localLaw : LocalLawStmt` | none |
+| [I, Theorem 1.5], (1.22)–(1.28); [I, Corollary 1.6], (1.29); [I, Corollary 1.7], (1.35)–(1.36) | `quantumDiffusionStmt`, with `SigmaOf`, `thm15Concl`, `cor17Concl` (`RBM8D/MainDefs.lean`) | `quantumDiffusion : quantumDiffusionStmt` | none |
 
 The statements unfold to the definitions in Appendix A: the model (`Profile`, `Smat`, `fWL`, `rbmLaw`, `gaussLaw`, `hmat`),
 the domains (`adm`, `specDom`), the bound `bB`, the resolvent `green`, the semicircle transform `msc`, and, for

@@ -1,5 +1,9 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # From [II, Def 6.3] to the clauses read at `𝔟₁ = 𝔟₂`

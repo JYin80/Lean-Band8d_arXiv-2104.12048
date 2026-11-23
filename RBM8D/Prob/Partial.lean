@@ -1,4 +1,8 @@
-import RBM8D.Prob.Model
+module
+
+public import RBM8D.Prob.Model
+
+@[expose] public section
 
 /-!
 # Partial expectations

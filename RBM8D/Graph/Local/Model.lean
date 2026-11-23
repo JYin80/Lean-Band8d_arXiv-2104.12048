@@ -1,6 +1,10 @@
-import RBM8D.Prob.IBP
-import RBM8D.Graph.Local.Basic
-import Mathlib.LinearAlgebra.Matrix.Gershgorin
+module
+
+public import RBM8D.Prob.IBP
+public import RBM8D.Graph.Local.Basic
+public import Mathlib.LinearAlgebra.Matrix.Gershgorin
+
+@[expose] public section
 
 /-!
 # The model relations in the Gaussian model

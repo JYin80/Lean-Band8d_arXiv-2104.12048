@@ -1,6 +1,10 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.Bound.Doubly
-import RBM8D.Bound.KeySum
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.Bound.Doubly
+public import RBM8D.Bound.KeySum
+
+@[expose] public section
 
 /-!
 # The graph-summation estimate ([II, Claim 8.6])

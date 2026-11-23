@@ -1,5 +1,9 @@
-import RBM8D.Graph.Local.Weight
-import RBM8D.Graph.Local.Edge
+module
+
+public import RBM8D.Graph.Local.Weight
+public import RBM8D.Graph.Local.Edge
+
+@[expose] public section
 
 /-!
 # Local expansions keep the doubly connected property

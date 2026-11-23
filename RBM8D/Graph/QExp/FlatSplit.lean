@@ -1,4 +1,8 @@
-import RBM8D.Graph.MolDot
+module
+
+public import RBM8D.Graph.MolDot
+
+@[expose] public section
 
 /-!
 # The splitting, `×`-dotted, rebasing and merging steps of the `Q`-expansions in the block reading

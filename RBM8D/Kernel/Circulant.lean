@@ -1,4 +1,9 @@
-import RBM8D.Kernel.Fourier
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Kernel.Fourier
+
+@[expose] public section
 
 /-!
 # Translation-invariant kernels and their symbols
@@ -20,10 +25,6 @@ variable {d L : ℕ}
 /-- Translation invariance of a kernel on `Z_L^d`: `K(x + a, y + a) = K(x, y)`. -/
 def TransInv {R : Type*} (K : Matrix (Zd d L) (Zd d L) R) : Prop :=
   ∀ x y a, K (x + a) (y + a) = K x y
-
-/-- The symbol `K̂(p) = Σ_x K_{0x} e^{i p·x}` of a kernel on `Z_L^d` (display after [I, (1.30)]). -/
-def symbol [NeZero L] (K : Matrix (Zd d L) (Zd d L) ℂ) (k : Zd d L) : ℂ :=
-  ∑ x, K 0 x * zchar k x
 
 /-- A translation-invariant kernel depends only on the difference of its arguments. -/
 private theorem transInv_apply {R : Type*} {K : Matrix (Zd d L) (Zd d L) R} (hK : TransInv K)

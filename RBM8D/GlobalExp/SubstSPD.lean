@@ -1,6 +1,10 @@
-import RBM8D.GlobalExp.SubstDC
-import RBM8D.GlobalExp.SubstMol
-import RBM8D.GlobalExp.GlueNormal
+module
+
+public import RBM8D.GlobalExp.SubstDC
+public import RBM8D.GlobalExp.SubstMol
+public import RBM8D.GlobalExp.GlueNormal
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.5 (1), (2)]: the substituted graphs in the block reading
@@ -48,23 +52,23 @@ local macro "kdec" : tactic => `(tactic| decide +kernel)
 
 /-! ## Decision procedures -/
 
-private instance SubstSPD_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance SubstSPD_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance SubstSPD_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance SubstSPD_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (SubstSPD_decAdjDot Γ) u v
 
-private instance SubstSPD_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance SubstSPD_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 
-private instance SubstSPD_decAdjEdge {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
+instance SubstSPD_decAdjEdge {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.x = u ∧ c.y = v) ∨ (∃ c ∈ Γ.comps, c.x = v ∧ c.y = u))))
 
-private instance SubstSPD_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
+instance SubstSPD_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.wavedThetaGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
@@ -72,7 +76,7 @@ private instance SubstSPD_decAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
       (∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
         c.x = v ∧ c.y = u))))
 
-private instance SubstSPD_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
+instance SubstSPD_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
     Decidable (Γ.Regular C) :=
   haveI : DecidableRel Γ.edgeGraph.Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (SubstSPD_decAdjEdge Γ)
@@ -85,7 +89,7 @@ private instance SubstSPD_decRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
       ∀ c ∈ Γ.comps, c.kind = .dot → c.x.isLeft = true ∨ c.y.isLeft = true)
     ⟨fun ⟨h1, h2, h3, h4⟩ => ⟨h1, h2, h3, h4⟩, fun ⟨h1, h2, h3, h4⟩ => ⟨h1, h2, h3, h4⟩⟩
 
-private instance SubstSPD_decNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
+instance SubstSPD_decNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) :
     Decidable (Γ.Normal C) :=
   inferInstanceAs (Decidable (Γ.Regular C ∧ (∀ c ∈ Γ.comps, c.kind.isSolid = true → c.x ≠ c.y) ∧
     ∀ u v : Atom k n, u ≠ v →

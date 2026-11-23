@@ -1,7 +1,11 @@
-import RBM8D.GlobalExp.TEqSigma
-import RBM8D.GlobalExp.RunOtimes
-import RBM8D.GlobalExp.RunMinus
-import RBM8D.GlobalExp.RunExports
+module
+
+public import RBM8D.GlobalExp.TEqSigma
+public import RBM8D.GlobalExp.RunOtimes
+public import RBM8D.GlobalExp.RunMinus
+public import RBM8D.GlobalExp.RunExports
+
+@[expose] public section
 
 /-!
 # The output graphs of [II, Lemma 6.7]: the form `Θ_{⊗x} 𝒮_{xy} t_{y,⊕⊖}`

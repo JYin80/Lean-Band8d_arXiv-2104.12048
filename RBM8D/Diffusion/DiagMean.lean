@@ -1,8 +1,12 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.Bound.GraphSum
-import RBM8D.Kernel.Decay
-import RBM8D.Prob.PartialPoly
-import RBM8D.Graph.Local.Model
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.Bound.GraphSum
+public import RBM8D.Kernel.Decay
+public import RBM8D.Prob.PartialPoly
+public import RBM8D.Graph.Local.Model
+
+@[expose] public section
 
 /-!
 # The expectation of the diagonal resolvent entries

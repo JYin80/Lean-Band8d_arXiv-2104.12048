@@ -1,5 +1,9 @@
-import RBM8D.Graph.Rooting
-import RBM8D.TExp.Defs
+module
+
+public import RBM8D.Graph.Rooting
+public import RBM8D.TExp.Defs
+
+@[expose] public section
 
 /-!
 # Dotted blocks as connected components

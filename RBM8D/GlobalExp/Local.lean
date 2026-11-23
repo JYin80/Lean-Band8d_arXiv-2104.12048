@@ -1,11 +1,16 @@
-import RBM8D.Graph.Local.Transposed
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import RBM8D.Graph.Deterministic
-import RBM8D.Graph.Standard
-import RBM8D.Graph.Local.Basic
-import RBM8D.Graph.MolMerge
-import RBM8D.Graph.MolSplit
-import RBM8D.Graph.MolDot
+module
+
+public import RBM8D.Graph.Local.Transposed
+public import Mathlib.Data.List.GetD
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import RBM8D.Graph.Deterministic
+public import RBM8D.Graph.Standard
+public import RBM8D.Graph.Local.Basic
+public import RBM8D.Graph.MolMerge
+public import RBM8D.Graph.MolSplit
+public import RBM8D.Graph.MolDot
+
+@[expose] public section
 
 /-!
 # Local expansions of sequentially pre-deterministic and globally standard graphs
@@ -8741,12 +8746,12 @@ set_option maxRecDepth 100000
 /-! ### Decidability on atomic graphs -/
 
 /-- The kind is not a `(G_{xx})⁻¹` weight. -/
-private def Local_notInvB : Kind → Bool
+def Local_notInvB : Kind → Bool
   | .inv _ => false
   | _ => true
 
 /-- The kind is not a `W_D` weight. -/
-private def Local_notWDB : Kind → Bool
+def Local_notWDB : Kind → Bool
   | .wD _ _ => false
   | _ => true
 
@@ -8756,7 +8761,7 @@ private theorem Local_notInvB_iff (κ : Kind) : (∀ ch, κ ≠ .inv ch) ↔ Loc
 private theorem Local_notWDB_iff (κ : Kind) : (∀ ch d, κ ≠ .wD ch d) ↔ Local_notWDB κ = true := by
   cases κ <;> simp [Local_notWDB]
 
-private instance Local_decPlain {k n : ℕ} (Γ : Graph k n) : Decidable Γ.Plain :=
+instance Local_decPlain {k n : ℕ} (Γ : Graph k n) : Decidable Γ.Plain :=
   decidable_of_iff (∀ c ∈ Γ.comps, c.minor = [] ∧ Local_notInvB c.kind = true ∧
     Local_notWDB c.kind = true ∧ (c.kind = .dot → c.x ≠ c.y) ∧
     ((c.kind.isWeight = true → c.y = c.x) ∧ (c.label.isSome = true → c.kind.isRandom = true)))

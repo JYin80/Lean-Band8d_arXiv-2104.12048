@@ -1,4 +1,8 @@
-import RBM8D.Graph.MolRead
+module
+
+public import RBM8D.Graph.MolRead
+
+@[expose] public section
 
 /-!
 # The clauses of the invariant of [II, Lemma 5.13] along the `Q`-expansions
@@ -2111,7 +2115,7 @@ private theorem MergeSpec.sameBlock_map (hs : MergeSpec Γ t) {u v : Atom k n}
     · exact this.symm
 
 /-- Atoms whose images lie in one block lie in one block. -/
-private theorem MergeSpec.sameBlock_of_map (hs : MergeSpec Γ t) {u v : Atom k n}
+private theorem MergeSpec.clauses_sameBlock_of_map (hs : MergeSpec Γ t) {u v : Atom k n}
     (h : t.g.SameBlock (t.f u) (t.f v)) : Γ.SameBlock u v := by
   have key : ∀ a b, (dg t.g.comps).Reachable a b → ∀ u v, t.f u = a → t.f v = b →
       Γ.SameBlock u v := by
@@ -2133,7 +2137,7 @@ private theorem MergeSpec.sameBlock_of_map (hs : MergeSpec Γ t) {u v : Atom k n
 
 private theorem MergeSpec.sameBlock_iff (hs : MergeSpec Γ t) (u v : Atom k n) :
     t.g.SameBlock (t.f u) (t.f v) ↔ Γ.SameBlock u v :=
-  ⟨hs.sameBlock_of_map, hs.sameBlock_map⟩
+  ⟨hs.clauses_sameBlock_of_map, hs.sameBlock_map⟩
 
 
 end MergeBlocks
@@ -3329,7 +3333,7 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance Cls_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance Cls_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 

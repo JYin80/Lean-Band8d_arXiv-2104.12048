@@ -1,8 +1,14 @@
-import RBM8D.GlobalExp.TEqIdentity
-import RBM8D.GlobalExp.TEqCorrShape
-import RBM8D.GlobalExp.RunOutFacts
-import RBM8D.TExp.Second
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.GlobalExp.TEqIdentity
+public import RBM8D.GlobalExp.TEqCorrShape
+public import RBM8D.GlobalExp.RunOutFacts
+public import RBM8D.TExp.Second
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.GlobalExp.TEqIdentity
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # The `n`-th order `T`-equation: [II, Theorem 3.7]

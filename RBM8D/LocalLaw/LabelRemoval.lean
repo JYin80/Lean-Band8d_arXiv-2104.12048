@@ -1,5 +1,9 @@
-import RBM8D.LocalLaw.Defs
-import Mathlib.Algebra.Order.Chebyshev
+module
+
+public import RBM8D.LocalLaw.Defs
+public import Mathlib.Algebra.Order.Chebyshev
+
+@[expose] public section
 
 /-!
 # The removal of the `P`/`Q` labels by the resampled row
@@ -1844,7 +1848,7 @@ private def LabelRemoval_ρC (S : Matrix (Zd d L) (Zd d L) ℝ) (G : Matrix (Zd 
 
 /-- The parameters of the majorant: the scale `t`, the bound `δ₁ = t W^{−d/2+e}` of [II, (7.7)],
 the window `Φ` and the floor `f`. -/
-private structure LabelRemoval_Par where
+structure LabelRemoval_Par where
   t : ℝ
   δ₁ : ℝ
   Φ : ℝ

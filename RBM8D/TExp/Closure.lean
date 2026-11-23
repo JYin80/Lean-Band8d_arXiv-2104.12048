@@ -1,6 +1,10 @@
-import RBM8D.TExp.Defs
-import RBM8D.TExp.Second
-import RBM8D.Kernel.PropagatorSymbol
+module
+
+public import RBM8D.TExp.Defs
+public import RBM8D.TExp.Second
+public import RBM8D.Kernel.PropagatorSymbol
+
+@[expose] public section
 
 /-!
 # Closure properties of `T`-expansions and the induction step
@@ -17,7 +21,7 @@ open scoped BigOperators
 namespace RBM8D.Graphs
 
 /-- A kernel on `Z_L^d` invariant under translations and under the reflection `x ↦ -x`. -/
-private def SymKer {d L : ℕ} (M : Matrix (Zd d L) (Zd d L) ℂ) : Prop :=
+def SymKer {d L : ℕ} (M : Matrix (Zd d L) (Zd d L) ℂ) : Prop :=
   TransInv M ∧ ∀ x y, M (-x) (-y) = M x y
 
 private theorem symKer_zero {d L : ℕ} : SymKer (0 : Matrix (Zd d L) (Zd d L) ℂ) :=
@@ -1039,10 +1043,10 @@ theorem inductionStep_of_parts (d : ℕ) (Svar : VarFamily d) (hT : tEquationStm
 
 section Instances
 
-private instance instDecLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
+instance instDecLabelFreeC {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
   inferInstanceAs (Decidable (∀ c ∈ Γ.comps, c.label = none))
 
-private instance instDecIsQGraph {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
+instance instDecIsQGraphC {k n : ℕ} (Γ : Graph k n) : Decidable Γ.IsQGraph :=
   inferInstanceAs (Decidable (∃ u : Atom k n, (∃ c ∈ Γ.comps, c.label = some (.Q, u)) ∧
     ∀ c ∈ Γ.comps, (c.kind.isRandom = true ∨ c.label.isSome = true) → c.label = some (.Q, u)))
 

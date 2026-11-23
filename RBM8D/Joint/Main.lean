@@ -1,13 +1,17 @@
-import RBM8D.Joint.Chain
-import RBM8D.Joint.Remainder
-import RBM8D.Joint.Struct
-import RBM8D.TExp.Closure
-import RBM8D.TExp.Second
-import RBM8D.LocalLaw.Primed
-import RBM8D.Bound.Doubly
-import RBM8D.Bound.GraphSum
-import RBM8D.Deloc.Defs
-import RBM8D.LocalLaw.Bridge
+module
+
+public import RBM8D.Joint.Chain
+public import RBM8D.Joint.Remainder
+public import RBM8D.Joint.Struct
+public import RBM8D.TExp.Closure
+public import RBM8D.TExp.Second
+public import RBM8D.LocalLaw.Primed
+public import RBM8D.Bound.Doubly
+public import RBM8D.Bound.GraphSum
+public import RBM8D.Deloc.Defs
+public import RBM8D.LocalLaw.Bridge
+
+@[expose] public section
 
 /-!
 # The joint induction and the local law

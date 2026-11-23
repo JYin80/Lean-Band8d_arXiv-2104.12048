@@ -1,4 +1,8 @@
-import RBM8D.Input.GaussPoly
+module
+
+public import RBM8D.Input.GaussPoly
+
+@[expose] public section
 
 /-!
 # Moments of a quadratic form in one row of Gaussian entries

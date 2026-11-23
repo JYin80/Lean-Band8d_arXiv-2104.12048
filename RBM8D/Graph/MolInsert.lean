@@ -1,6 +1,10 @@
-import RBM8D.Graph.MolCarry
-import RBM8D.Graph.MolRead
-import RBM8D.Graph.IsolatedNest
+module
+
+public import RBM8D.Graph.MolCarry
+public import RBM8D.Graph.MolRead
+public import RBM8D.Graph.IsolatedNest
+
+@[expose] public section
 
 /-!
 # Inserting a molecular graph at three molecules, and merging molecules
@@ -56,7 +60,7 @@ def MGraph.unloop [DecidableEq V] (G : MGraph V E) : MGraph V E :=
 
 /-! ## Present edges between internal vertices, and graphs related by a map -/
 
-section Rel
+section InsRel
 
 variable {V' E' : Type}
 
@@ -66,13 +70,13 @@ private theorem MolInsert_ext {G H : MGraph V E} (h1 : G.int = H.int) (h2 : G.ex
   cases G; cases H; simp_all
 
 /-- The edge `e` is present, not a red solid edge, and joins two internal vertices. -/
-private def Live (G : MGraph V E) (e : E) : Prop :=
+def Live (G : MGraph V E) (e : E) : Prop :=
   G.cls e ≠ none ∧ G.cls e ≠ some .minus ∧ (G.ends e).1 ∈ G.int ∧ (G.ends e).2 ∈ G.int
 
 /-- The graph `G'` is the image of `G` under the map `f` of the vertices and the injective map `g`
 of the edges, as far as the present edges other than red solid edges between internal vertices
 are concerned; `G'` may have in addition diffusive loops. -/
-private structure Rel (G : MGraph V E) (G' : MGraph V' E') (f : V → V') (g : E → E') : Prop where
+structure InsRel (G : MGraph V E) (G' : MGraph V' E') (f : V → V') (g : E → E') : Prop where
   mem : ∀ v', v' ∈ G'.int ↔ ∃ v ∈ G.int, f v = v'
   inj : Function.Injective g
   cls : ∀ e, Live G e → G'.cls (g e) = G.cls e
@@ -83,17 +87,17 @@ private structure Rel (G : MGraph V E) (G' : MGraph V' E') (f : V → V') (g : E
 
 variable {G : MGraph V E} {G' : MGraph V' E'} {f : V → V'} {g : E → E'}
 
-private theorem Rel.mem_of (h : Rel G G' f g) {v : V} (hv : v ∈ G.int) : f v ∈ G'.int :=
+private theorem InsRel.mem_of (h : InsRel G G' f g) {v : V} (hv : v ∈ G.int) : f v ∈ G'.int :=
   (h.mem _).2 ⟨v, hv, rfl⟩
 
-private theorem Rel.ends_int (h : Rel G G' f g) {e : E} (he : Live G e) :
+private theorem InsRel.ends_int (h : InsRel G G' f g) {e : E} (he : Live G e) :
     (G'.ends (g e)).1 ∈ G'.int ∧ (G'.ends (g e)).2 ∈ G'.int := by
   rcases h.ends e he with h' | h' <;> rw [h'] <;>
     exact ⟨h.mem_of (by first | exact he.2.2.1 | exact he.2.2.2),
       h.mem_of (by first | exact he.2.2.2 | exact he.2.2.1)⟩
 
 /-- A spanning set of edges of `G` is carried to a spanning set of edges of `G'`. -/
-private theorem Rel.spans (h : Rel G G' f g) {B : Finset E}
+private theorem InsRel.spans (h : InsRel G G' f g) {B : Finset E}
     (hB : ∀ e ∈ B, G.cls e ≠ some .minus) (hsp : G.Spans B) :
     open Classical in G'.Spans ((B.filter (Live G)).image g) := by
   classical
@@ -116,7 +120,7 @@ private theorem Rel.spans (h : Rel G G' f g) {B : Finset E}
     rcases h.ends e hl with h' | h' <;> rw [h'] <;> simp only at * <;> tauto
 
 /-- The doubly connected property is carried from `G` to `G'`. -/
-private theorem Rel.dc (h : Rel G G' f g) (hG : G.DC) : G'.DC := by
+private theorem InsRel.dc (h : InsRel G G' f g) (hG : G.DC) : G'.DC := by
   classical
   obtain ⟨bk, bl, hd, hbk, hbl, hsk, hsl⟩ := hG
   refine ⟨(bk.filter (Live G)).image g, (bl.filter (Live G)).image g, ?_, ?_, ?_,
@@ -155,8 +159,8 @@ private theorem live_erase [DecidableEq E] {e₀ e : E} :
   · simp [he]
 
 /-- The relation is kept when the blue solid edges of a list are changed into `Θ` edges. -/
-private theorem Rel.convert [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) (l : List E) :
-    Rel (G.convert l) (G'.convert (l.map g)) f g := by
+private theorem InsRel.convert [DecidableEq E] [DecidableEq E'] (h : InsRel G G' f g) (l : List E) :
+    InsRel (G.convert l) (G'.convert (l.map g)) f g := by
   refine ⟨h.mem, h.inj, fun e he => ?_, fun e he => h.ends e (live_convert.1 he), fun e' he' => ?_⟩
   · have he0 := live_convert.1 he
     change (if g e ∈ l.map g ∧ G'.cls (g e) = some .plus then some MClass.diff else G'.cls (g e)) =
@@ -170,8 +174,8 @@ private theorem Rel.convert [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) 
       rw [hc]; simp
 
 /-- The relation is kept when an edge and its image are removed. -/
-private theorem Rel.erase [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) (e₀ : E) :
-    Rel (G.erase e₀) (G'.erase (g e₀)) f g := by
+private theorem InsRel.erase [DecidableEq E] [DecidableEq E'] (h : InsRel G G' f g) (e₀ : E) :
+    InsRel (G.erase e₀) (G'.erase (g e₀)) f g := by
   refine ⟨h.mem, h.inj, fun e he => ?_, fun e he => h.ends e (live_erase.1 he).2,
     fun e' he' => ?_⟩
   · obtain ⟨hne, hl⟩ := live_erase.1 he
@@ -185,7 +189,7 @@ private theorem Rel.erase [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) (e
       rw [Function.update_of_ne hne, hc]
 
 /-- Internal blue solid edges of `G'` are the images of those of `G`. -/
-private theorem Rel.intPlus (h : Rel G G' f g) (e' : E') :
+private theorem InsRel.intPlus (h : InsRel G G' f g) (e' : E') :
     G'.IsIntPlus e' ↔ ∃ e, G.IsIntPlus e ∧ g e = e' := by
   constructor
   · intro hp
@@ -198,7 +202,7 @@ private theorem Rel.intPlus (h : Rel G G' f g) (e' : E') :
     exact ⟨by rw [h.cls e hl, hp.1], (h.ends_int hl).1, (h.ends_int hl).2⟩
 
 /-- The pre-deterministic property is carried from `G` to `G'`. -/
-private theorem Rel.preDet [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) (hG : G.PreDet) :
+private theorem InsRel.preDet [DecidableEq E] [DecidableEq E'] (h : InsRel G G' f g) (hG : G.PreDet) :
     G'.PreDet := by
   obtain ⟨hdc, l, hnd, hmem, hred⟩ := hG
   refine ⟨h.dc hdc, l.map g, hnd.map h.inj, fun e' => ?_, fun j hj => ?_⟩
@@ -215,7 +219,7 @@ private theorem Rel.preDet [DecidableEq E] [DecidableEq E'] (h : Rel G G' f g) (
       ⟨by rw [hip.1]; simp, by rw [hip.1]; simp, hip.2.1, hip.2.2⟩
     exact ⟨by rw [hr.cls _ hl, hp], hr.dc hd1, (hr.erase l[j]).dc hd2⟩
 
-end Rel
+end InsRel
 
 /-! ## Nets -/
 
@@ -602,7 +606,7 @@ variable [DecidableEq V] [DecidableEq W] [DecidableEq E] [DecidableEq F]
 
 /-- The hypotheses of `MGraph.spd_insert` on `K` and `L`, with the three edges `f₀`, `f₁`, `f₂`
 of `L` from its external vertices `w₀`, `w₁`, `w₂` to its internal vertices `x₀`, `x₁`, `x₂`. -/
-private structure Hyp (K : MGraph V E) (L : MGraph W F) (σ : W → V) (u₀ u₁ u₂ : V) (b r : E)
+structure InsHyp (K : MGraph V E) (L : MGraph W F) (σ : W → V) (u₀ u₁ u₂ : V) (b r : E)
     (f₀ f₁ f₂ : F) (w₀ w₁ w₂ x₀ x₁ x₂ : W) : Prop where
   kspd : K.SPD
   kdis : Disjoint K.int K.ext
@@ -639,9 +643,9 @@ private structure Hyp (K : MGraph V E) (L : MGraph W F) (σ : W → V) (u₀ u�
   oth : ∀ f, f ≠ f₀ → f ≠ f₁ → f ≠ f₂ → L.cls f ≠ none →
     (L.ends f).1 ∈ L.int ∧ (L.ends f).2 ∈ L.int
 
-namespace Hyp
+namespace InsHyp
 
-variable (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+variable (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
 include h
 
 private theorem m₀ : ∀ P, K.IsProperIso K.int P → u₀ ∈ P := by
@@ -679,7 +683,7 @@ private theorem cr₁ (T : Finset V) (Y : Finset W) :
   crosses_att h.hu₁ h.hx₁ h.c₁n h.c₁m h.e₁ T Y
 
 omit h in
-private theorem ncr₂ (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) (P : Finset (V ⊕ W)) :
+private theorem ncr₂ (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) (P : Finset (V ⊕ W)) :
     ¬ (K.insert L σ {b, r}).Crosses P (.inr f₂) := fun hc => hc.2.1 h.c₂
 
 private theorem crl (e : E) (T : Finset V) (Y : Finset W) :
@@ -810,13 +814,13 @@ private theorem crossFirst {T : Finset V} (hu₀ : u₀ ∈ T) (hu₁ : u₁ ∈
     rw [h.cro h0 h1 h2]
     exact h.lncr_int h0 h1
 
-end Hyp
+end InsHyp
 
 /-! ## The isolated sets of the inserted graph -/
 
 /-- Three distinct edges of `K` crossing `T`, and an edge of `L` crossing `T ⊔ Y` if `b` crosses
 `T`, give three edges crossing `T ⊔ Y` in the inserted graph. -/
-private theorem Hyp.three_K (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.three_K (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {T : Finset V} {Y : Finset W} {i j k : E} (hi : K.Crosses T i) (hj : K.Crosses T j)
     (hk : K.Crosses T k) (hij : i ≠ j) (hki : k ≠ i) (hkj : k ≠ j)
     (hbf : K.Crosses T b → ∃ f, (K.insert L σ {b, r}).Crosses (T.disjSum Y) (.inr f)) :
@@ -844,7 +848,7 @@ private theorem Hyp.three_K (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w�
 /-- **The isolated sets of the inserted graph** ([II, Lemma 6.5 (2)], chain (6.6)): `T ⊔ Y` is
 isolated iff either `Y` is the set of internal vertices of `L` and `T` is an isolated set of `K`
 containing `u₀` and `u₁`, or `T` is empty and `Y` is an isolated set of `L`. -/
-private theorem Hyp.iso_iff (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.iso_iff (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     (T : Finset V) (Y : Finset W) :
     (K.insert L σ {b, r}).IsIsolated (T.disjSum Y) ↔
       (Y = L.int ∧ u₀ ∈ T ∧ u₁ ∈ T ∧ K.IsIsolated T) ∨ (T = ∅ ∧ L.IsIsolated Y) := by
@@ -950,7 +954,7 @@ private theorem Hyp.iso_iff (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w�
         · exact ⟨c, rfl, (hcr c).2 (Or.inr rfl)⟩
 
 /-- The internal vertices of `L` form an isolated set of the inserted graph. -/
-private theorem Hyp.x_iso (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.x_iso (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).IsIsolated ((∅ : Finset V).disjSum L.int) :=
   (h.iso_iff ∅ L.int).2 (Or.inr ⟨rfl, h.lint_iso⟩)
 
@@ -963,7 +967,7 @@ private theorem x_ssub {T : Finset V} {Y : Finset W} {u : V} (hu : u ∈ T) (hY 
   exact ⟨⟨Finset.empty_subset _, hY⟩, fun h' => by simpa using h'.1 hu⟩
 
 /-- **The proper isolated sets form a chain** ([II, Def 5.9 (ii)] for the inserted graph). -/
-private theorem Hyp.chain (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.chain (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).IsoChain := by
   intro P Q hP hQ
   obtain ⟨T, Y, rfl⟩ := exists_disjSum P
@@ -997,7 +1001,7 @@ private theorem Hyp.chain (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀
 
 /-- The doubly connected property of `K` without `b` ([II, Lemma 6.5 (2)]): in Case B, from the
 pre-deterministic order of the subgraph induced on the minimal isolated subset headed by `b`. -/
-private theorem Hyp.kdc' (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.kdc' (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.erase b).DC := by
   rcases h.k3 with ⟨hb, -⟩ | ⟨-, hbe, l, hl, hlh⟩
   · have : K.erase b = K :=
@@ -1020,7 +1024,7 @@ private theorem Hyp.kdc' (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ 
 
 /-- Spanning nets of `K` without `b` and of `L`, and the edge `f` from `u` to `x`, span the
 inserted graph. -/
-private theorem Hyp.spans (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.spans (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {N : Finset E} {M : Finset F} (hN : (K.erase b).Spans N)
     (hNm : ∀ e ∈ N, (K.erase b).cls e ≠ some .minus) (hM : L.Spans M) {f : F} {u : V} {x : W}
     (hu : u ∈ K.int) (hx : x ∈ L.int) (hc : L.cls f ≠ none)
@@ -1090,7 +1094,7 @@ private theorem mem_net_inr {N : Finset E} {M : Finset F} {g f : F} :
 /-- **The inserted graph is doubly connected** ([II, Lemma 6.5 (2)], [II, Def 5.9 (i)]): the black
 net of `K` without `b`, that of `L` and `f₀`, and the blue net of `K` without `b`, that of `L` and
 `f₁`. -/
-private theorem Hyp.dc (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.dc (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).DC := by
   obtain ⟨bk, bl, hd, hbk, hbl, hsk, hsl⟩ := h.kdc'
   obtain ⟨ck, cl, hd', hck, hcl, hsk', hsl'⟩ := h.lspd.1
@@ -1145,7 +1149,7 @@ private theorem Hyp.dc (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w�
 omit [DecidableEq F] in
 /-- The subgraph of the inserted graph induced on `∅ ⊔ Y` is that of `L` induced on `Y`. -/
 private theorem rel_induceL {Y : Finset W} (hY : Y ⊆ L.int) :
-    Rel (L.induce Y) ((K.insert L σ {b, r}).induce ((∅ : Finset V).disjSum Y)) Sum.inr
+    InsRel (L.induce Y) ((K.insert L σ {b, r}).induce ((∅ : Finset V).disjSum Y)) Sum.inr
       Sum.inr := by
   have htY : ∀ p, tau L σ p ∈ (∅ : Finset V).disjSum Y ↔ p ∈ Y := fun p => by
     rw [tau_mem]
@@ -1174,10 +1178,10 @@ private theorem rel_induceL {Y : Finset W} (hY : Y ⊆ L.int) :
       exact ⟨f, live_induce.2 ⟨g1, g2, g3, g4⟩, rfl⟩
 
 /-- The replacement of a proper isolated set `Q` of `Y` in the inserted graph is that in `L`. -/
-private theorem Hyp.rel_replaceL (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.rel_replaceL (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {Y Q : Finset W} (hY : L.IsoOrTop Y) (hYs : Y ⊆ L.int) (hQ : L.IsProperIso Y Q) {a c : F}
     (hac : a ≠ c) (ha : L.Crosses Q a) (hc : L.Crosses Q c) :
-    Rel (L.replace Y Q a c) ((K.insert L σ {b, r}).replace ((∅ : Finset V).disjSum Y)
+    InsRel (L.replace Y Q a c) ((K.insert L σ {b, r}).replace ((∅ : Finset V).disjSum Y)
       ((∅ : Finset V).disjSum Q) (.inr a) (.inr c)) Sum.inr Sum.inr := by
   have hQs : Q ⊆ L.int := hQ.2.subset.trans hYs
   have hoa := MGraph.replace_ends _ _ L h.lspd.1 Y Q a hY hQ ha
@@ -1247,7 +1251,7 @@ private theorem Hyp.rel_replaceL (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f�
       exact ⟨f, (live_rep hfa hfc).2 (live_induce.2 ⟨g1, g2, g3, g4⟩), rfl⟩
 
 /-- A present edge of `L` has an internal end. -/
-private theorem Hyp.lend (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) {f : F}
+private theorem InsHyp.lend (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) {f : F}
     (hf : L.cls f ≠ none) : (L.ends f).1 ∈ L.int ∨ (L.ends f).2 ∈ L.int := by
   by_cases h0 : f = f₀
   · subst h0; rcases h.o₀ with h' | h' <;> rw [h'] <;> simp [h.hx₀]
@@ -1259,7 +1263,7 @@ private theorem Hyp.lend (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ 
 
 /-- A live edge of the subgraph of the inserted graph induced on a set `Z` of vertices of `K` is
 an edge of `K` other than `b` and `r`, live in the subgraph of `K` induced on `Z`. -/
-private theorem Hyp.live_indK (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.live_indK (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {Z : Finset (V ⊕ W)} (hZ : ∀ w, Sum.inr w ∉ Z) {x : E ⊕ F}
     (hx : Live ((K.insert L σ {b, r}).induce Z) x) :
     ∃ e, x = .inl e ∧ e ≠ b ∧ e ≠ r ∧ Live (K.induce Z.toLeft) e := by
@@ -1288,7 +1292,7 @@ private theorem cls_indK {Z : Finset (V ⊕ W)} {e : E} (hb : e ≠ b) (hr : e �
   simp [hb, hr]
 
 /-- The edge `r` is never live in a subgraph of `K`. -/
-private theorem Hyp.r_nl (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.r_nl (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     (A : Finset V) : ¬ Live (K.induce A) r := by
   intro hl
   obtain ⟨-, -, g3, g4⟩ := live_induce.1 hl
@@ -1297,7 +1301,7 @@ private theorem Hyp.r_nl (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ 
   · exact g4 h'
 
 /-- The edge `b` is not live in the subgraph of `K` induced on a set missing `u₀` or `u₁`. -/
-private theorem Hyp.b_nl (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.b_nl (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {A : Finset V} (hA : u₀ ∉ A ∨ u₁ ∉ A) : ¬ Live (K.induce A) b := by
   intro hl
   obtain ⟨g1, g2, g3, -⟩ := live_induce.1 hl
@@ -1310,10 +1314,10 @@ private theorem Hyp.b_nl (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ 
 
 /-- The replacement of a maximal isolated set `T' ⊔ L.int` of `T ⊔ L.int` in the inserted graph
 is the replacement of `T'` in `K`. -/
-private theorem Hyp.rel_replaceK (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.rel_replaceK (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {T T' : Finset V} (hT : K.IsoOrTop T) (hT' : K.IsProperIso T T') (hu₀ : u₀ ∈ T') {a c : E}
     (hac : a ≠ c) (ha : K.Crosses T' a) (hc : K.Crosses T' c) :
-    Rel (K.replace T T' a c) ((K.insert L σ {b, r}).replace (T.disjSum L.int) (T'.disjSum L.int)
+    InsRel (K.replace T T' a c) ((K.insert L σ {b, r}).replace (T.disjSum L.int) (T'.disjSum L.int)
       (.inl a) (.inl c)) Sum.inl Sum.inl := by
   have hoa := MGraph.replace_ends _ _ K h.kspd.1 T T' a hT hT' ha
   have hoc := MGraph.replace_ends _ _ K h.kspd.1 T T' c hT hT' hc
@@ -1360,12 +1364,12 @@ private theorem Hyp.rel_replaceK (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f�
     rw [hZl] at hl
     exact ⟨e, (live_rep (by simpa using hea) (by simpa using hec)).2 hl, rfl⟩
 
-private theorem Hyp.outX₀ (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.outX₀ (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).outer ((∅ : Finset V).disjSum L.int) (.inr f₀) = .inl u₀ := by
   unfold MGraph.outer
   rcases h.e₀ with e | e <;> rw [e] <;> simp [h.hx₀]
 
-private theorem Hyp.outX₁ (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.outX₁ (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).outer ((∅ : Finset V).disjSum L.int) (.inr f₁) = .inl u₁ := by
   unfold MGraph.outer
   rcases h.e₁ with e | e <;> rw [e] <;> simp [h.hx₁]
@@ -1383,10 +1387,10 @@ private theorem omega_inr (A : Finset V) (w : W) :
 /-- Case B of [II, Lemma 6.5 (2)]: the replacement of the internal vertices of `L` in the
 minimal isolated subset of `K` together with them is the subgraph of `K` induced on its minimal
 isolated subset, with `b` changed into a `Θ` edge. -/
-private theorem Hyp.rel_omegaB (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.rel_omegaB (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     (hb : K.cls b = some .plus) (hbe : K.ends b = (u₁, u₀)) {a c : F}
     (hac : (a = f₀ ∧ c = f₁) ∨ (a = f₁ ∧ c = f₀)) :
-    Rel ((K.induce K.MIS).convert [b]) ((K.insert L σ {b, r}).replace (K.MIS.disjSum L.int)
+    InsRel ((K.induce K.MIS).convert [b]) ((K.insert L σ {b, r}).replace (K.MIS.disjSum L.int)
       ((∅ : Finset V).disjSum L.int) (.inr a) (.inr c)) Sum.inl
       (fun e => if e = b then .inr a else .inl e) := by
   have hac' : a ≠ c := by
@@ -1446,10 +1450,10 @@ private theorem Hyp.rel_omegaB (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂
 /-- Case A of [II, Lemma 6.5 (2)]: the replacement of the internal vertices of `L` in the
 minimal isolated subset of `K` together with them is the subgraph of `K` induced on its minimal
 isolated subset, with a `Θ` loop at `u₀`. -/
-private theorem Hyp.rel_omegaA (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.rel_omegaA (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     (hb : K.cls b = none) (hu : u₀ = u₁) {a c : F}
     (hac : (a = f₀ ∧ c = f₁) ∨ (a = f₁ ∧ c = f₀)) :
-    Rel (K.induce K.MIS) ((K.insert L σ {b, r}).replace (K.MIS.disjSum L.int)
+    InsRel (K.induce K.MIS) ((K.insert L σ {b, r}).replace (K.MIS.disjSum L.int)
       ((∅ : Finset V).disjSum L.int) (.inr a) (.inr c)) Sum.inl Sum.inl := by
   have hac' : a ≠ c := by
     rcases hac with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -1482,7 +1486,7 @@ private theorem Hyp.rel_omegaA (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂
 
 /-- [II, Def 5.9 (iii)] for the minimal isolated subset of the inserted graph: it is a minimal
 isolated subset of `L`. -/
-private theorem Hyp.clauseA (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.clauseA (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     ∀ S, (K.insert L σ {b, r}).IsoOrTop S → (∀ Q, ¬ (K.insert L σ {b, r}).IsProperIso S Q) →
       ((K.insert L σ {b, r}).induce S).PreDet := by
   intro S hS hmin
@@ -1501,7 +1505,7 @@ private theorem Hyp.clauseA (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w�
     exact (rel_induceL hYi.1).preDet (h.lspd.2.2.1 Y (Or.inr hYi) hLmin)
 
 /-- [II, Def 5.9 (iii)] for a proper isolated subset of `L` inside an isolated subset of `L`. -/
-private theorem Hyp.replace_second (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.replace_second (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {Y : Finset W} (hYi : L.IsIsolated Y) {P : Finset (V ⊕ W)} {e₁ e₂ : E ⊕ F}
     (hPm : (K.insert L σ {b, r}).IsMaximalIso ((∅ : Finset V).disjSum Y) P) (hne : e₁ ≠ e₂)
     (he₁ : (K.insert L σ {b, r}).Crosses P e₁) (he₂ : (K.insert L σ {b, r}).Crosses P e₂) :
@@ -1528,7 +1532,7 @@ private theorem Hyp.replace_second (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ 
 isolated subset of `K` containing `u₀` and `u₁`: the replacement of `T' ⊔ L.int` for the maximal
 isolated subset `T'` of `T`, and, for `T` the minimal isolated subset of `K`, the replacement of
 the internal vertices of `L` (Cases A and B of [II, Lemma 6.5 (2)]). -/
-private theorem Hyp.replace_first (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.replace_first (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     {T : Finset V} (hT : K.IsoOrTop T) (hTs : T ⊆ K.int) (hu₀ : u₀ ∈ T) {P : Finset (V ⊕ W)}
     {e₁ e₂ : E ⊕ F} (hPm : (K.insert L σ {b, r}).IsMaximalIso (T.disjSum L.int) P)
     (hne : e₁ ≠ e₂) (he₁ : (K.insert L σ {b, r}).Crosses P e₁)
@@ -1589,7 +1593,7 @@ private theorem Hyp.replace_first (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f
     · exact (h.rel_omegaB hb hbe hac).preDet (preDet_convert_head hl hlh)
 
 /-- [II, Def 5.9 (iii)] for the replacements in the inserted graph. -/
-private theorem Hyp.clauseB (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.clauseB (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     ∀ S P e₁ e₂, (K.insert L σ {b, r}).IsoOrTop S → (K.insert L σ {b, r}).IsMaximalIso S P →
       e₁ ≠ e₂ → (K.insert L σ {b, r}).Crosses P e₁ → (K.insert L σ {b, r}).Crosses P e₂ →
         ((K.insert L σ {b, r}).replace S P e₁ e₂).PreDet := by
@@ -1608,14 +1612,14 @@ private theorem Hyp.clauseB (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w�
   · exact h.replace_second hYi hPm hne he₁ he₂
 
 /-- **[II, Lemma 6.5 (2)]**: the inserted graph is sequentially pre-deterministic. -/
-private theorem Hyp.spd (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
+private theorem InsHyp.spd (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂) :
     (K.insert L σ {b, r}).SPD :=
   ⟨h.dc, h.chain, h.clauseA, h.clauseB⟩
 
 /-- The proper isolated subsets of the inserted graph other than the internal vertices of `L`
 are weakly isolated when `K` and `L` are globally standard and `r` joins `u₂` to `u₀`
 ([II, Lemma 6.5 (2)], [II, Def 6.1]). -/
-private theorem Hyp.weak (h : Hyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
+private theorem InsHyp.weak (h : InsHyp K L σ u₀ u₁ u₂ b r f₀ f₁ f₂ w₀ w₁ w₂ x₀ x₁ x₂)
     (hu₂ : u₂ ∈ K.int) (hKg : K.GloballyStandard) (hLg : L.GloballyStandard)
     (hre : K.ends r = (u₂, u₀)) (P : Finset (V ⊕ W))
     (hP : (K.insert L σ {b, r}).IsProperIso (K.insert L σ {b, r}).int P)
@@ -1714,7 +1718,7 @@ theorem MGraph.spd_insert :
   intro V W E F _ _ _ _ K L σ u₀ u₁ u₂ b r hK _ hKd hu₀ hu₁ _ hm₀ hm₁ hK3 hK4 hK5 hL _ hLd hL2
   obtain ⟨f₀, f₁, f₂, w₀, w₁, w₂, h01, h02, h12, hw₀, hw₁, hw₂, -, -, -, hσ₀, hσ₁, hσ₂,
     ⟨x₀, hx₀, ho₀⟩, ⟨x₁, hx₁, ho₁⟩, ⟨x₂, hx₂, ho₂⟩, hc₀, hc₁, hc₂, hoth⟩ := hL2
-  exact (Hyp.mk hK hKd hu₀ hu₁ hm₀ hm₁ hK3 hK4 hK5 hL hLd h01 h02 h12 hw₀ hw₁ hw₂ hσ₀ hσ₁ hσ₂
+  exact (InsHyp.mk hK hKd hu₀ hu₁ hm₀ hm₁ hK3 hK4 hK5 hL hLd h01 h02 h12 hw₀ hw₁ hw₂ hσ₀ hσ₁ hσ₂
     hx₀ hx₁ hx₂ ho₀ ho₁ ho₂ hc₀ hc₁ hc₂ hoth).spd
 
 /-- **[II, Lemma 6.5 (2)]**, weak isolation in the chain (6.6): under the hypotheses of
@@ -1751,7 +1755,7 @@ theorem MGraph.insert_weakIso :
     hKg hLg hr
   obtain ⟨f₀, f₁, f₂, w₀, w₁, w₂, h01, h02, h12, hw₀, hw₁, hw₂, -, -, -, hσ₀, hσ₁, hσ₂,
     ⟨x₀, hx₀, ho₀⟩, ⟨x₁, hx₁, ho₁⟩, ⟨x₂, hx₂, ho₂⟩, hc₀, hc₁, hc₂, hoth⟩ := hL2
-  exact (Hyp.mk hK hKd hu₀ hu₁ hm₀ hm₁ hK3 hK4 hK5 hL hLd h01 h02 h12 hw₀ hw₁ hw₂ hσ₀ hσ₁ hσ₂
+  exact (InsHyp.mk hK hKd hu₀ hu₁ hm₀ hm₁ hK3 hK4 hK5 hL hLd h01 h02 h12 hw₀ hw₁ hw₂ hσ₀ hσ₁ hσ₂
     hx₀ hx₁ hx₂ ho₀ ho₁ ho₂ hc₀ hc₁ hc₂ hoth).weak hu₂ hKg hLg hr.1
 
 /-! ## Merging molecules by an idempotent map -/

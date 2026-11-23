@@ -1,14 +1,18 @@
-import RBM8D.LocalLaw.Defs
-import RBM8D.LocalLaw.LabelRemoval
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.Propagator
-import RBM8D.Profile.Decay
-import RBM8D.Profile.Symbol
-import RBM8D.Profile.Density
-import RBM8D.Input.EntryDiag
-import RBM8D.Prob.Union
-import RBM8D.Prob.Net
-import RBM8D.Bound.Doubly
+module
+
+public import RBM8D.LocalLaw.Defs
+public import RBM8D.LocalLaw.LabelRemoval
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.Propagator
+public import RBM8D.Profile.Decay
+public import RBM8D.Profile.Symbol
+public import RBM8D.Profile.Density
+public import RBM8D.Input.EntryDiag
+public import RBM8D.Prob.Union
+public import RBM8D.Prob.Net
+public import RBM8D.Bound.Doubly
+
+@[expose] public section
 
 /-!
 # The local law at `η = 1`

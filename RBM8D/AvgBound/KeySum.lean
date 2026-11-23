@@ -1,5 +1,10 @@
-import RBM8D.Bound.KeySum
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.Bound.KeySum
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.Bound.KeySum
+
+@[expose] public section
 
 /-!
 # The two-net key sums [II, §9.3]

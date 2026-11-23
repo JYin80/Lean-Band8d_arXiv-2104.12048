@@ -1,8 +1,15 @@
-import Batteries.Tactic.OpenPrivate
-import RBM8D.LocalLaw.Cutoff.Assembly
-import RBM8D.GlobalExp.TEquation
-import RBM8D.Deloc.Thm13
-import RBM8D.Diffusion.Main
+module
+
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.LocalLaw.Cutoff.Assembly
+public import RBM8D.GlobalExp.TEquation
+public import RBM8D.Deloc.Thm13
+public import RBM8D.Diffusion.Main
+public import RBM8D.Diffusion.Fourier
+import all RBM8D.Deloc.Thm13
+import all RBM8D.Diffusion.Fourier
+
+@[expose] public section
 
 /-!
 # The endpoints: [I, Theorems 1.3, 1.4, 1.5], [I, Corollaries 1.6, 1.7]

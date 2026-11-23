@@ -1,11 +1,16 @@
-import Mathlib.Analysis.Distribution.TemperateGrowth
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
-import Mathlib.Analysis.Convex.DoublyStochasticMatrix
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Prob.StochDom
-import RBM8D.Kernel.Fourier
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Analysis.Distribution.TemperateGrowth
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+public import Mathlib.Analysis.Convex.DoublyStochasticMatrix
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Prob.StochDom
+public import RBM8D.Kernel.Fourier
+
+@[expose] public section
 
 /-!
 # The profile, `f_{W,L}`, `Z_{W,L}` and `S`
@@ -27,57 +32,15 @@ section Profile
 
 variable {d : ℕ}
 
-/-- The representative `[x]_L ∈ ((−L/2, L/2] ∩ ℤ)^d` of `x ∈ Z_L^d` ([I, (1.2)–(1.3)]), as a
-point of `ℝ^d`. -/
-def zrep {L : ℕ} (x : Zd d L) : EuclideanSpace ℝ (Fin d) :=
-  WithLp.toLp 2 fun i => ((x i).valMinAbs : ℝ)
-
 /-- A point of `ℤ^d` as a point of `ℝ^d`. -/
 def intVec (n : Fin d → ℤ) : EuclideanSpace ℝ (Fin d) :=
   WithLp.toLp 2 fun i => (n i : ℝ)
-
-/-- The integral `(2π)^{−d} ∫ ψ(Wp) e^{i p·y} dp` of [I, (1.6)], before normalisation. -/
-def profInt (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (W : ℝ) (y : EuclideanSpace ℝ (Fin d)) : ℂ :=
-  ((2 * Real.pi : ℂ) ^ d)⁻¹ * ∫ p, (ψ (W • p) : ℂ) * cexp (I * (inner ℝ p y : ℝ))
 
 /-- The density `φ(y) = (2π)^{−d} ∫ ψ(q) e^{i q·y} dq`, so that `ψ(p) = ∫ φ(y) e^{−i p·y} dy`. -/
 def profPhi (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (y : EuclideanSpace ℝ (Fin d)) : ℝ :=
   (profInt ψ 1 y).re
 
-/-- The unnormalised profile `x ↦ (2π)^{−d} ∫ ψ(Wp) e^{i p·[x]_L} dp` on `Z_L^d` ([I, (1.6)]). -/
-def fRaw (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (W L : ℕ) (x : Zd d L) : ℝ :=
-  (profInt ψ W (zrep x)).re
-
-/-- The normalisation `Z_{W,L}` of [I, (1.6)], chosen so that `Σ_x f_{W,L}(x) = 1`. -/
-def ZWL (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (W L : ℕ) [NeZero L] : ℝ :=
-  ∑ x : Zd d L, fRaw ψ W L x
-
-/-- The variance profile `f_{W,L}` of [I, (1.6)]. -/
-def fWL (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (W L : ℕ) [NeZero L] (x : Zd d L) : ℝ :=
-  (ZWL ψ W L)⁻¹ * fRaw ψ W L x
-
-/-- The variance matrix `S_{xy} = f_{W,L}([x − y]_L)` of [I, (1.5)]. -/
-def Smat (ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)) (W L : ℕ) [NeZero L] :
-    Matrix (Zd d L) (Zd d L) ℝ :=
-  Matrix.of fun x y => fWL ψ W L (x - y)
-
 end Profile
-
-/-- [I, Assumption 1.2] with `f_{W,L} ≥ 0`: `ψ` is a real, symmetric Schwartz function with
-`ψ(0) = 1`, `‖ψ‖_∞ ≤ 1`, `ψ(p) ≤ max(1 − c_ψ|p|², 1 − c_ψ)`; the function `f_{W,L}` of [I, (1.6)]
-is nonnegative for every `W ≥ 1` and `L ≥ 1`, and symmetric on `Z_L^d` ([I, Assumption 1.1]) in
-the regime `L ≫ W ≫ 1` of the model: for `(W, L) ∈ adm(c₀, c₁)` with `W ≥ W₀(c₀, c₁)`. -/
-structure Profile (d : ℕ) where
-  ψ : 𝓢(EuclideanSpace ℝ (Fin d), ℝ)
-  cψ : ℝ
-  cψ_pos : 0 < cψ
-  symm : ∀ p, ψ (-p) = ψ p
-  at_zero : ψ 0 = 1
-  abs_le_one : ∀ p, |ψ p| ≤ 1
-  le_max : ∀ p, ψ p ≤ max (1 - cψ * ‖p‖ ^ 2) (1 - cψ)
-  f_nonneg : ∀ (W L : ℕ) [NeZero L], 1 ≤ W → ∀ x : Zd d L, 0 ≤ fWL ψ W L x
-  f_symm : ∀ c₀ c₁ : ℝ, 0 < c₀ → 0 < c₁ → ∃ W₀ : ℕ, ∀ (W L : ℕ) [NeZero L],
-    (W, L) ∈ adm c₀ c₁ → W₀ ≤ W → ∀ x : Zd d L, fWL ψ W L (-x) = fWL ψ W L x
 
 /-- The integral of [I, (1.6)] in Mathlib's convention: `𝓕⁻ g (y) = ∫ e^{2πi⟨w,y⟩} g(w) dw`
 applied to `g(w) = ψ(2πW w)`; it holds for every real `W` and every `d`. -/

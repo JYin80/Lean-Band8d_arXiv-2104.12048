@@ -1,4 +1,8 @@
-import RBM8D.Graph.MolCarry
+module
+
+public import RBM8D.Graph.MolCarry
+
+@[expose] public section
 
 /-!
 # Adding an edge between two internal molecules

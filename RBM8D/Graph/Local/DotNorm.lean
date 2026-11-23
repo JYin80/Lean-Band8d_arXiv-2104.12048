@@ -1,4 +1,8 @@
-import RBM8D.Graph.Local.Strategy
+module
+
+public import RBM8D.Graph.Local.Strategy
+
+@[expose] public section
 
 /-!
 # Dot normalisation and the scaling order of [II, (2.5)]

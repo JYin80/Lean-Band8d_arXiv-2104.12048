@@ -1,6 +1,10 @@
-import RBM8D.Prob.Partial
-import RBM8D.Prob.Wirtinger
-import RBM8D.Basic.Minor
+module
+
+public import RBM8D.Prob.Partial
+public import RBM8D.Prob.Wirtinger
+public import RBM8D.Basic.Minor
+
+@[expose] public section
 
 /-!
 # Functions of polynomial growth

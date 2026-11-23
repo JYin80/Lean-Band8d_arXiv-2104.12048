@@ -1,4 +1,8 @@
-import RBM8D.Graph.Isolated
+module
+
+public import RBM8D.Graph.Isolated
+
+@[expose] public section
 
 /-!
 # Pre-deterministic and sequentially pre-deterministic graphs

@@ -1,8 +1,16 @@
-import RBM8D.AvgBound.Trace
-import RBM8D.Diffusion.ModelSymm
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Graph.ValueLemmas
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.AvgBound.Trace
+public import RBM8D.Diffusion.ModelSymm
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Graph.ValueLemmas
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.Graph.Local.Model
+import all RBM8D.Kernel.ThetaDecay
+import all RBM8D.Graph.Local.Model
+import all RBM8D.AvgBound.Trace
+
+@[expose] public section
 
 /-!
 # The identities of [I, Lemma 5.11] that do not use the local law

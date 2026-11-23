@@ -1,4 +1,8 @@
-import RBM8D.Graph.QExp.Step1
+module
+
+public import RBM8D.Graph.QExp.Step1
+
+@[expose] public section
 
 /-!
 # The third step of the `Q`-expansions

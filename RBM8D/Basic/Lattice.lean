@@ -1,7 +1,12 @@
-import Mathlib.Data.ZMod.ValMinAbs
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import RBM8D.MainDefs
+public import Mathlib.Data.ZMod.ValMinAbs
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+
+@[expose] public section
 
 /-!
 # The torus `Z_L^d` and its periodic distance
@@ -13,9 +18,6 @@ is the periodic `ℓ^∞` distance to the origin on `Zd d L`.
 -/
 
 namespace RBM8D
-
-/-- Distance from `u` to `0` on the cycle `ZMod L`. -/
-def zdist (L : ℕ) (u : ZMod L) : ℕ := min u.val (L - u.val)
 
 theorem zdist_eq_zero_iff (L : ℕ) [NeZero L] {u : ZMod L} : zdist L u = 0 ↔ u = 0 := by
   have hu : u.val < L := ZMod.val_lt u
@@ -60,15 +62,9 @@ theorem zdist_le_half (L : ℕ) [NeZero L] (u : ZMod L) : zdist L u ≤ L / 2 :=
   simp only [zdist]
   omega
 
-/-- The lattice `Z_L^d` of the paper. -/
-abbrev Zd (d L : ℕ) : Type := Fin d → ZMod L
-
 /-- The torus `Z_L^d` has `L ^ d` points. -/
 theorem card_Zd (d L : ℕ) [NeZero L] : Fintype.card (Zd d L) = L ^ d := by
   simp [Zd, ZMod.card]
-
-/-- The periodic `ℓ^∞` distance to the origin on `Z_L^d`, `‖x‖_L` of [I, (1.2)–(1.3)]. -/
-def zdistInf (d L : ℕ) (x : Zd d L) : ℕ := Finset.univ.sup fun i => zdist L (x i)
 
 theorem zdist_le_zdistInf (d L : ℕ) (x : Zd d L) (i : Fin d) :
     zdist L (x i) ≤ zdistInf d L x :=

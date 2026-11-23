@@ -1,6 +1,10 @@
-import RBM8D.Graph.QExp.SelRounds
-import RBM8D.Graph.QExp.MolMonoSteps
-import RBM8D.Graph.QExp.MainB
+module
+
+public import RBM8D.Graph.QExp.SelRounds
+public import RBM8D.Graph.QExp.MolMonoSteps
+public import RBM8D.Graph.QExp.MainB
+
+@[expose] public section
 
 /-!
 # Coherence, order and molecular monotonicity of the rounds of [II, Lemma 4.15]

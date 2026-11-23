@@ -1,7 +1,12 @@
-import RBM8D.AvgBound.Defs
-import RBM8D.AvgBound.KeySum
-import Mathlib.Algebra.Ring.GeomSum
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.AvgBound.Defs
+public import RBM8D.AvgBound.KeySum
+public import Mathlib.Algebra.Ring.GeomSum
+public import Batteries.Tactic.OpenPrivate
+import all RBM8D.AvgBound.KeySum
+
+@[expose] public section
 
 /-!
 # The row sum of the kernel of [II, Lemma 9.5]

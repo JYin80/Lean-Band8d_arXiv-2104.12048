@@ -1,5 +1,9 @@
-import RBM8D.Kernel.InfSymbol
-import RBM8D.Profile.Poisson
+module
+
+public import RBM8D.Kernel.InfSymbol
+public import RBM8D.Profile.Poisson
+
+@[expose] public section
 
 /-!
 # The infinite-space kernel `S_∞`

@@ -1,6 +1,10 @@
-import RBM8D.Diffusion.Defs
-import RBM8D.TExp.Closure
-import RBM8D.SelfEnergy.Contract
+module
+
+public import RBM8D.Diffusion.Defs
+public import RBM8D.TExp.Closure
+public import RBM8D.SelfEnergy.Contract
+
+@[expose] public section
 
 /-!
 # The self-energies `Σ_l` of [I, Theorem 1.5]

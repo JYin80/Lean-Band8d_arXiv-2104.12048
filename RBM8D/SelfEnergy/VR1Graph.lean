@@ -1,6 +1,20 @@
-import RBM8D.SelfEnergy.RenormDiff
-import RBM8D.SelfEnergy.InfBound
-import RBM8D.Kernel.InfLimit
+module
+
+public import RBM8D.SelfEnergy.RenormDiff
+public import RBM8D.SelfEnergy.InfBound
+public import RBM8D.Kernel.InfLimit
+public import RBM8D.Bound.DoublyDet
+public import RBM8D.SelfEnergy.ValZ
+public import RBM8D.Kernel.Sinf
+public import RBM8D.Bound.AuxTreeZ
+import all RBM8D.Bound.DoublyDet
+import all RBM8D.SelfEnergy.RenormDiff
+import all RBM8D.SelfEnergy.ValZ
+import all RBM8D.Kernel.Sinf
+import all RBM8D.Bound.AuxTreeZ
+import all RBM8D.Kernel.InfLimit
+
+@[expose] public section
 
 /-!
 # The comparison of one graph of `Σ_n` on the torus and on `ℤ^d`
@@ -446,6 +460,7 @@ private def VR1Graph_maj {V : Type*} (W : ℕ) (τ₁ : ℝ) (j₀ i : ℕ) (c :
   | .waved _ => VR1Graph_u W ((d : ℝ) - 2) v * VR1Graph_u W ((d : ℝ) - 2) v
   | _ => if i = j₀ then VR1Graph_u W ((d : ℝ) - 4) v else VR1Graph_u W ((d : ℝ) - 2 - τ₁) v
 
+set_option maxHeartbeats 1000000 in
 /-- **[I, Cor 7.6] on `ℤ^d` with one marked edge**, for kernels given by their bounds: for a graph
 of waved and `Θ` edges whose internal form is normal regular and doubly connected, an index `j₀`
 that is not a waved edge, and `0 < τ₁ ≤ 1/4`, there is `C₀` such that for `W ≥ 1`, kernels
@@ -631,6 +646,7 @@ private theorem VR1Graph_graphZ (hd : 8 ≤ d) {n C : ℕ} (Γ : Graph 2 n)
           AuxTreeZ.brk d W x y ^ (-(2 * (d : ℝ) - 6 - 2 * τ₁)) := by ring
     _ = _ := by rw [hexp]; ring
 
+set_option maxHeartbeats 1000000 in
 /-- **The comparison of two sets of kernels on `ℤ^d`**: for a graph as in `VR1Graph_graphZ` and
 `0 < τ₁ ≤ 1/4` there is `C₀` such that for `W ≥ 1`, coefficients `a₁, a₂` and kernels `h₁, h₂`
 bounded by `K W^{-qᵢ d/2}` times the unmarked majorants, with `|a₁ - a₂| ≤ λ K_a` and
@@ -834,6 +850,7 @@ private theorem VR1Graph_val_toAux {n : ℕ} {ι : Type} [Fintype ι] [Decidable
   refine Finset.sum_congr rfl fun s _ => ?_
   simp only [RenormDiff_toAux, List.map_ofFn, List.prod_ofFn, Function.comp_def]
 
+set_option maxHeartbeats 1000000 in
 /-- **The `Θ` edges on the torus**: for a graph of waved and `Θ` edges whose internal form is
 normal regular and doubly connected, there are `τ' > 0` and `W₀` such that for every two
 families `A`, `B` of matrices on the `Θ` edges with `|Aᵢ|, |Bᵢ| ≤ W^{τ'} W^{-(kᵢ-2)d/2} B` and
@@ -2566,6 +2583,7 @@ private theorem VR1Graph_R_far {c₀ c₁ : ℝ} (hc₀ : 0 < c₀) {W L n : ℕ
       _ = L := h3
   linarith
 
+set_option maxHeartbeats 1000000 in
 /-- **Step two.** On the torus the waved edges are cut at `|[v - u]|_∞ ≤ R`, `R = ⌊L/(4(n+2))⌋`,
 at a cost below a quarter of `η W^{-(n_Γ-4)d/2} W^{-6} ⟨x⟩^{-(2d-6-τ)}`: a crude count over the
 `L^{dn}` labellings against the decay of the waved kernels beyond `R`. -/
@@ -3180,6 +3198,7 @@ private theorem VR1Graph_brkZ_zlift {L W : ℕ} [NeZero L] (x : Zd d L) :
   unfold AuxTreeZ.brk brk
   rw [zero_sub, zdInf_neg, VR1Graph_zdInf_zlift, zero_sub, zdistInf_neg]
 
+set_option maxHeartbeats 1000000 in
 /-- **[I, (8.9)] for one graph** ([I, Lemma 7.7, Lemma 8.5]; steps 1–4 of the torus `↔ ℤ^d`
 passage). Let `d ≥ 8`, `c₀, c₁, κ, ε > 0` with `c₀ + c₁ < 1`, a torus kernel family `KL` with
 `KerSymm` and `KerBound` at the even orders `l ∈ [4, N]`, label kernels `KI(E)` on `ℤ^d` with

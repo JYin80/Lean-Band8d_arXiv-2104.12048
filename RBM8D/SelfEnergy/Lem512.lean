@@ -1,7 +1,15 @@
-import RBM8D.LocalLaw.Primed
-import RBM8D.LocalLaw.Bridge
-import RBM8D.Graph.ValueLemmas
-import Batteries.Tactic.OpenPrivate
+module
+
+public import RBM8D.LocalLaw.Primed
+public import RBM8D.LocalLaw.Bridge
+public import RBM8D.Graph.ValueLemmas
+public import Batteries.Tactic.OpenPrivate
+public import RBM8D.LocalLaw.Moment
+public import RBM8D.LocalLaw.LabelRemoval
+import all RBM8D.LocalLaw.Moment
+import all RBM8D.LocalLaw.LabelRemoval
+
+@[expose] public section
 
 /-!
 # The bounds of [I, Lemma 5.12] on the graphs of `R` and on the graphs of `A` with internal atoms

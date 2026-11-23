@@ -1,12 +1,16 @@
-import RBM8D.TExp.Defs
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.ZdCancel
-import RBM8D.Profile.Symbol
-import RBM8D.Input.Entry
-import RBM8D.Input.Sizes
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import RBM8D.Bound.Norm
+module
+
+public import RBM8D.TExp.Defs
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.ZdCancel
+public import RBM8D.Profile.Symbol
+public import RBM8D.Input.Entry
+public import RBM8D.Input.Sizes
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import RBM8D.Bound.Norm
+
+@[expose] public section
 
 /-!
 # Labelled `Θ` edges on the torus ([I, Lemma 6.2] = [II, Lemma 2.8])

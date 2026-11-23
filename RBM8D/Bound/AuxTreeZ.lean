@@ -1,4 +1,8 @@
-import RBM8D.Bound.AuxTree
+module
+
+public import RBM8D.Bound.AuxTree
+
+@[expose] public section
 
 /-!
 # Auxiliary graphs on `ℤ^d` ([I, Claim 6.11], pointwise strong form)

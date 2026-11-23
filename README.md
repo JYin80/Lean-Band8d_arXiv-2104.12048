@@ -29,9 +29,9 @@ theorem RBM8D.quantumDiffusion : RBM8D.quantumDiffusionStmt
 
 | Part I | Lean statement (file) | Lean theorem | What it says |
 |---|---|---|---|
-| Theorem 1.3 | `Thm13Stmt` ([`RBM8D/Deloc/Thm13.lean`](RBM8D/Deloc/Thm13.lean)) | `thm13` | Weak delocalization of bulk eigenvectors: (1.12), the fraction of localized eigenvectors, and (1.13), the sup-norm bound `‖u_α‖_∞ ≤ W^{1+τ}/L`, each with probability at least `1 − L^{−D}`. |
-| Theorem 1.4 | `LocalLawStmt` ([`RBM8D/Deloc/Defs.lean`](RBM8D/Deloc/Defs.lean)) | `localLaw` | The local law (1.19): `|G_{xy}(z) − m(z)δ_{xy}|² ≤ W^τ B_{xy}` uniformly in `z = E + iη` with `|E| < 2 − κ` and `W²/L^{2−ε} ≤ η ≤ 1`, with probability at least `1 − L^{−D}`. |
-| Theorem 1.5, Corollaries 1.6, 1.7 | `quantumDiffusionStmt` ([`RBM8D/Diffusion/Defs.lean`](RBM8D/Diffusion/Defs.lean)) | `quantumDiffusion` | Quantum diffusion: the self-energies `Σ_l` (sums of deterministic doubly connected graphs), the expansion (1.22) of `E T_{xy}` with the renormalized diffusive matrix `Θ^{(M)}`, the bounds (1.24)–(1.28), the expansion (1.29) of `E|G_{xy}|²`, and the diffusion approximation (1.35)–(1.36) in Fourier space. |
+| Theorem 1.3 | `Thm13Stmt` ([`RBM8D/MainDefs.lean`](RBM8D/MainDefs.lean)) | `thm13` | Weak delocalization of bulk eigenvectors: (1.12), the fraction of localized eigenvectors, and (1.13), the sup-norm bound `‖u_α‖_∞ ≤ W^{1+τ}/L`, each with probability at least `1 − L^{−D}`. |
+| Theorem 1.4 | `LocalLawStmt` ([`RBM8D/MainDefs.lean`](RBM8D/MainDefs.lean)) | `localLaw` | The local law (1.19): `|G_{xy}(z) − m(z)δ_{xy}|² ≤ W^τ B_{xy}` uniformly in `z = E + iη` with `|E| < 2 − κ` and `W²/L^{2−ε} ≤ η ≤ 1`, with probability at least `1 − L^{−D}`. |
+| Theorem 1.5, Corollaries 1.6, 1.7 | `quantumDiffusionStmt` ([`RBM8D/MainDefs.lean`](RBM8D/MainDefs.lean)) | `quantumDiffusion` | Quantum diffusion: the self-energies `Σ_l` (sums of deterministic doubly connected graphs), the expansion (1.22) of `E T_{xy}` with the renormalized diffusive matrix `Θ^{(M)}`, the bounds (1.24)–(1.28), the expansion (1.29) of `E|G_{xy}|²`, and the diffusion approximation (1.35)–(1.36) in Fourier space. |
 
 The three theorems have no hypotheses other than their parameters. `docs/PAPER-VS-LEAN.md` reads each Lean statement
 in plain language and lists every difference from the printed statements (for example, the joint form of
@@ -101,3 +101,15 @@ differently, and the numbering used in the comments of the Lean files.
 The code is released under the Apache License 2.0; see [`LICENSE`](LICENSE).
 
 Papers: Fan Yang, Horng-Tzer Yau and Jun Yin. Lean formalization: Jun Yin.
+
+## Palomar
+
+The repository is laid out for the [Palomar registry](https://palomar-registry.org/) of Lean-verified mathematics.
+All source files use Lean's module system. [`RBM8D/MainDefs.lean`](RBM8D/MainDefs.lean) holds every definition used
+by the statements of [I, Theorems 1.3, 1.4, 1.5] and [I, Corollaries 1.6, 1.7] and depends on Mathlib only;
+[`Challenge.lean`](Challenge.lean) is the statement to audit (it imports Mathlib only and repeats the definitions of
+`RBM8D/MainDefs.lean`), [`Solution.lean`](Solution.lean) proves it from the library,
+[`comparator.json`](comparator.json) names the compared theorems and [`formalization.yaml`](formalization.yaml)
+holds the metadata. `lake build` also builds `Challenge.lean` (three `sorry` warnings, by design) and
+`Solution.lean`. `python3 scripts/check-lean-sources.py` and `./scripts/verify-comparator.sh` (Linux, needs
+`bwrap`) run the checks locally; submissions go to <https://submit.palomar-registry.org/>.

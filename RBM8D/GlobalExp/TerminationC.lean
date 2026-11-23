@@ -1,5 +1,22 @@
-import RBM8D.GlobalExp.TerminationB
-import RBM8D.Graph.QExp.SelRunIso
+module
+
+public import RBM8D.GlobalExp.TerminationB
+public import RBM8D.Graph.QExp.SelRunIso
+public import RBM8D.GlobalExp.Termination
+public import RBM8D.GlobalExp.GlobalGood
+public import RBM8D.Graph.MolCarry
+public import RBM8D.GlobalExp.RunClauses
+public import RBM8D.GlobalExp.Local
+public import RBM8D.TExp.Second
+import all RBM8D.GlobalExp.Termination
+import all RBM8D.GlobalExp.GlobalGood
+import all RBM8D.Graph.MolCarry
+import all RBM8D.GlobalExp.RunClauses
+import all RBM8D.GlobalExp.Local
+import all RBM8D.GlobalExp.TerminationB
+import all RBM8D.TExp.Second
+
+@[expose] public section
 
 /-!
 # [II, Lemma 6.8] in the block reading: the selector of a run

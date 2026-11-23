@@ -1,4 +1,8 @@
-import RBM8D.Graph.Local.Basic
+module
+
+public import RBM8D.Graph.Local.Basic
+
+@[expose] public section
 
 /-!
 # Identities from Gaussian integration by parts

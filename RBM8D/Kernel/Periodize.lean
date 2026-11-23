@@ -1,5 +1,9 @@
-import Mathlib.Algebra.Module.ZLattice.Summable
-import RBM8D.Kernel.Lattice
+module
+
+public import Mathlib.Algebra.Module.ZLattice.Summable
+public import RBM8D.Kernel.Lattice
+
+@[expose] public section
 
 /-!
 # Periodisation

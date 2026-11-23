@@ -1,7 +1,11 @@
-import RBM8D.TExp.Closure
-import RBM8D.Bound.GraphAbs
-import RBM8D.TExp.Second
-import RBM8D.LocalLaw.Primed
+module
+
+public import RBM8D.TExp.Closure
+public import RBM8D.Bound.GraphAbs
+public import RBM8D.TExp.Second
+public import RBM8D.LocalLaw.Primed
+
+@[expose] public section
 
 /-!
 # The self-energy step [II, Lemma 3.9] = [I, Lemma 5.8]: parity, odd orders, the bound step

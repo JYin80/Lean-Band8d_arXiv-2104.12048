@@ -1,11 +1,15 @@
-import RBM8D.TExp.Second
-import RBM8D.Bound.GraphAbs
-import RBM8D.Bound.Norm
-import RBM8D.Bound.Chain
-import RBM8D.Input.GT
-import RBM8D.Input.GTDiag
-import RBM8D.Graph.Local.ModelGauss
-import RBM8D.Graph.Rooting
+module
+
+public import RBM8D.TExp.Second
+public import RBM8D.Bound.GraphAbs
+public import RBM8D.Bound.Norm
+public import RBM8D.Bound.Chain
+public import RBM8D.Input.GT
+public import RBM8D.Input.GTDiag
+public import RBM8D.Graph.Local.ModelGauss
+public import RBM8D.Graph.Rooting
+
+@[expose] public section
 
 /-!
 # The local law from a T-expansion: definitions and statements
@@ -107,13 +111,13 @@ def Graph.pathRepl {n : ℕ} (Γ : Graph 3 n) (S : Finset (Fin Γ.comps.length))
       !cs.any fun c' => c'.kind.isSolid &&
         ((c'.x == c.x && c'.y == c.y) || (c'.x == c.y && c'.y == c.x))), Γ.coeff⟩
 
-private instance G11_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals := by
+instance G11_decAtExternals {n : ℕ} (Γ : Graph 3 n) : Decidable Γ.AtExternals := by
   unfold Graph.AtExternals; infer_instance
 
-private instance G11_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
+instance G11_decTKinds {k n : ℕ} (N : ℕ) (Γ : Graph k n) : Decidable (Γ.TKinds N) :=
   inferInstanceAs (Decidable (_ = true))
 
-private instance G11_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
+instance G11_decLabelFree {k n : ℕ} (Γ : Graph k n) : Decidable Γ.LabelFree :=
   inferInstanceAs (Decidable (∀ c ∈ Γ.comps, c.label = none))
 
 end RBM8D.Graphs

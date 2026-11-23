@@ -1,8 +1,12 @@
-import RBM8D.Kernel.Periodize
-import RBM8D.Kernel.Sinf
-import RBM8D.Kernel.ZdCancel
-import RBM8D.Kernel.PropagatorSymbol
-import RBM8D.Basic.Domain
+module
+
+public import RBM8D.Kernel.Periodize
+public import RBM8D.Kernel.Sinf
+public import RBM8D.Kernel.ZdCancel
+public import RBM8D.Kernel.PropagatorSymbol
+public import RBM8D.Basic.Domain
+
+@[expose] public section
 
 /-!
 # Decay of `Θ` on the torus

@@ -1,8 +1,12 @@
-import RBM8D.LocalLaw.Cutoff.Bootstrap
-import RBM8D.LocalLaw.Cutoff.Hook
-import RBM8D.LocalLaw.Cutoff.Resample
-import RBM8D.LocalLaw.Cutoff.Moment
-import RBM8D.SelfEnergy.Assembly
+module
+
+public import RBM8D.LocalLaw.Cutoff.Bootstrap
+public import RBM8D.LocalLaw.Cutoff.Hook
+public import RBM8D.LocalLaw.Cutoff.Resample
+public import RBM8D.LocalLaw.Cutoff.Moment
+public import RBM8D.SelfEnergy.Assembly
+
+@[expose] public section
 
 /-!
 # [II, Theorem 3.6] and [II, Lemma 3.9] from the cutoff bootstrap

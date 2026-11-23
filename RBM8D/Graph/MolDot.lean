@@ -1,5 +1,9 @@
-import RBM8D.Graph.MolRead
-import RBM8D.Graph.MolCarry
+module
+
+public import RBM8D.Graph.MolRead
+public import RBM8D.Graph.MolCarry
+
+@[expose] public section
 
 /-!
 # Dotted edges and carried molecular graphs in the block reading
@@ -18,7 +22,7 @@ namespace RBM8D.Graphs
 /-! ## Carried molecular graphs -/
 
 /-- A molecular multigraph together with its types of vertices and of edges. -/
-private structure MolDot_Pk : Type 1 where
+structure MolDot_Pk : Type 1 where
   V : Type
   E : Type
   dV : DecidableEq V
@@ -27,7 +31,7 @@ private structure MolDot_Pk : Type 1 where
 
 /-- One step between molecular multigraphs: a change of names (`MGraph.Transported`), or one of
 the operations `MGraph.CarStep` on the same types of vertices and edges. -/
-private inductive MolDot_Step : MolDot_Pk → MolDot_Pk → Prop
+inductive MolDot_Step : MolDot_Pk → MolDot_Pk → Prop
   | tr (A B : MolDot_Pk) (h : @MGraph.Transported A.V A.E B.V B.E B.dV A.G B.G) :
       MolDot_Step A B
   | car (V E : Type) (dV : DecidableEq V) (dE : DecidableEq E) (G G' : MGraph V E)
@@ -1974,15 +1978,15 @@ section Instances
 set_option synthInstance.maxSize 4000
 set_option maxRecDepth 100000
 
-private instance MolDot_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
+instance MolDot_decAdjDot {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.dotGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind = .dot ∧ c.x = v ∧ c.y = u))))
 
-private instance MolDot_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
+instance MolDot_decSameBlock {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameBlock :=
   fun u v => @SimpleGraph.instDecidableRelReachable _ _ _ _ (MolDot_decAdjDot Γ) u v
 
-private instance MolDot_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
+instance MolDot_decUnpinned {k n : ℕ} (Γ : Graph k n) (u : Atom k n) :
     Decidable (Γ.Unpinned u) := by
   unfold Graph.Unpinned; infer_instance
 

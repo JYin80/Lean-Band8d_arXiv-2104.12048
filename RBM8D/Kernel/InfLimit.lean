@@ -1,5 +1,9 @@
-import RBM8D.Kernel.ThetaDecay
-import RBM8D.Kernel.Decay
+module
+
+public import RBM8D.Kernel.ThetaDecay
+public import RBM8D.Kernel.Decay
+
+@[expose] public section
 
 /-!
 # Torus versus `ℤ^d`

@@ -1,14 +1,19 @@
-import RBM8D.Graph.Deterministic
-import RBM8D.Graph.Standard
-import RBM8D.Graph.Local.Basic
-import RBM8D.Graph.MolRead
-import RBM8D.Basic.Domain
-import RBM8D.Graph.Local.Dot
-import RBM8D.Graph.Rooting
-import RBM8D.Graph.Local.IBP
-import RBM8D.Kernel.Circulant
-import RBM8D.Kernel.Propagator
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+module
+
+public import RBM8D.MainDefs
+public import RBM8D.Graph.Deterministic
+public import RBM8D.Graph.Standard
+public import RBM8D.Graph.Local.Basic
+public import RBM8D.Graph.MolRead
+public import RBM8D.Basic.Domain
+public import RBM8D.Graph.Local.Dot
+public import RBM8D.Graph.Rooting
+public import RBM8D.Graph.Local.IBP
+public import RBM8D.Kernel.Circulant
+public import RBM8D.Kernel.Propagator
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+
+@[expose] public section
 
 /-!
 # Self-energies, labelled `Θ` edges, `T`-expansions and `T`-equations
@@ -30,47 +35,11 @@ namespace RBM8D.Graphs
 side length `L ≥ 1`. -/
 abbrev VarFamily (d : ℕ) : Type := ℕ → ∀ (L : ℕ) [NeZero L], Matrix (Zd d L) (Zd d L) ℝ
 
-/-- The deterministic data record at the variance matrix `S` and the spectral parameter `z`, with
-self-energy matrices `Sig`: `m = m(z)`, `s = S`, `S^± = S^±(m)`, `Θ = Θ(m)` ([I, (1.16), (2.1)]);
-the resolvent entries and the other fields are `0` (deterministic graphs do not read them). -/
-def detData {ι : Type} [Fintype ι] [DecidableEq ι] (S : Matrix ι ι ℝ) (z : ℂ)
-    (Sig : ℕ → Matrix ι ι ℂ) : Data ι where
-  m := msc z
-  Gm _ := 0
-  S := cmat S
-  Sp := Splus (msc z) S
-  Sm := Sminus (msc z) S
-  Theta := cmat (Theta (msc z) S)
-  Sig := Sig
-  ThetaErr _ _ := 0
-  ghost := 0
-  aux _ := 0
-
-/-- The self-energy matrices of the family `Sig` below order `N`: the entry `k < N` is the value
-of `Sig k` (external atoms `x = 0`, `y = 1`) on the deterministic record whose entries below `k`
-are already computed; the entries `≥ N` are `0`. -/
-def sigUpTo {ι : Type} [Fintype ι] [DecidableEq ι] (Sig : ℕ → Expansion 2) (S : Matrix ι ι ℝ)
-    (z : ℂ) : ℕ → ℕ → Matrix ι ι ℂ
-  | 0 => fun _ => 0
-  | N + 1 => Function.update (sigUpTo Sig S z N) N
-      (Matrix.of fun x y => (Sig N).val (detData S z (sigUpTo Sig S z N)) ![x, y])
-
-/-- The matrix `(Σ_l)_{xy}`: the value of `Sig l` on the deterministic record with the self-energy
-matrices of the lower orders. -/
-def sigMat {ι : Type} [Fintype ι] [DecidableEq ι] (Sig : ℕ → Expansion 2) (S : Matrix ι ι ℝ)
-    (z : ℂ) (l : ℕ) : Matrix ι ι ℂ :=
-  Matrix.of fun x y => (Sig l).val (detData S z (sigUpTo Sig S z l)) ![x, y]
-
 /-- A data record whose self-energy matrices of even order `k ∈ [4, N)` are the values of
 `Sig k` on the record itself (the matrices read by the labelled `Θ` edges, [I, Def 6.3]). -/
 def SigConsistent {ι : Type} [Fintype ι] [DecidableEq ι] (Sig : ℕ → Expansion 2) (N : ℕ)
     (D : Data ι) : Prop :=
   ∀ k, 4 ≤ k → k < N → Even k → D.Sig k = Matrix.of fun x y => (Sig k).val D ![x, y]
-
-/-- The entries of a label of a labelled `Θ` edge ([II, Def 2.9]) are even and lie in `[4, N]`;
-the empty label is the plain `Θ` edge. -/
-def labelOK (N : ℕ) (o : List ℕ) : Bool :=
-  o.all fun j => decide (4 ≤ j) && decide (j ≤ N) && j % 2 == 0
 
 /-- The components of the graphs of [II, Def 3.2]: solid edges, regular and light weights, waved
 edges, `Θ` edges with labels of entries even in `[4, N]` ([II, Def 3.2 (2)]), dotted and
@@ -79,16 +48,6 @@ def Comp.isTKind {V : Type*} (N : ℕ) (c : Comp V) : Bool :=
   c.minor.isEmpty &&
     match c.kind with
     | .G _ | .weight _ | .light _ | .waved _ | .dot | .xdot => true
-    | .theta o => labelOK N o
-    | _ => false
-
-/-- The components of deterministic graphs built from `S`, `S^±`, `Θ` and labelled `Θ` edges
-with labels of entries even in `[4, N]`: waved edges, `Θ` edges, dotted and `×`-dotted edges,
-without minor and without label ([II, Def 2.7 (i)], [II, Def 3.3 (3)]). -/
-def Comp.isDetKind {V : Type*} (N : ℕ) (c : Comp V) : Bool :=
-  c.minor.isEmpty && c.label.isNone &&
-    match c.kind with
-    | .waved _ | .dot | .xdot => true
     | .theta o => labelOK N o
     | _ => false
 
@@ -130,23 +89,6 @@ theorem Graph.plain_iff_check {k n : ℕ} (Γ : Graph k n) :
 /-- `Graph.Plain` is decidable, by `Comp.plainCheck`. -/
 instance Graph.instDecidablePlain {k n : ℕ} (Γ : Graph k n) : Decidable Γ.Plain :=
   decidable_of_iff _ (Graph.plain_iff_check Γ).symm
-
-/-- The shape of an `l`-th order self-energy ([II, Def 2.7 (i)], with [II, Def 3.2 (3)] and
-[II, Def 3.3 (2), (3), (5)]): every graph of the formal sum (external atoms `x = 0`, `y = 1`) is
-normal regular, and its dotted edges form a forest on the atoms (`Graph.DotsAcyclic`: no dotted
-loop, at most one dotted edge between two atoms as in [I, Def 2.6] = [II, Def 2.2], and no
-dotted cycle, so that every dotted edge counts `+2` in the scaling order of [I, (2.12)] against
-one summation it removes); it is deterministic, of scaling order `l`, and its labelled `Θ` edges
-carry labels with entries even in `[4, l - 1]`; it is doubly connected ([II, Def 2.12]) when its
-external atoms `x`, `y` are read as internal atoms: the graph with the atoms `x, y` first and then
-the internal atoms of `g`, all internal. A single dotted edge between `x` and `y` is allowed
-([I, Def 2.13 (i)]). -/
-def SelfEnergyShape (l : ℕ) (E : Expansion 2) : Prop :=
-  ∀ g ∈ E, (∃ C, g.2.Normal C ∧ g.2.DotsAcyclic) ∧
-    g.2.comps.all (Comp.isDetKind (l - 1)) = true ∧
-    g.2.ord = l ∧
-    (g.2.mapAtoms (Sum.elim (fun a => Sum.inr (Fin.castAdd g.1 a))
-      (fun b => Sum.inr (Fin.natAdd 2 b))) : Graph 0 (2 + g.1)).DoublyConnected
 
 /-- [I, (1.25)] = [II, (1.20)] for `Σ_l`, as exact identities for every `(W, L)` and every `z` with
 `Im z > 0`: `Σ_l(x, x + a) = Σ_l(0, a)` and `Σ_l(0, a) = Σ_l(0, -a)`. -/
@@ -675,16 +617,15 @@ theorem isSelfEnergy_nil :
       have : (0:ℝ) ≤ (W : ℝ) ^ (-(((l : ℝ) - 2) * d / 2)) := Real.rpow_nonneg (Nat.cast_nonneg _) _
       positivity
 
-
 section Instances
 
 /-- Adjacency in the graph of all components is decidable. -/
-private instance instDecAdjEdgeGraph {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
+instance instDecAdjEdgeGraph {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.edgeGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.x = u ∧ c.y = v) ∨ (∃ c ∈ Γ.comps, c.x = v ∧ c.y = u))))
 
 /-- Adjacency in the graph of waved and diffusive components is decidable. -/
-private instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
+instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
     DecidableRel Γ.wavedThetaGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, (c.kind.joinsMol = true ∧ c.kind ≠ .dot ∨ c.kind.isDiffusive = true) ∧
@@ -693,13 +634,13 @@ private instance instDecAdjWavedTheta {k n : ℕ} (Γ : Graph k n) :
         c.x = v ∧ c.y = u))))
 
 /-- Adjacency in the graph of waved and dotted components is decidable. -/
-private instance instDecAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
+instance instDecAdjMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.molGraph.Adj :=
   fun u v => inferInstanceAs (Decidable (u ≠ v ∧
     ((∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = u ∧ c.y = v) ∨
       (∃ c ∈ Γ.comps, c.kind.joinsMol = true ∧ c.x = v ∧ c.y = u))))
 
 /-- Being in one molecule is decidable. -/
-private instance instDecSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
+instance instDecSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.SameMol :=
   fun u v =>
     haveI : Decidable (Γ.molGraph.Reachable u v) :=
       @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjMol Γ) u v
@@ -707,14 +648,14 @@ private instance instDecSameMol {k n : ℕ} (Γ : Graph k n) : DecidableRel Γ.S
       (u.isRight = true ∧ v.isRight = true ∧ Γ.molGraph.Reachable u v)))
 
 /-- Adjacency in a net is decidable. -/
-private instance instDecAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance instDecAdjNet {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     DecidableRel (Γ.net B).Adj :=
   fun a b => inferInstanceAs (Decidable (a ≠ b ∧
     ((Γ.SameMol (.inr a) (.inr b) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr a ∧ Γ.comps[i].y = .inr b) ∨
       (Γ.SameMol (.inr b) (.inr a) ∨ ∃ i ∈ B, Γ.comps[i].x = .inr b ∧ Γ.comps[i].y = .inr a))))
 
 /-- Regularity with a given bound is decidable. -/
-private instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Regular C) :=
+instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Regular C) :=
   haveI : DecidableRel Γ.edgeGraph.Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjEdgeGraph Γ)
   haveI : DecidableRel Γ.wavedThetaGraph.Reachable :=
@@ -728,14 +669,14 @@ private instance instDecRegular {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidab
 
 set_option synthInstance.maxSize 1024 in
 /-- Normal regularity with a given bound is decidable. -/
-private instance instDecNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Normal C) :=
+instance instDecNormal {k n : ℕ} (C : ℕ) (Γ : Graph k n) : Decidable (Γ.Normal C) :=
   inferInstanceAs (Decidable (Γ.Regular C ∧ (∀ c ∈ Γ.comps, c.kind.isSolid = true → c.x ≠ c.y) ∧
     ∀ u v : Atom k n, u ≠ v →
       ((∃ c ∈ Γ.comps, c.kind = .xdot ∧ (c.x = u ∧ c.y = v ∨ c.x = v ∧ c.y = u)) ↔
         (∃ c ∈ Γ.comps, c.kind.isSolid = true ∧ (c.x = u ∧ c.y = v ∨ c.x = v ∧ c.y = u)))))
 
 /-- Spanning the internal molecules is decidable. -/
-private instance instDecSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
+instance instDecSpans {k n : ℕ} (Γ : Graph k n) (B : Finset (Fin Γ.comps.length)) :
     Decidable (Γ.Spans B) :=
   haveI : DecidableRel (Γ.net B).Reachable :=
     @SimpleGraph.instDecidableRelReachable _ _ _ _ (instDecAdjNet Γ B)

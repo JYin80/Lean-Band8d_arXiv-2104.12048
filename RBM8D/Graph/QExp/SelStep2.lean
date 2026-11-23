@@ -1,6 +1,10 @@
-import RBM8D.Graph.QExp.Main
-import RBM8D.Graph.QExp.SelStep3
-import RBM8D.Graph.DotBlocks
+module
+
+public import RBM8D.Graph.QExp.Main
+public import RBM8D.Graph.QExp.SelStep3
+public import RBM8D.Graph.DotBlocks
+
+@[expose] public section
 
 /-!
 # The second step of the `Q`-expansions with deterministic choices

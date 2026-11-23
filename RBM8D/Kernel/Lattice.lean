@@ -1,14 +1,18 @@
-import Mathlib.Analysis.SpecialFunctions.SmoothTransition
-import Mathlib.Analysis.InnerProductSpace.Calculus
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Analysis.Normed.Group.InfiniteSum
-import RBM8D.Basic.Lattice
-import RBM8D.Basic.Semicircle
-import RBM8D.Prob.StochDom
-import RBM8D.Kernel.Fourier
-import RBM8D.Kernel.Propagator
-import RBM8D.Kernel.Profile
-import RBM8D.Kernel.Circulant
+module
+
+public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+public import Mathlib.Analysis.InnerProductSpace.Calculus
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Analysis.Normed.Group.InfiniteSum
+public import RBM8D.Basic.Lattice
+public import RBM8D.Basic.Semicircle
+public import RBM8D.Prob.StochDom
+public import RBM8D.Kernel.Fourier
+public import RBM8D.Kernel.Propagator
+public import RBM8D.Kernel.Profile
+public import RBM8D.Kernel.Circulant
+
+@[expose] public section
 
 /-!
 # Kernels on `ℤ^d`

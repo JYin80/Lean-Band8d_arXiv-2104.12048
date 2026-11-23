@@ -1,5 +1,9 @@
-import RBM8D.Graph.Local.Dot
-import RBM8D.Graph.Local.Weight
+module
+
+public import RBM8D.Graph.Local.Dot
+public import RBM8D.Graph.Local.Weight
+
+@[expose] public section
 
 /-!
 # The first step of the `Q`-expansions

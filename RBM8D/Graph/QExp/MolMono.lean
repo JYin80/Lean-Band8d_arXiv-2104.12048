@@ -1,4 +1,8 @@
-import RBM8D.Graph.MolRead
+module
+
+public import RBM8D.Graph.MolRead
+
+@[expose] public section
 
 /-!
 # Crossing counts along the block-preserving steps of the `Q`-expansions
